@@ -169,18 +169,37 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
-    final boolean isCell(int row, int col) {
-        return 0 <= col && col < size() && 0 <= row && row < size();
-    }
 
     public static boolean atLeastOneMoveExists(Board b) {
         if (emptySpaceExists(b) == true) {
             return true;
         }
+        else if (AdjacentTilesSameVal(b) == true){
+            return true;
+        }
         else {
-            for (int col = 0; col < b.size(); col += 1) {
-                for (int row = 0; row < b.size(); row += 1) {
+            return false;
+        }
+    }
 
+    public static boolean isCell(int row, int col, Board b) {
+        return 0 <= col && col < b.size() && 0 <= row && row < b.size();
+    }
+
+    public static boolean AdjacentTilesSameVal(Board b) {
+        for (int col = 0; col < b.size(); col += 1) {
+            for (int row = 0; row < b.size(); row += 1) {
+                if (isCell(row + 1, col, b) && b.tile(col, row) == b.tile(col, row + 1)) {
+                    return true;
+                }
+                else if (isCell(row - 1, col, b) && b.tile(col, row) == b.tile(col, row - 1)) {
+                    return true;
+                }
+                else if (isCell(row, col - 1, b) && b.tile(col, row) == b.tile(col - 1, row)) {
+                    return true;
+                }
+                else if (isCell(row, col + 1, b) && b.tile(col, row) == b.tile(col + 1, row)) {
+                    return true;
                 }
             }
         }
