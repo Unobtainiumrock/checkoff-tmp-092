@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Yu Hsuan Lee
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -28,15 +28,20 @@ public class Model extends Observable {
     /** A new 2048 game on a board of size SIZE with no pieces
      *  and score 0. */
     public Model(int size) {
-        // TODO: Fill in this constructor.
+        this._score = _maxScore = 0;
+        this._board = new Board(size);
     }
 
     /** A new 2048 game where RAWVALUES contain the values of the tiles
      * (0 if null). VALUES is indexed by (row, col) with (0, 0) corresponding
      * to the bottom-left corner. Used for testing purposes. */
     public Model(int[][] rawValues, int score, int maxScore, boolean gameOver) {
-        // TODO: Fill in this constructor.
+        this._board = new Board(rawValues, score);
+        this._score = score;
+        this._maxScore = maxScore;
+        this._gameOver = gameOver;
     }
+
 
     /** Return the current Tile at (COL, ROW), where 0 <= ROW < size(),
      *  0 <= COL < size(). Returns null if there is no tile there.
@@ -129,7 +134,13 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        for (int col = 0; col < b.size(); col += 1) {
+            for (int row = 0; row < b.size(); row += 1) {
+                if (b.tile(col, row) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -139,7 +150,16 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        for (int col = 0; col < b.size(); col += 1) {
+            for (int row = 0; row < b.size(); row += 1) {
+                if (b.tile(col, row) == null) {
+                    continue;
+                }
+                else if (b.tile(col, row).value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -149,8 +169,21 @@ public class Model extends Observable {
      * 1. There is at least one empty space on the board.
      * 2. There are two adjacent tiles with the same value.
      */
+    final boolean isCell(int row, int col) {
+        return 0 <= col && col < size() && 0 <= row && row < size();
+    }
+
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+        if (emptySpaceExists(b) == true) {
+            return true;
+        }
+        else {
+            for (int col = 0; col < b.size(); col += 1) {
+                for (int row = 0; row < b.size(); row += 1) {
+
+                }
+            }
+        }
         return false;
     }
 
@@ -192,3 +225,4 @@ public class Model extends Observable {
         return toString().hashCode();
     }
 }
+
