@@ -109,14 +109,57 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Fill in this function.
-
+        for (int col = 0; col < this.size(); col += 1) {
+            for (int row = this.size() - 1; row >= 0; row -= 1) {
+                if (!isTile(row + 1, col, _board)) {
+                    if (this.tile(col, row) == null) {
+                        continue;
+                    }
+                    else {
+                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
+                            if (!isTile(SubRow - 1, col, _board)) {
+                                break;
+                            }
+                            else if (this.tile(col, row).value() == this.tile(col, SubRow - 1).value()) {
+                                _board.move(col, row, this.tile(col, SubRow));
+                                break;
+                            }
+                            else if (this.tile(col, SubRow - 1) == null) {
+                                continue;
+                            }
+                            else if (this.tile(col, row).value() != this.tile(col, SubRow - 1).value()) {
+                                break;
+                            }
+                        }
+                        }
+                    }
+                else {
+                    if (this.tile(col, row) == null) {
+                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
+                            if (!isTile(SubRow - 1, col, _board)) {
+                                break;
+                            }
+                            else if (this.tile(col, SubRow - 1) != null) {
+                                _board.move(col, row, this.tile(col, SubRow));
+                            }
+                            else {
+                                continue;
+                            }
+                        }
+                    }
+                    else {
+                        break;
+                    }
+                }
+                }
+            }
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
-    }
+        }
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
@@ -182,23 +225,23 @@ public class Model extends Observable {
         }
     }
 
-    public static boolean isCell(int row, int col, Board b) {
+    public static boolean isTile(int row, int col, Board b) {
         return 0 <= col && col < b.size() && 0 <= row && row < b.size();
     }
 
     public static boolean AdjacentTilesSameVal(Board b) {
         for (int col = 0; col < b.size(); col += 1) {
             for (int row = 0; row < b.size(); row += 1) {
-                if (isCell(row + 1, col, b) && b.tile(col, row) == b.tile(col, row + 1)) {
+                if (isTile(row + 1, col, b) && b.tile(col, row).value() == b.tile(col, row + 1).value()) {
                     return true;
                 }
-                else if (isCell(row - 1, col, b) && b.tile(col, row) == b.tile(col, row - 1)) {
+                else if (isTile(row - 1, col, b) && b.tile(col, row).value() == b.tile(col, row - 1).value()) {
                     return true;
                 }
-                else if (isCell(row, col - 1, b) && b.tile(col, row) == b.tile(col - 1, row)) {
+                else if (isTile(row, col - 1, b) && b.tile(col, row).value() == b.tile(col - 1, row).value()) {
                     return true;
                 }
-                else if (isCell(row, col + 1, b) && b.tile(col, row) == b.tile(col + 1, row)) {
+                else if (isTile(row, col + 1, b) && b.tile(col, row).value() == b.tile(col + 1, row).value()) {
                     return true;
                 }
             }
