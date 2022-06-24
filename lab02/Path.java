@@ -35,7 +35,7 @@ public class Path {
     }
 
     public void iterate(double dx, double dy) {
-        this.curr = this.next;
-        this.next = new Point(this.curr.getX() + dx, this.curr.getY() + dy);
+        this.setCurrentPoint(this.next);
+        this.next = new Point(getCurrX() + dx, getCurrY() + dy);
     }
 }
