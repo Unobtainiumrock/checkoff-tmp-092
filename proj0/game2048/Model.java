@@ -153,10 +153,6 @@ public class Model extends Observable {
 //                }
 //            }
 
-//        An abstraction I came up with to logically step through the problem
-//        it will make more sense when I do a whiteboard demonstration of how
-//        I came up with it.
-
 //        Get columns
           int[][] columns = getColumns();
 
@@ -169,28 +165,40 @@ public class Model extends Observable {
         return changed;
     }
 
+    /**
+     * Imagine that you take a column from a matrix and then transpose that column into a row.
+     * Then this row can be though of as an array on which we can easily white board out the algorithm
+     * using a dynamically sized sliding window. I refer to the edges of this window as left and right leg.
+     *
+     * @param column A column from a matrix. It's elements are ordered in a top-down manner.
+     * @return the column after performing the shift up algorithm on it (Re-orienting will take care of the others)
+     */
     public int[] algo(int[] column) {
           int left = 0;
           int right = 1;
-//        If left zero, then swap, and then right leg
-        if (column[left] == 0) {
-            // swap fn
-            right++;
-        }
-//        If right zero, then both legs
-        if (column[right] == 0) {
-            left++;
-            right++;
-        }
-//        If same, then merge, and then right leg
-        if (column[left] == column[right]) {
-            // merge fn
-        }
-//        If both diff, then both legs
-        if () {
-            left++;
-            right++;
-        }
+
+          while (right <  column.length) {
+//              If left zero, then swap, and then right leg
+              if (column[left] == 0) {
+                  int tmp = column[left];
+                  column[left] = column[right];
+                  column[right] = tmp;
+              }
+//              If right zero, then both legs
+              if (column[right] == 0) {
+                  left++;
+              }
+//               If same, then merge, and then right leg
+              if (column[left] == column[right]) {
+                  column[left] = column[left] + column[right];
+                  column[right] = 0;
+              }
+//              If both diff (non both non-zero), then both legs
+              if (column[left] != column[right] && (column[left] != 0 && column[right] != 0)) {
+                  left++;
+              }
+              right ++; // Realized right leg is inevitable.
+          }
     }
 
     /**
