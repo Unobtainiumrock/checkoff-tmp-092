@@ -158,20 +158,39 @@ public class Model extends Observable {
 //        I came up with it.
 
 //        Get columns
+          int[][] columns = getColumns();
 
 //        Perform algorithm on each column
-
-//        If left zero, then swap
-//        If right zero, then both legs
-//        If same, then merge
-//        If both diff, then both legs
-//        note: left zero should be checked before right zero
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    public int[] algo(int[] column) {
+          int left = 0;
+          int right = 1;
+//        If left zero, then swap, and then right leg
+        if (column[left] == 0) {
+            // swap fn
+            right++;
+        }
+//        If right zero, then both legs
+        if (column[right] == 0) {
+            left++;
+            right++;
+        }
+//        If same, then merge, and then right leg
+        if (column[left] == column[right]) {
+            // merge fn
+        }
+//        If both diff, then both legs
+        if () {
+            left++;
+            right++;
+        }
     }
 
     /**
@@ -207,13 +226,13 @@ public class Model extends Observable {
 
 
     public static void main(String[] args) {
-        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
-        Model m = new Model(board, 0, 2048, false);
-        int[][] columns = m.getColumns();
-        System.out.println(columns[0][0]);
-        System.out.println(columns[0][1]);
-        System.out.println(columns[0][2]);
-        System.out.println(columns[0][3]);
+//        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+//        Model m = new Model(board, 0, 2048, false);
+//        int[][] columns = m.getColumns();
+//        System.out.println(columns[0][0]);
+//        System.out.println(columns[0][1]);
+//        System.out.println(columns[0][2]);
+//        System.out.println(columns[0][3]);
 
     }
 
