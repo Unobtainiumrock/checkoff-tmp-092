@@ -109,50 +109,65 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        for (int col = 0; col < this.size(); col += 1) {
-            for (int row = this.size() - 1; row >= 0; row -= 1) {
-                if (!isTile(row + 1, col, _board)) {
-                    if (this.tile(col, row) == null) {
-                        continue;
-                    }
-                    else {
-                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
-                            if (!isTile(SubRow - 1, col, _board)) {
-                                break;
-                            }
-                            else if (this.tile(col, row).value() == this.tile(col, SubRow - 1).value()) {
-                                _board.move(col, row, this.tile(col, SubRow));
-                                break;
-                            }
-                            else if (this.tile(col, SubRow - 1) == null) {
-                                continue;
-                            }
-                            else if (this.tile(col, row).value() != this.tile(col, SubRow - 1).value()) {
-                                break;
-                            }
-                        }
-                        }
-                    }
-                else {
-                    if (this.tile(col, row) == null) {
-                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
-                            if (!isTile(SubRow - 1, col, _board)) {
-                                break;
-                            }
-                            else if (this.tile(col, SubRow - 1) != null) {
-                                _board.move(col, row, this.tile(col, SubRow));
-                            }
-                            else {
-                                continue;
-                            }
-                        }
-                    }
-                    else {
-                        break;
-                    }
-                }
-                }
-            }
+//        for (int col = 0; col < this.size(); col += 1) {
+//            for (int row = this.size() - 1; row >= 0; row -= 1) {
+//                if (!isTile(row + 1, col, _board)) {
+//                    if (this.tile(col, row) == null) {
+//                        continue;
+//                    }
+//                    else {
+//                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
+//                            if (!isTile(SubRow - 1, col, _board)) {
+//                                break;
+//                            }
+//                            else if (this.tile(col, row).value() == this.tile(col, SubRow - 1).value()) {
+//                                _board.move(col, row, this.tile(col, SubRow));
+//                                break;
+//                            }
+//                            else if (this.tile(col, SubRow - 1) == null) {
+//                                continue;
+//                            }
+//                            else if (this.tile(col, row).value() != this.tile(col, SubRow - 1).value()) {
+//                                break;
+//                            }
+//                        }
+//                        }
+//                    }
+//                else {
+//                    if (this.tile(col, row) == null) {
+//                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
+//                            if (!isTile(SubRow - 1, col, _board)) {
+//                                break;
+//                            }
+//                            else if (this.tile(col, SubRow - 1) != null) {
+//                                _board.move(col, row, this.tile(col, SubRow));
+//                            }
+//                            else {
+//                                continue;
+//                            }
+//                        }
+//                    }
+//                    else {
+//                        break;
+//                    }
+//                }
+//                }
+//            }
+
+//        An abstraction I came up with to logically step through the problem
+//        it will make more sense when I do a whiteboard demonstration of how
+//        I came up with it.
+
+//        Get columns
+
+//        Perform algorithm on each column
+
+//        If left zero, then swap
+//        If right zero, then both legs
+//        If same, then merge
+//        If both diff, then both legs
+//        note: left zero should be checked before right zero
+
         checkGameOver();
         if (changed) {
             setChanged();
@@ -160,6 +175,16 @@ public class Model extends Observable {
         return changed;
         }
 
+    private int[][] getColumns(int x, int y) {
+        int[][] m = new int[4][4];
+//      0: 3, 2, 1, 0
+//      1: 3, 2, 1, 0
+//      2: 3, 2, 1, 0
+//      3: 3, 2, 1, 0
+
+//        this._board.tile(1,1);
+
+    }
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
