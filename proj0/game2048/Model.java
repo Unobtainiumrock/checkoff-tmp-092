@@ -3,7 +3,6 @@ package game2048;
 import java.util.Formatter;
 import java.util.Observable;
 
-
 /** The state of a game of 2048.
  *  @author Yu Hsuan Lee
  */
@@ -173,16 +172,48 @@ public class Model extends Observable {
             setChanged();
         }
         return changed;
-        }
+    }
 
-    private int[][] getColumns(int x, int y) {
+    /**
+     * Creates a 2-D array of integers from a given board.
+     *
+     * Example:
+     * If you have a board that looks like this,
+     *         2 0 2 0
+     *         4 4 2 2
+     *         0 4 0 0
+     *         2 4 4 8
+     * then the array of columns looks like this
+     * {{2, 4, 0, 2}, {0, 4, 4, 4}, {2, 2, 0, 4}, {0, 2, 0, 8}}
+     * They're read from top-down, left to right.
+     *
+     *
+     * @return int[4][4] Columns oriented in a way that works well with the algorithm
+     */
+    public int[][] getColumns() {
         int[][] m = new int[4][4];
-//      0: 3, 2, 1, 0
-//      1: 3, 2, 1, 0
-//      2: 3, 2, 1, 0
-//      3: 3, 2, 1, 0
+        for (int i = 0; i <= 3; i++) {
+            for (int j = 3; j >= 0; j--) {
+                Tile t = this._board.tile(i, j);
+                if (t == null) {
+                    m[i][j] = 0;
+                } else {
+                    m[i][j] = t.value();
+                }
+            }
+        }
+        return m;
+    }
 
-//        this._board.tile(1,1);
+
+    public static void main(String[] args) {
+        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+        Model m = new Model(board, 0, 2048, false);
+        int[][] columns = m.getColumns();
+        System.out.println(columns[0][0]);
+        System.out.println(columns[0][1]);
+        System.out.println(columns[0][2]);
+        System.out.println(columns[0][3]);
 
     }
 
