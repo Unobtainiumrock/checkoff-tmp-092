@@ -162,7 +162,7 @@ public class Model extends Observable {
      * Then this row can be though of as an array on which we can easily white board out the algorithm
      * using a dynamically sized sliding window. I refer to the edges of this window as left and right leg.
      *
-     * This method mutates the column by performing the shift up
+     * This method mutates a column by performing the shift up
      * algorithm on it (Re-orienting will take care of the others).
      * I will change this later to adhere to immutability if it becomes an issue later on.
      *
@@ -197,16 +197,47 @@ public class Model extends Observable {
      * @return A boolean flag to notify the left index of when it can advance.
      */
     public static boolean eval(int left, int right, int[] column) {
+        // Swap
         if (column[left] == 0) {
             int tmp = column[left];
             column[left] = column[right];
             column[right] = tmp;
             return false; // Only increment left leg when a proper comparison has occurred.
-        } else if (column[left] == column[right]) {
+        }
+        // merge
+        else if (column[left] == column[right]) {
             column[left] = column[left] + column[right];
             column[right] = 0;
         }
         return true;
+    }
+
+    /**
+     * Transposes a square matrix.
+     *
+     * note: I need to transpose the resulting matrix after performing the algorithm
+     * on the original matrix. This is because I pulled the values from the board using the
+     * column perspective and couldn't resolve the issue after trying all 4
+     * of the Side view options.
+     *
+     * @param matrix
+     * @return the matrix transposed
+     */
+    public static int[][] transpose(int[][] matrix) {
+        int s = matrix.length;
+        int[][] transposed = new int[s][s];
+        int h = 0;
+        for (int i = 0; i < s; i++) {
+            int [] row = new int[s];
+            int k = 0;
+            for (int j = 0; j < s; j++) {
+                row[k] = matrix[j][i];
+                k++;
+            }
+            transposed[h] = row;
+            h++;
+        }
+        return transposed;
     }
 
     /**
@@ -216,16 +247,31 @@ public class Model extends Observable {
     public static void main(String[] args) {
         int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
         Model m = new Model(board, 0, 2048, false);
-        int[][] columns = m.getColumns();
+        int[][] columns = m.getColumns(Side.NORTH);
 
 //        This performs the algorithm on the mocked up board.
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             m.algo(column);
         });
+//
+////        Verify that the algorithm works as expected.
+//        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
+//                .forEach(System.out::println);
 
-//        Verify that the algorithm works as expected.
-        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
-                .forEach(System.out::println);
+//        Run a test on feeding this new board state to Board.
+          for (int i = 0; i < columns.length; i++) {
+              logger(columns[i]);
+              System.out.println("Column" + (i + 1));
+          }
+
+          Board b = new Board(transpose(columns),0);
+          System.out.println("Done!");
+    }
+
+    public static void logger(int[] column) {
+        for (int i = 0; i < column.length; i++) {
+            System.out.println(column[i]);
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
