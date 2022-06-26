@@ -105,19 +105,20 @@ public class Model extends Observable {
      */
     public boolean tilt(Side side) {
         boolean[] state = {false};
-        state[0] = false;
+        state[0] = false; // see if this is redundant later. May not be due to observers or something.
 
         int[][] columns = getColumns(side);
 //      Perform algorithm on each column. Achieved through side effects.
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             algo(column,state);
         });
-//      Columns are now mutated. Use the transposed result to update board state.
+//      Columns are now mutated. Use the resulting transposed matrix to update board state.
         columns = transpose(columns);
-        this._board = new Board(columns, 0);
+        this._board = new Board(columns, this._score);
 //        for (int i = 0; i < columns.length; i++) {
 //            for (int j = 0; j < columns[i].length; j++) {
-//
+////                System.out.println("[" + i + "]"+ "[" + j + "] = " + columns[i][j]);
+//                Tile t = this._board.tile();
 //            }
 //        }
 
@@ -146,9 +147,10 @@ public class Model extends Observable {
      */
     public int[][] getColumns(Side side) {
         this._board.setViewingPerspective(Side.EAST); // Orient this wya to grab columns to match image above.
-        int[][] m = new int[4][4];
-        for (int i = 0; i <= 3; i++) {
-            for (int j = 0; j <= 3; j++) {
+        int k = this._board.size();
+        int[][] m = new int[k][k];
+        for (int i = 0; i <= k - 1; i++) {
+            for (int j = 0; j <= k - 1; j++) {
                 Tile t = this._board.tile(j, i);
                 if (t == null) {
                     m[i][j] = 0;
@@ -172,7 +174,7 @@ public class Model extends Observable {
      *
      * @param column A column from a matrix. It's elements are ordered in a top-down manner.
      */
-    public static void algo(int[] column, boolean[] state) {
+    public void algo(int[] column, boolean[] state) {
           int left = 0;
           int right = 1;
 
@@ -187,7 +189,7 @@ public class Model extends Observable {
               }
           }
 //        Perform the final comparison.
-          eval(left, right, column, state[0]);
+          eval(left, right, column, state);
     }
 
     /**
@@ -201,7 +203,7 @@ public class Model extends Observable {
      * @param state State passed down from top level (tilt -> algo -> here).
      * @return A boolean flag to notify the left index of when it can advance.
      */
-    public static boolean eval(int left, int right, int[] column, boolean[] state) {
+    public boolean eval(int left, int right, int[] column, boolean[] state) {
         // Swap
         if (column[left] == 0) {
             int tmp = column[left];
@@ -211,8 +213,9 @@ public class Model extends Observable {
         }
         // merge
         else if (column[left] == column[right]) {
-            column[left] = column[left] + column[right];
+            column[left] = column[left] + column[right]; // Maybe change this to * 2 later?
             column[right] = 0;
+            this._score += column[left];
         }
         state[0] = true;
         return true;
@@ -251,20 +254,28 @@ public class Model extends Observable {
      * @param args
      */
     public static void main(String[] args) {
-        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
-        Model m = new Model(board, 0, 2048, false);
+//        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+        int[][] board = new int[][] {
+                {0, 0, 4, 0},
+                {0, 0, 0, 2},
+                {0, 0, 0, 0},
+                {0, 0, 0, 0},
+        };
+        Model m = new Model(board, 0, 0, false);
+        m.tilt(Side.NORTH);
         int[][] columns = m.getColumns(Side.NORTH);
+        boolean[] state = {false};
 
 //        This performs the algorithm on the mocked up board.
         Arrays.asList(columns).stream().forEach((int[] column) -> {
-            m.algo(column);
+            m.algo(column, state);
         });
 
 //        Verify that the algorithm works as expected.
         Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
                 .forEach(System.out::println);
 
-//        Run a test on feeding this new board state to  a Board.
+//        Run a test on feeding this new board state to a Board.
           Board b = new Board(transpose(columns),0);
           System.out.println(b);
           System.out.println("Done!");
