@@ -1,6 +1,7 @@
 package game2048;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 /** The state of a game of 2048.
  *  @author Yu Hsuan Lee
@@ -113,14 +114,8 @@ public class Model extends Observable {
             algo(column,state);
         });
 //      Columns are now mutated. Use the resulting transposed matrix to update board state.
-        columns = transpose(columns);
+        columns = transpose(columns, false);
         this._board = new Board(columns, this._score);
-//        for (int i = 0; i < columns.length; i++) {
-//            for (int j = 0; j < columns[i].length; j++) {
-////                System.out.println("[" + i + "]"+ "[" + j + "] = " + columns[i][j]);
-//                Tile t = this._board.tile();
-//            }
-//        }
 
         checkGameOver();
         if (state[0]) {
@@ -146,7 +141,7 @@ public class Model extends Observable {
      * @return int[4][4] Columns oriented in a way that works well with the algorithm
      */
     public int[][] getColumns(Side side) {
-        this._board.setViewingPerspective(Side.EAST); // Orient this wya to grab columns to match image above.
+        this._board.setViewingPerspective(Side.EAST); // Orient this way to grab columns to match image above.
         int k = this._board.size();
         int[][] m = new int[k][k];
         for (int i = 0; i <= k - 1; i++) {
@@ -180,7 +175,7 @@ public class Model extends Observable {
 
           while (left <  column.length - 2 && right <= column.length - 1) {
               //Only advance the left leg when a proper comparison is done.
-              if (eval(left, right, column, state)) {
+              if (eval(left, right, column, state) || right == column.length - 1) {
                   left ++;
               }
               // Always advance right leg until end.
@@ -209,6 +204,7 @@ public class Model extends Observable {
             int tmp = column[left];
             column[left] = column[right];
             column[right] = tmp;
+            state[0] = true;
             return false; // Only increment left leg when a proper comparison has occurred.
         }
         // merge
@@ -216,9 +212,10 @@ public class Model extends Observable {
             column[left] = column[left] + column[right]; // Maybe change this to * 2 later?
             column[right] = 0;
             this._score += column[left];
+            state[0] = true;
+            return true;
         }
-        state[0] = true;
-        return true;
+        return false;
     }
 
     /**
@@ -232,7 +229,7 @@ public class Model extends Observable {
      * @param matrix
      * @return the matrix transposed
      */
-    public static int[][] transpose(int[][] matrix) {
+    private static int[][] transpose(int[][] matrix, boolean reverse) {
         int s = matrix.length;
         int[][] transposed = new int[s][s];
         int h = 0;
@@ -243,10 +240,58 @@ public class Model extends Observable {
                 row[k] = matrix[j][i];
                 k++;
             }
-            transposed[h] = row;
+            if (reverse) {
+                transposed[h] = reverse(row);
+            } else {
+                transposed[h] = row;
+            }
             h++;
         }
         return transposed;
+    }
+
+    /**
+     * Borrowed an idea from here https://stackoverflow.com/questions/42519/how-do-you-rotate-a-two-dimensional-array
+     * I already have a transpose function and had a hunch that we can use it for rotations.
+     * I'm using this to handle the other options for tilt directions other
+     * than North by transforming all other configurations to north form.
+     *
+     * @param matrix
+     * @return
+     */
+    public static int[][] rotateToNorth(int[][] matrix, Side side) {
+        return switch (side) {
+            case SOUTH -> {
+                // -180 degrees (c.c.w), rotate by -90 degrees (c.c.w)
+                // transpose
+                matrix = transpose(matrix, true);
+                matrix = transpose(matrix, true);
+                yield matrix;
+            }
+            case EAST -> {
+                // -90 degrees (c.c.w)
+                matrix = transpose(matrix, true);
+                yield matrix;
+            }
+            case WEST -> {
+                // 90 degrees (c.w.)
+                matrix = transpose(matrix, false);
+                yield matrix;
+            }
+            default -> {
+                // No change
+                yield matrix;
+            }
+        };
+    }
+
+    public static int[] reverse(int[] array) {
+        int[] reversed = new int[array.length];
+
+        for (int i = array.length; i > 0; i--) {
+            reversed[array.length - i] = array[i - 1];
+        }
+        return reversed;
     }
 
     /**
@@ -256,10 +301,10 @@ public class Model extends Observable {
     public static void main(String[] args) {
 //        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
         int[][] board = new int[][] {
-                {0, 0, 4, 0},
-                {0, 0, 0, 2},
+                {0, 0, 2, 0},
                 {0, 0, 0, 0},
-                {0, 0, 0, 0},
+                {0, 0, 2, 0},
+                {0, 0, 2, 0},
         };
         Model m = new Model(board, 0, 0, false);
         m.tilt(Side.NORTH);
@@ -276,7 +321,7 @@ public class Model extends Observable {
                 .forEach(System.out::println);
 
 //        Run a test on feeding this new board state to a Board.
-          Board b = new Board(transpose(columns),0);
+          Board b = new Board(transpose(columns, false),0);
           System.out.println(b);
           System.out.println("Done!");
     }
