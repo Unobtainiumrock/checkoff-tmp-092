@@ -1,8 +1,6 @@
 package game2048;
 
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /** The state of a game of 2048.
  *  @author Yu Hsuan Lee
@@ -106,22 +104,28 @@ public class Model extends Observable {
      *    and the trailing tile does not.
      */
     public boolean tilt(Side side) {
-        boolean changed;
-        changed = false;
-
+        boolean[] state = {false};
+        state[0] = false;
 
         int[][] columns = getColumns(side);
-
-//      Perform algorithm on each column
+//      Perform algorithm on each column. Achieved through side effects.
         Arrays.asList(columns).stream().forEach((int[] column) -> {
-            algo(column);
+            algo(column,state);
         });
+//      Columns are now mutated. Use the transposed result to update board state.
+        columns = transpose(columns);
+        this._board = new Board(columns, 0);
+//        for (int i = 0; i < columns.length; i++) {
+//            for (int j = 0; j < columns[i].length; j++) {
+//
+//            }
+//        }
 
         checkGameOver();
-        if (changed) {
+        if (state[0]) {
             setChanged();
         }
-        return changed;
+        return state[0];
     }
 
     /**
@@ -168,13 +172,13 @@ public class Model extends Observable {
      *
      * @param column A column from a matrix. It's elements are ordered in a top-down manner.
      */
-    public static void algo(int[] column) {
+    public static void algo(int[] column, boolean[] state) {
           int left = 0;
           int right = 1;
 
           while (left <  column.length - 2 && right <= column.length - 1) {
               //Only advance the left leg when a proper comparison is done.
-              if (eval(left, right, column)) {
+              if (eval(left, right, column, state)) {
                   left ++;
               }
               // Always advance right leg until end.
@@ -183,7 +187,7 @@ public class Model extends Observable {
               }
           }
 //        Perform the final comparison.
-          eval(left, right, column);
+          eval(left, right, column, state[0]);
     }
 
     /**
@@ -194,9 +198,10 @@ public class Model extends Observable {
      * @param left A trailing index on the dynamically resized sliding window.
      * @param right The leading index on the dynamically resized sliding window.
      * @param column An array of integers representing a column from the board read in top-down fashion.
+     * @param state State passed down from top level (tilt -> algo -> here).
      * @return A boolean flag to notify the left index of when it can advance.
      */
-    public static boolean eval(int left, int right, int[] column) {
+    public static boolean eval(int left, int right, int[] column, boolean[] state) {
         // Swap
         if (column[left] == 0) {
             int tmp = column[left];
@@ -209,6 +214,7 @@ public class Model extends Observable {
             column[left] = column[left] + column[right];
             column[right] = 0;
         }
+        state[0] = true;
         return true;
     }
 
@@ -253,25 +259,15 @@ public class Model extends Observable {
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             m.algo(column);
         });
-//
-////        Verify that the algorithm works as expected.
-//        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
-//                .forEach(System.out::println);
 
-//        Run a test on feeding this new board state to Board.
-          for (int i = 0; i < columns.length; i++) {
-              logger(columns[i]);
-              System.out.println("Column" + (i + 1));
-          }
+//        Verify that the algorithm works as expected.
+        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
+                .forEach(System.out::println);
 
+//        Run a test on feeding this new board state to  a Board.
           Board b = new Board(transpose(columns),0);
+          System.out.println(b);
           System.out.println("Done!");
-    }
-
-    public static void logger(int[] column) {
-        for (int i = 0; i < column.length; i++) {
-            System.out.println(column[i]);
-        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
