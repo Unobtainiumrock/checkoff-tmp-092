@@ -214,18 +214,18 @@ public class Model extends Observable {
      * @param args
      */
     public static void main(String[] args) {
-        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
-        Model m = new Model(board, 0, 2048, false);
-        int[][] columns = m.getColumns();
+//        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+//        Model m = new Model(board, 0, 2048, false);
+//        int[][] columns = m.getColumns(Side.NORTH);
 
 //        This performs the algorithm on the mocked up board.
-        Arrays.asList(columns).stream().forEach((int[] column) -> {
-            m.algo(column);
-        });
+//        Arrays.asList(columns).stream().forEach((int[] column) -> {
+//            m.algo(column);
+//        });
 
 //        Verify that the algorithm works as expected.
-        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
-                .forEach(System.out::println);
+//        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
+//                .forEach(System.out::println);
     }
 
     /** Checks if the game is over and sets the gameOver variable
