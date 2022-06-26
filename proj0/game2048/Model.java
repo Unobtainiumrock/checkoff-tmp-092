@@ -162,7 +162,7 @@ public class Model extends Observable {
      * Then this row can be though of as an array on which we can easily white board out the algorithm
      * using a dynamically sized sliding window. I refer to the edges of this window as left and right leg.
      *
-     * This method mutates the column by performing the shift up
+     * This method mutates a column by performing the shift up
      * algorithm on it (Re-orienting will take care of the others).
      * I will change this later to adhere to immutability if it becomes an issue later on.
      *
@@ -197,12 +197,15 @@ public class Model extends Observable {
      * @return A boolean flag to notify the left index of when it can advance.
      */
     public static boolean eval(int left, int right, int[] column) {
+        // Swap
         if (column[left] == 0) {
             int tmp = column[left];
             column[left] = column[right];
             column[right] = tmp;
             return false; // Only increment left leg when a proper comparison has occurred.
-        } else if (column[left] == column[right]) {
+        }
+        // merge
+        else if (column[left] == column[right]) {
             column[left] = column[left] + column[right];
             column[right] = 0;
         }
