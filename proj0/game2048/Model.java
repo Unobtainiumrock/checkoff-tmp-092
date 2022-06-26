@@ -213,22 +213,65 @@ public class Model extends Observable {
     }
 
     /**
+     * Transposes a square matrix.
+     *
+     * note: I need to transpose the resulting matrix after performing the algorithm
+     * on the original matrix. This is because I pulled the values from the board using the
+     * column perspective and couldn't resolve the issue after trying all 4
+     * of the Side view options.
+     *
+     * @param matrix
+     * @return the matrix transposed
+     */
+    public static int[][] transpose(int[][] matrix) {
+        int s = matrix.length;
+        int[][] transposed = new int[s][s];
+        int h = 0;
+        for (int i = 0; i < s; i++) {
+            int [] row = new int[s];
+            int k = 0;
+            for (int j = 0; j < s; j++) {
+                row[k] = matrix[j][i];
+                k++;
+            }
+            transposed[h] = row;
+            h++;
+        }
+        return transposed;
+    }
+
+    /**
      * I wrote my own mocked-up board with a test board to see if the algorithm works.
      * @param args
      */
     public static void main(String[] args) {
-//        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
-//        Model m = new Model(board, 0, 2048, false);
-//        int[][] columns = m.getColumns(Side.NORTH);
+        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+        Model m = new Model(board, 0, 2048, false);
+        int[][] columns = m.getColumns(Side.NORTH);
 
 //        This performs the algorithm on the mocked up board.
-//        Arrays.asList(columns).stream().forEach((int[] column) -> {
-//            m.algo(column);
-//        });
-
-//        Verify that the algorithm works as expected.
+        Arrays.asList(columns).stream().forEach((int[] column) -> {
+            m.algo(column);
+        });
+//
+////        Verify that the algorithm works as expected.
 //        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
 //                .forEach(System.out::println);
+
+//        Run a test on feeding this new board state to Board.
+          for (int i = 0; i < columns.length; i++) {
+              logger(columns[i]);
+              System.out.println("Column" + (i + 1));
+          }
+
+          Board b = new Board(transpose(columns),0);
+          System.out.println("Done!");
+    }
+
+    public static void logger(int[] column) {
+        for (int i = 0; i < column.length; i++) {
+            System.out.println(column[i]);
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
