@@ -1,8 +1,8 @@
 package game2048;
 
-import java.util.Formatter;
-import java.util.Observable;
-
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /** The state of a game of 2048.
  *  @author Yu Hsuan Lee
@@ -109,81 +109,123 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-//        for (int col = 0; col < this.size(); col += 1) {
-//            for (int row = this.size() - 1; row >= 0; row -= 1) {
-//                if (!isTile(row + 1, col, _board)) {
-//                    if (this.tile(col, row) == null) {
-//                        continue;
-//                    }
-//                    else {
-//                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
-//                            if (!isTile(SubRow - 1, col, _board)) {
-//                                break;
-//                            }
-//                            else if (this.tile(col, row).value() == this.tile(col, SubRow - 1).value()) {
-//                                _board.move(col, row, this.tile(col, SubRow));
-//                                break;
-//                            }
-//                            else if (this.tile(col, SubRow - 1) == null) {
-//                                continue;
-//                            }
-//                            else if (this.tile(col, row).value() != this.tile(col, SubRow - 1).value()) {
-//                                break;
-//                            }
-//                        }
-//                        }
-//                    }
-//                else {
-//                    if (this.tile(col, row) == null) {
-//                        for (int SubRow = this.size() - 1; row >= 0; row -= 1) {
-//                            if (!isTile(SubRow - 1, col, _board)) {
-//                                break;
-//                            }
-//                            else if (this.tile(col, SubRow - 1) != null) {
-//                                _board.move(col, row, this.tile(col, SubRow));
-//                            }
-//                            else {
-//                                continue;
-//                            }
-//                        }
-//                    }
-//                    else {
-//                        break;
-//                    }
-//                }
-//                }
-//            }
 
-//        An abstraction I came up with to logically step through the problem
-//        it will make more sense when I do a whiteboard demonstration of how
-//        I came up with it.
+        int[][] columns = getColumns(side);
 
-//        Get columns
-
-//        Perform algorithm on each column
-
-//        If left zero, then swap
-//        If right zero, then both legs
-//        If same, then merge
-//        If both diff, then both legs
-//        note: left zero should be checked before right zero
+//      Perform algorithm on each column
+        Arrays.asList(columns).stream().forEach((int[] column) -> {
+            algo(column);
+        });
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
-        }
+    }
 
-    private int[][] getColumns(int x, int y) {
+    /**
+     * Creates a 2-D array of integers from a given board.
+     *
+     * Example:
+     * If you have a board that looks like this,
+     *         2 0 2 0
+     *         4 4 2 2
+     *         0 4 0 0
+     *         2 4 4 8
+     * then the array of columns looks like this
+     * {{2, 4, 0, 2}, {0, 4, 4, 4}, {2, 2, 0, 4}, {0, 2, 0, 8}}
+     * They're read from top-down, left to right.
+     *
+     *
+     * @return int[4][4] Columns oriented in a way that works well with the algorithm
+     */
+    public int[][] getColumns(Side side) {
+        this._board.setViewingPerspective(Side.EAST); // Orient this wya to grab columns to match image above.
         int[][] m = new int[4][4];
-//      0: 3, 2, 1, 0
-//      1: 3, 2, 1, 0
-//      2: 3, 2, 1, 0
-//      3: 3, 2, 1, 0
+        for (int i = 0; i <= 3; i++) {
+            for (int j = 0; j <= 3; j++) {
+                Tile t = this._board.tile(j, i);
+                if (t == null) {
+                    m[i][j] = 0;
+                } else {
+                    m[i][j] = t.value();
+                }
+            }
+        }
+        this._board.setViewingPerspective(side);
+        return m;
+    }
 
-//        this._board.tile(1,1);
+    /**
+     * Imagine that you take a column from a matrix and then transpose that column into a row.
+     * Then this row can be though of as an array on which we can easily white board out the algorithm
+     * using a dynamically sized sliding window. I refer to the edges of this window as left and right leg.
+     *
+     * This method mutates the column by performing the shift up
+     * algorithm on it (Re-orienting will take care of the others).
+     * I will change this later to adhere to immutability if it becomes an issue later on.
+     *
+     * @param column A column from a matrix. It's elements are ordered in a top-down manner.
+     */
+    public static void algo(int[] column) {
+          int left = 0;
+          int right = 1;
 
+          while (left <  column.length - 2 && right <= column.length - 1) {
+              //Only advance the left leg when a proper comparison is done.
+              if (eval(left, right, column)) {
+                  left ++;
+              }
+              // Always advance right leg until end.
+              if (right < column.length - 1) {
+                  right++;
+              }
+          }
+//        Perform the final comparison.
+          eval(left, right, column);
+    }
+
+    /**
+     * This mutates the 2D board array by performing swaps and merges where necessary.
+     * It returns true only if a comparison between non-zero numbers has occurred. This
+     * serves to notify the left leg index of when it is allowed to increment.
+     *
+     * @param left A trailing index on the dynamically resized sliding window.
+     * @param right The leading index on the dynamically resized sliding window.
+     * @param column An array of integers representing a column from the board read in top-down fashion.
+     * @return A boolean flag to notify the left index of when it can advance.
+     */
+    public static boolean eval(int left, int right, int[] column) {
+        if (column[left] == 0) {
+            int tmp = column[left];
+            column[left] = column[right];
+            column[right] = tmp;
+            return false; // Only increment left leg when a proper comparison has occurred.
+        } else if (column[left] == column[right]) {
+            column[left] = column[left] + column[right];
+            column[right] = 0;
+        }
+        return true;
+    }
+
+    /**
+     * I wrote my own mocked-up board with a test board to see if the algorithm works.
+     * @param args
+     */
+    public static void main(String[] args) {
+        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+        Model m = new Model(board, 0, 2048, false);
+        int[][] columns = m.getColumns();
+
+//        This performs the algorithm on the mocked up board.
+        Arrays.asList(columns).stream().forEach((int[] column) -> {
+            m.algo(column);
+        });
+
+//        Verify that the algorithm works as expected.
+        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
+                .forEach(System.out::println);
     }
 
     /** Checks if the game is over and sets the gameOver variable
