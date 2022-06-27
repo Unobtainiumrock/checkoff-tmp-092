@@ -118,14 +118,13 @@ public class Model extends Observable {
 //      Grab columns from Board.
         int[][] columns = getColumns(side);
 //      Make it rotated north before transforming with algo.
-        columns = rotateToNorth(columns, side);
 //      Perform algorithm on each column. Achieved through side effects.
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             algo(column,state);
         });
 
 //      Columns are now mutated. Use the resulting transposed matrix to update board state.
-        columns = transpose(columns, Rotation.NOROTATION);
+        columns = transpose(columns);
         this._board = new Board(columns, this._score);
         this._board.setViewingPerspective(Side.NORTH);
 
@@ -171,53 +170,6 @@ public class Model extends Observable {
         }
 
         return m;
-    }
-
-    public int[][] rotate(int[][] matrix, Rotation direction, Rotation degrees) {
-        return switch(direction) {
-            case NINETYDEGREES -> {
-                yield transpose(matrix, degrees);
-            }
-            case ONEHUNDREDEIGHTYDEGREES -> {
-                matrix = transpose(matrix, degrees);
-                yield transpose(matrix, degrees);
-            }
-            default -> matrix;
-        };
-    }
-
-    /**
-     * Borrowed an idea from here https://stackoverflow.com/questions/42519/how-do-you-rotate-a-two-dimensional-array
-     * I already have a transpose function and had a hunch that we can use it for rotations.
-     * I'm using this to handle the other options for tilt directions other
-     * than North by transforming all other configurations to north form.
-     *
-     * @param matrix
-     * @return
-     */
-    public static int[][] rotateToNorth(int[][] matrix, Side side) { // "DRY" this later by invoking a rotation method.
-        return switch (side) {
-            case SOUTH -> {
-                // -180 degrees (c.c.w)
-                // transpose
-                matrix = transpose(matrix, Rotation.COUNTERCLOCKWISE);
-                yield transpose(matrix, Rotation.COUNTERCLOCKWISE);
-            }
-            case EAST -> {
-                // -90 degrees (c.c.w)
-                matrix = transpose(matrix, Rotation.COUNTERCLOCKWISE);
-                yield matrix;
-            }
-            case WEST -> {
-                // 90 degrees (c.w.)
-                matrix = transpose(matrix, Rotation.CLOCKWISE);
-                yield matrix;
-            }
-            default -> {
-                // No change
-                yield matrix;
-            }
-        };
     }
 
     /**
@@ -364,7 +316,7 @@ public class Model extends Observable {
 //        };
         Model m = new Model(board, 0, 0, false);
 
-        int[][] rotated_board = m.rotate(board, Rotation.NINETYDEGREES, Rotation.CLOCKWISE);
+        int[][] rotated_board = m.rotateNinety(board);
 
         for (int i = 0; i < rotated_board.length; i++) {
             for (int j = 0; j < rotated_board.length; j++) {
