@@ -3,6 +3,7 @@ package game2048;
 import java.util.*;
 import java.util.function.UnaryOperator;
 
+
 /** The state of a game of 2048.
  *  @author Yu Hsuan Lee
  */
@@ -23,6 +24,14 @@ public class Model extends Observable {
 
     /** Largest piece value. */
     public static final int MAX_PIECE = 2048;
+
+    public enum Rotation {
+        CLOCKWISE,
+        COUNTERCLOCKWISE,
+        NOROTATION,
+        NINETYDEGREES,
+        ONEHUNDREDEIGHTYDEGREES;
+    }
 
     /** A new 2048 game on a board of size SIZE with no pieces
      *  and score 0. */
@@ -99,23 +108,57 @@ public class Model extends Observable {
      *    value and that new value is added to the score instance variable
      * 2. A tile that is the result of a merge will not merge again on that
      *    tilt. So each move, every tile will only ever be part of at most one
-     *    merge (perhaps zero).
+     *    merge (perhaps zero).9
      * 3. When three adjacent tiles in the direction of motion have the same
      *    value, then the leading two tiles in the direction of motion merge,
      *    and the trailing tile does not.
      */
     public boolean tilt(Side side) {
         boolean[] state = {false};
-        state[0] = false; // see if this is redundant later. May not be due to observers or something.
-
+//      Grab columns from Board.
         int[][] columns = getColumns(side);
+//      Make it rotated north before transforming with algo.
 //      Perform algorithm on each column. Achieved through side effects.
+
+        if (side.equals(Side.NORTH)) {
+            columns = rotateNinety(columns);
+        } else if (side.equals(Side.SOUTH)) {
+            columns = rotateNegNinety(columns);
+        } else if (side.equals(Side.EAST)) {
+            columns = rotateNegNinety(columns);
+            columns = rotateNegNinety(columns);
+        }
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             algo(column,state);
         });
+
+        int h = columns.length;
+
 //      Columns are now mutated. Use the resulting transposed matrix to update board state.
-        columns = transpose(columns, false);
+        if (!(side.equals(Side.SOUTH))) {
+            columns = transpose(columns);
+        }
+
+        if (side.equals(Side.SOUTH)) {
+            columns = rotateNegNinety(columns);
+            int[][] mirrored = new int[h][h];
+
+            for (int i = 0; i < h; i++) {
+                mirrored[i] = rowReverse(columns[i]);
+            }
+            columns = mirrored;
+        }
+
+        if (side.equals(Side.EAST)) {
+            columns = rotateNinety(columns);
+        }
+
+        if (side.equals(Side.WEST)) {
+            columns = rotateNegNinety(columns);
+        }
+//        columns = transpose(columns);
         this._board = new Board(columns, this._score);
+        this._board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (state[0]) {
@@ -126,6 +169,8 @@ public class Model extends Observable {
 
     /**
      * Creates a 2-D array of integers from a given board.
+     *
+     * Change this later so we don't have to transpose as often.
      *
      * Example:
      * If you have a board that looks like this,
@@ -141,7 +186,8 @@ public class Model extends Observable {
      * @return int[4][4] Columns oriented in a way that works well with the algorithm
      */
     public int[][] getColumns(Side side) {
-        this._board.setViewingPerspective(Side.EAST); // Orient this way to grab columns to match image above.
+//        this._board.setViewingPerspective(side.EAST);
+        // Orient this way to grab columns to match image above.
         int k = this._board.size();
         int[][] m = new int[k][k];
         for (int i = 0; i <= k - 1; i++) {
@@ -154,7 +200,7 @@ public class Model extends Observable {
                 }
             }
         }
-        this._board.setViewingPerspective(side);
+
         return m;
     }
 
@@ -175,9 +221,10 @@ public class Model extends Observable {
 
           while (left <  column.length - 2 && right <= column.length - 1) {
               //Only advance the left leg when a proper comparison is done.
-              if (eval(left, right, column, state) || right == column.length - 1) {
+              if (eval(left, right, column, state) || right == column.length - 1 || column[right] != 0) {
                   left ++;
               }
+              eval(left, right, column, state);
               // Always advance right leg until end.
               if (right < column.length - 1) {
                   right++;
@@ -229,7 +276,7 @@ public class Model extends Observable {
      * @param matrix
      * @return the matrix transposed
      */
-    private static int[][] transpose(int[][] matrix, boolean reverse) {
+    private static int[][] transpose(int[][] matrix) {
         int s = matrix.length;
         int[][] transposed = new int[s][s];
         int h = 0;
@@ -240,52 +287,45 @@ public class Model extends Observable {
                 row[k] = matrix[j][i];
                 k++;
             }
-            if (reverse) {
-                transposed[h] = reverse(row);
-            } else {
-                transposed[h] = row;
-            }
+            transposed[h] = row;
             h++;
         }
         return transposed;
     }
 
-    /**
-     * Borrowed an idea from here https://stackoverflow.com/questions/42519/how-do-you-rotate-a-two-dimensional-array
-     * I already have a transpose function and had a hunch that we can use it for rotations.
-     * I'm using this to handle the other options for tilt directions other
-     * than North by transforming all other configurations to north form.
-     *
-     * @param matrix
-     * @return
-     */
-    public static int[][] rotateToNorth(int[][] matrix, Side side) {
-        return switch (side) {
-            case SOUTH -> {
-                // -180 degrees (c.c.w), rotate by -90 degrees (c.c.w)
-                // transpose
-                matrix = transpose(matrix, true);
-                matrix = transpose(matrix, true);
-                yield matrix;
-            }
-            case EAST -> {
-                // -90 degrees (c.c.w)
-                matrix = transpose(matrix, true);
-                yield matrix;
-            }
-            case WEST -> {
-                // 90 degrees (c.w.)
-                matrix = transpose(matrix, false);
-                yield matrix;
-            }
-            default -> {
-                // No change
-                yield matrix;
-            }
-        };
+//    I know, "DRY" it later. Rushing to finish.
+    public static int[][] rotateNinety (int matrix[][]) {
+        int k = matrix.length;
+        int[][] rotated = new int[k][k];
+        int[][] t = transpose(matrix);
+
+        for (int i = 0; i < k; i++) {
+            rotated[i] = rowReverse(t[i]);
+        }
+        return rotated;
     }
 
-    public static int[] reverse(int[] array) {
+    public static int[][] rotateNegNinety (int matrix[][]) {
+        int k = matrix.length;
+        int[][] reversed = new int[k][k];
+
+        for (int i = 0; i < k; i++) {
+            reversed[i] = rowReverse(matrix[i]);
+        }
+        return transpose(reversed);
+    }
+
+    // "DRY" this later.
+    public static int[][] columnReverse(int[][] matrix) {
+        int k = matrix.length;
+        int[][] reversed = new int[k][k];
+
+        for (int i = 0; i < k; i++) {
+            reversed[i] = rowReverse(matrix[i]);
+        }
+        return transpose(reversed);
+    }
+    public static int[] rowReverse(int[] array) {
         int[] reversed = new int[array.length];
 
         for (int i = array.length; i > 0; i--) {
@@ -299,31 +339,49 @@ public class Model extends Observable {
      * @param args
      */
     public static void main(String[] args) {
-//        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
-        int[][] board = new int[][] {
-                {0, 0, 2, 0},
-                {0, 0, 0, 0},
-                {0, 0, 2, 0},
-                {0, 0, 2, 0},
-        };
+        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+//        int[][] board = new int[][] {
+//                {0, 0, 2, 0},
+//                {0, 0, 0, 0},
+//                {0, 0, 2, 0},
+//                {0, 0, 2, 0},
+//        };
         Model m = new Model(board, 0, 0, false);
-        m.tilt(Side.NORTH);
-        int[][] columns = m.getColumns(Side.NORTH);
-        boolean[] state = {false};
+
+        int[][] rotated_board = m.rotateNinety(board);
+
+        for (int i = 0; i < rotated_board.length; i++) {
+            for (int j = 0; j < rotated_board.length; j++) {
+                System.out.print(rotated_board[i][j]);
+            }
+            System.out.println();
+        }
+
+//        int[][] rows = m.getRows();
+//        m.tilt(Side.NORTH);
+//        int[][] columns = m.getColumns(Side.NORTH);
+//        boolean[] state = {false};
 
 //        This performs the algorithm on the mocked up board.
-        Arrays.asList(columns).stream().forEach((int[] column) -> {
-            m.algo(column, state);
-        });
-
-//        Verify that the algorithm works as expected.
-        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
-                .forEach(System.out::println);
-
-//        Run a test on feeding this new board state to a Board.
-          Board b = new Board(transpose(columns, false),0);
-          System.out.println(b);
-          System.out.println("Done!");
+//        Arrays.asList(columns).stream().forEach((int[] column) -> {
+//            m.algo(column, state);
+//        });
+//        for (int i = 0; i < columns.length; i++) {
+//            System.out.println(columns[i]);
+//            m.algo(columns[i], state);
+//        }
+//
+////        Verify that the algorithm works as expected.
+//        Arrays.stream(columns).flatMapToInt((int[] column) -> Arrays.stream(column))
+//                .forEach(System.out::println);
+//
+////        Run a test on feeding this new board state to a Board.
+//          Board b = new Board(transpose(columns, Rotation.NOROTATION),0);
+//          System.out.println(b);
+//          System.out.println("Done!");
+//        int[] l = {4, 0, 2, 0};
+//        boolean[] state = {false};
+//        m.algo(l, state);
     }
 
     /** Checks if the game is over and sets the gameOver variable
