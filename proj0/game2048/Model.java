@@ -119,12 +119,44 @@ public class Model extends Observable {
         int[][] columns = getColumns(side);
 //      Make it rotated north before transforming with algo.
 //      Perform algorithm on each column. Achieved through side effects.
+
+        if (side.equals(Side.NORTH)) {
+            columns = rotateNinety(columns);
+        } else if (side.equals(Side.SOUTH)) {
+            columns = rotateNegNinety(columns);
+        } else if (side.equals(Side.EAST)) {
+            columns = rotateNegNinety(columns);
+            columns = rotateNegNinety(columns);
+        }
         Arrays.asList(columns).stream().forEach((int[] column) -> {
             algo(column,state);
         });
 
+        int h = columns.length;
+
 //      Columns are now mutated. Use the resulting transposed matrix to update board state.
-        columns = transpose(columns);
+        if (!(side.equals(Side.SOUTH))) {
+            columns = transpose(columns);
+        }
+
+        if (side.equals(Side.SOUTH)) {
+            columns = rotateNegNinety(columns);
+            int[][] mirrored = new int[h][h];
+
+            for (int i = 0; i < h; i++) {
+                mirrored[i] = rowReverse(columns[i]);
+            }
+            columns = mirrored;
+        }
+
+        if (side.equals(Side.EAST)) {
+            columns = rotateNinety(columns);
+        }
+
+        if (side.equals(Side.WEST)) {
+            columns = rotateNegNinety(columns);
+        }
+//        columns = transpose(columns);
         this._board = new Board(columns, this._score);
         this._board.setViewingPerspective(Side.NORTH);
 
@@ -154,7 +186,7 @@ public class Model extends Observable {
      * @return int[4][4] Columns oriented in a way that works well with the algorithm
      */
     public int[][] getColumns(Side side) {
-        this._board.setViewingPerspective(side.EAST);
+//        this._board.setViewingPerspective(side.EAST);
         // Orient this way to grab columns to match image above.
         int k = this._board.size();
         int[][] m = new int[k][k];
