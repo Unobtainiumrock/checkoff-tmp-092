@@ -14,7 +14,7 @@ public class LinkedListDequeTest {
      * you can define a new local variable. However, the autograder will
      * not grade that test. Please do not import java.util.Deque here!*/
 
-    public static Deque<Integer> lld = new LinkedListDeque<Integer>();
+    public static Deque<Integer> lld = new LinkedListDeque<>();
 
     @Test
     /** Adds a few things to the list, checks that isEmpty() is correct.
@@ -23,17 +23,12 @@ public class LinkedListDequeTest {
      *
      * && is the "and" operation. */
     public void addIsEmptySizeTest() {
-
-        System.out.println("Make sure to uncomment the lines below (and delete this print statement)." +
-                " The code you submit to the AG shouldn't have any print statements!");
-        /*
 		assertTrue("A newly initialized LLDeque should be empty", lld.isEmpty());
 		lld.addFirst(0);
 
         assertFalse("lld1 should now contain 1 item", lld.isEmpty());
 
         lld = new LinkedListDeque<Integer>(); //Assigns lld equal to a new, clean LinkedListDeque!
-		*/
 
     }
 
