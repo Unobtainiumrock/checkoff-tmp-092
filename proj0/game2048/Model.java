@@ -221,8 +221,11 @@ public class Model extends Observable {
 
           while (left <  column.length - 2 && right <= column.length - 1) {
               //Only advance the left leg when a proper comparison is done.
-              if (eval(left, right, column, state) || right == column.length - 1 || column[right] != 0) {
+              if (eval(left, right, column, state) || column[left] != 0 && column[right] != 0) {
                   left ++;
+              }
+              if (column[left] == 0 && right == 3) {
+                  break;
               }
               eval(left, right, column, state);
               // Always advance right leg until end.
@@ -230,8 +233,12 @@ public class Model extends Observable {
                   right++;
               }
           }
-//        Perform the final comparison.
-          eval(left, right, column, state);
+//        Perform the final comparison, only if required. Hacked togther this
+//        monkey-fix last minute. No time to clean up code.
+            if (column[left] != 0) {
+                eval(left, right, column, state);
+            }
+//          eval(left, right, column, state);
     }
 
     /**
@@ -339,7 +346,7 @@ public class Model extends Observable {
      * @param args
      */
     public static void main(String[] args) {
-        int[][] board = {{2, 0, 2, 0}, {4, 4, 2, 2}, {0, 4, 0, 0}, {2, 4, 4, 8}};
+        int[][] board = {{2, 0, 2, 2}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
 //        int[][] board = new int[][] {
 //                {0, 0, 2, 0},
 //                {0, 0, 0, 0},
@@ -347,15 +354,15 @@ public class Model extends Observable {
 //                {0, 0, 2, 0},
 //        };
         Model m = new Model(board, 0, 0, false);
-
-        int[][] rotated_board = m.rotateNinety(board);
-
-        for (int i = 0; i < rotated_board.length; i++) {
-            for (int j = 0; j < rotated_board.length; j++) {
-                System.out.print(rotated_board[i][j]);
-            }
-            System.out.println();
-        }
+        m.tilt(Side.NORTH);
+//        int[][] rotated_board = m.rotateNinety(board);
+//
+//        for (int i = 0; i < rotated_board.length; i++) {
+//            for (int j = 0; j < rotated_board.length; j++) {
+//                System.out.print(rotated_board[i][j]);
+//            }
+//            System.out.println();
+//        }
 
 //        int[][] rows = m.getRows();
 //        m.tilt(Side.NORTH);
