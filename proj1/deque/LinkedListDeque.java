@@ -2,38 +2,36 @@ package deque;
 import java.util.*;
 
 
-public class LinkedListDeque<E> implements deque.Deque {
-    
+public class LinkedListDeque<E> implements deque.Deque, Comparable<LinkedListDeque<E>> {
 
     @Override
-    public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
+    public void addFirst(Object o) {
 
     }
+
     @Override
-    public void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
+    public void addLast(Object o) {
 
     }
 
-    public E removeFirst() throws NoSuchElementException {
+    @Override
+    public E removeFirst() {
 
     }
 
-    public E removeLast() throws NoSuchElementException {
+    @Override
+    public E removeLast() {
 
     }
 
-    public E get(int index) throws NoSuchElementException {
+    @Override
+    public E get(int index) {
 
     }
 
     @Override
     public int size() {
         return 0;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return false;
     }
 
     @Override
@@ -114,5 +112,20 @@ public class LinkedListDeque<E> implements deque.Deque {
     @Override
     public Object peek() {
         return null;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int compareTo(LinkedListDeque<E> eLinkedListDeque) {
+        return 0;
+    }
+
+    @Override
+    public String toString() {
+        return "";
     }
 }
