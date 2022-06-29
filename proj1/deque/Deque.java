@@ -10,9 +10,9 @@ public interface Deque<E>  extends Queue {
      * it is generally preferable to use method offerFirst(E).
      *
      * @param e - the element to add
-     * @throws IllegalStateException -  if the element cannot be added at this time due to capacity restrictions
-     * @throws ClassCastException - if the class of the specified element prevents it from being added to this deque
-     * @throws NullPointerException - if the specified element is null and this deque does not permit null elements
+     * @throws IllegalStateException    -  if the element cannot be added at this time due to capacity restrictions
+     * @throws ClassCastException       - if the class of the specified element prevents it from being added to this deque
+     * @throws NullPointerException     - if the specified element is null and this deque does not permit null elements
      * @throws IllegalArgumentException - if some property of the specified element prevents it from being added to this deque
      */
     public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
@@ -22,11 +22,10 @@ public interface Deque<E>  extends Queue {
      * throwing an IllegalStateException if no space is currently available. When using a capacity-restricted deque, it is generally preferable
      * to use method offerLast(E).
      *
-     *
      * @param e - the element to add
-     * @throws IllegalStateException - if the element cannot be added at this time due to capacity restrictions
-     * @throws ClassCastException - if the class of the specified element prevents it from being added to this deque
-     * @throws NullPointerException - if the specified element is null and this deque does not permit null elements
+     * @throws IllegalStateException    - if the element cannot be added at this time due to capacity restrictions
+     * @throws ClassCastException       - if the class of the specified element prevents it from being added to this deque
+     * @throws NullPointerException     - if the specified element is null and this deque does not permit null elements
      * @throws IllegalArgumentException - if some property of the specified element prevents it from being added to this deque
      */
     public void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
@@ -50,8 +49,8 @@ public interface Deque<E>  extends Queue {
     public E removeLast() throws NoSuchElementException;
 
     /**
-     *  Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
-     *  Must not mutate the deque.
+     * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
+     * Must not mutate the deque.
      *
      * @param index
      * @return
