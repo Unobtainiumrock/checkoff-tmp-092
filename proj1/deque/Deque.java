@@ -49,7 +49,7 @@ public interface Deque<E> extends Queue {
     E removeLast() throws NoSuchElementException;
 
     default boolean isEmpty() {
-        return this.size() > 0;
+        return this.size() == 0;
     }
 
     /**
