@@ -1,7 +1,9 @@
 package deque;
 
+import jh61b.junit.In;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import java.util.*;
 
 
 /** Performs some basic linked list deque tests. */
@@ -28,32 +30,61 @@ public class LinkedListDequeTest {
 
         assertFalse("lld1 should now contain 1 item", lld.isEmpty());
 
-        lld = new LinkedListDeque<Integer>(); //Assigns lld equal to a new, clean LinkedListDeque!
+        update(); //Assigns lld equal to a new, clean LinkedListDeque!
 
     }
 
-    /** Adds an item, removes an item, and ensures that dll is empty afterwards. */
+    /** Adds an item, removes an item, and ensures that lld is empty afterwards. */
     @Test
     public void addRemoveTest() {
+        lld.add(2);
+        lld.remove(2);
+        assertTrue("LLDeque should be empty now", lld.isEmpty());
 
+        update();
     }
     /** Make sure that removing from an empty LinkedListDeque does nothing */
     @Test
     public void removeEmptyTest() {
+        lld.removeFirst();
 
+        assertTrue();
+        update();
     }
+
     /** Make sure your LinkedListDeque also works on non-Integer types */
     @Test
     public void multipleParamsTest() {
+        Deque<Object> test1 = new LinkedListDeque<>();
+        Object o = new Object();
+        test1.add(o);
+        assertTrue("test1 should now contain object o", test1.contains(o));
+
+        test1.remove(o);
+        assertTrue("test1 should now be empty", test1.isEmpty());
+
+
+//        Deque<Object> test2 = new LinkedListDeque<>();
+//        test2.add("hi");
+//
+//        Deque<Object> test3 = new LinkedListDeque<>();
+//        List <Integer> l = new ArrayList<>();
+//        test3.add(l);
 
     }
     /** Make sure that removing from an empty LinkedListDeque returns null */
     @Test
     public void emptyNullReturn() {
 
+        update();
     }
     /** TODO: Write tests to ensure that your implementation works for really large
      * numbers of elements, and test any other methods you haven't yet tested!
      */
+
+
+    public void update() {
+        lld = new LinkedListDeque<Integer>();
+    }
 
 }

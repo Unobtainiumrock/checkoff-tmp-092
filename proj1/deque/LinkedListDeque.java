@@ -2,7 +2,7 @@ package deque;
 import java.util.*;
 
 
-public class LinkedListDeque<E> implements deque.Deque, Comparable<LinkedListDeque<E>> {
+public class LinkedListDeque<E> implements deque.Deque {
 
     @Override
     public void addFirst(Object o) {
@@ -95,11 +95,6 @@ public class LinkedListDeque<E> implements deque.Deque, Comparable<LinkedListDeq
     }
 
     @Override
-    public Object remove() {
-        return null;
-    }
-
-    @Override
     public Object poll() {
         return null;
     }
@@ -119,10 +114,6 @@ public class LinkedListDeque<E> implements deque.Deque, Comparable<LinkedListDeq
         return super.equals(obj);
     }
 
-    @Override
-    public int compareTo(LinkedListDeque<E> eLinkedListDeque) {
-        return 0;
-    }
 
     @Override
     public String toString() {
