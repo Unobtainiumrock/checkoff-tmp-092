@@ -46,9 +46,7 @@ public class LinkedListDequeTest {
     /** Make sure that removing from an empty LinkedListDeque does nothing */
     @Test
     public void removeEmptyTest() {
-        lld.removeFirst();
-
-        assertTrue();
+        assertNull("removing from an empty LinkedListDeque should do nothing", lld.removeFirst());
         update();
     }
 
@@ -75,6 +73,7 @@ public class LinkedListDequeTest {
     /** Make sure that removing from an empty LinkedListDeque returns null */
     @Test
     public void emptyNullReturn() {
+        lld.remove();
 
         update();
     }
