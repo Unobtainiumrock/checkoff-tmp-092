@@ -4,40 +4,51 @@
  * @author Maurice Lee and Wan Fung Chui
  */
 
-public class IntList {
 
-    /** The integer stored by this node. */
+public class IntList {
+    // Y'all shoulda made these private. I tried making them private and then using getters/setters
+    // to practice good encapsulation.
+    // I'm changing them back to public, but I'm too lazy to remove all my getters/setters and change the rest of the code.
     public int item;
-    /** The next node in this IntList. */
     public IntList next;
 
-    /** Constructs an IntList storing ITEM and next node NEXT. */
     public IntList(int item, IntList next) {
         this.item = item;
         this.next = next;
     }
 
-    /** Constructs an IntList storing ITEM and no next node. */
     public IntList(int item) {
         this(item, null);
     }
 
-    /** Returns an IntList consisting of the elements in ITEMS.
-     * IntList L = IntList.list(1, 2, 3);
-     * System.out.println(L.toString()) // Prints 1 2 3 */
+    public IntList() {}
+
+    public int getItem() {
+        return this.item;
+    }
+
+
+    public IntList getNext() {
+        return this.next;
+    }
+
+    public boolean hasNext() {
+        return this.next != null;
+    }
+
     public static IntList of(int... items) {
-        /** Check for cases when we have no element given. */
         if (items.length == 0) {
             return null;
         }
-        /** Create the first element. */
+
         IntList head = new IntList(items[0]);
         IntList last = head;
-        /** Create rest of the list. */
+
         for (int i = 1; i < items.length; i++) {
             last.next = new IntList(items[i]);
             last = last.next;
         }
+
         return head;
     }
 
@@ -49,8 +60,21 @@ public class IntList {
      * @return The element at [position]
      */
     public int get(int position) {
-        //TODO: YOUR CODE HERE
-        return -1;
+        if (position < 0) {
+            throw new IllegalArgumentException("Index out of bounds.");
+        }
+
+        IntList curr = this;
+        int k = 0;
+
+        while(k < position) {
+            if (!(curr.hasNext())) {
+                throw new IllegalArgumentException("Index out of bounds.");
+            }
+            curr = curr.next;
+            k++;
+        }
+        return curr.getItem();
     }
 
     /**
@@ -60,8 +84,14 @@ public class IntList {
      * @return The String representation of the list.
      */
     public String toString() {
-        //TODO: YOUR CODE HERE
-        return null;
+        IntList curr = this;
+        String result = Integer.toString(curr.item);
+        while (curr.hasNext()) {
+            result += " ";
+            result += Integer.toString(curr.next.item);
+            curr = curr.getNext();
+        }
+        return result;
     }
 
     /**
@@ -78,14 +108,26 @@ public class IntList {
      * @return Whether the two lists are equal.
      */
     public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
         if (obj == null || !(obj instanceof IntList)) {
             return false;
         }
+
         IntList otherLst = (IntList) obj;
+        IntList a = this;
+        boolean res = otherLst.getItem() == a.getItem();
 
-        //TODO: YOUR CODE HERE
+        while(otherLst.hasNext() && a.hasNext()) {
+            otherLst = otherLst.getNext();
+            a = a.getNext();
+            res = res && (a.getItem() == otherLst.getItem());
+        }
 
-        return false;
+        return res && !(otherLst.hasNext() || a.hasNext());
+
     }
 
     /**
@@ -93,8 +135,14 @@ public class IntList {
      *
      * @param value, the int to be added.
      */
+    // The code we were given doesn't allow for add to be O(1)
+    // It is O(1) since we don't have a direct reference to the tail.
     public void add(int value) {
-        //TODO: YOUR CODE HERE
+        IntList curr = this;
+        while (curr.hasNext()) {
+            curr = curr.next;
+        }
+        curr.next = new IntList(value);
     }
 
     /**
@@ -103,8 +151,16 @@ public class IntList {
      * @return smallest element in the list
      */
     public int smallest() {
-        //TODO: YOUR CODE HERE
-        return -1;
+        IntList curr = this;
+        int smallest = curr.item;
+
+        while(curr.hasNext()) {
+            curr = curr.getNext();
+            if (curr.getItem() < smallest) {
+                smallest = curr.getItem();
+            }
+        }
+        return smallest;
     }
 
     /**
@@ -113,8 +169,14 @@ public class IntList {
      * @return The sum of squares of all elements.
      */
     public int squaredSum() {
-        //TODO: YOUR CODE HERE
-        return -1;
+        IntList curr = this;
+        int res = curr.getItem() * curr.getItem();
+
+        while (curr.hasNext()) {
+            curr = curr.getNext();
+            res += (curr.getItem() * curr.getItem());
+        }
+        return res;
     }
 
     /**
@@ -123,7 +185,7 @@ public class IntList {
      * @param L list to destructively square.
      */
     public static void dSquareList(IntList L) {
-        while (L != null) {
+        while (L.hasNext()) {
             L.item = L.item * L.item;
             L = L.next;
         }
