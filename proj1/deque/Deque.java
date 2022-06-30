@@ -31,7 +31,7 @@ public interface Deque<E> extends Queue {
     void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
 
     /**
-     * Retrieves and removes the first element of this deque. Thi   s method differs from pollFirst only in that
+     * Retrieves and removes the first element of this deque. This method differs from pollFirst only in that
      * it throws an exception if this deque is empty.
      *
      * @return the head of this deque.

@@ -2,7 +2,23 @@ package deque;
 import java.util.*;
 
 
-public class LinkedListDeque<E> implements deque.Deque {
+public class LinkedListDeque<T> implements deque.Deque {
+
+    private Node<T> head;
+
+    private Node<T> tail;
+
+    public LinkedListDeque() {
+        this.head = new Node<T>();
+        this.tail = this.head;
+    }
+
+    public LinkedListDeque (T val) {
+        Node<T> newNode = new Node<>(val);
+        this.head.getNext() = (T) newNode;
+        this.head.getPrev() = (T) newNode;
+        this.tail = newNode;
+    }
 
     @Override
     public void addFirst(Object o) {
@@ -16,6 +32,7 @@ public class LinkedListDeque<E> implements deque.Deque {
 
     @Override
     public E removeFirst() {
+
 
     }
 
@@ -92,6 +109,11 @@ public class LinkedListDeque<E> implements deque.Deque {
     @Override
     public boolean offer(Object o) {
         return false;
+    }
+
+    @Override
+    public Object remove() {
+        return null;
     }
 
     @Override
