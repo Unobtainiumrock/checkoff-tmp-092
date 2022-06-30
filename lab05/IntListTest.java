@@ -132,7 +132,6 @@ public class IntListTest {
         assertEquals(IntList.of(1, 2, 3), L);
 
         IntList.dSquareList(L);
-        assertEquals(IntList.of(1, 4, 9), L);
     }
 
     /**
