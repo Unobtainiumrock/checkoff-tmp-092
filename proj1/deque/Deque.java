@@ -1,4 +1,5 @@
 package deque;
+<<<<<<< HEAD
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
@@ -62,4 +63,13 @@ public interface Deque<E> extends Queue {
     E get(int index) throws NoSuchElementException;
 
     boolean equals(Object o);
+=======
+
+/* The Deque interface defines the expected behavior for any
+* Deque, whether it is an ArrayDeque or LinkedListDeque. A
+* Deque is a doubly-ended queue, that allows you to quickly add
+* and remove items from the front and back. */
+public interface Deque<T> {
+
+>>>>>>> 759b4c4e2d4cd1397a7d85cefc5a88b9f440e6bf
 }
