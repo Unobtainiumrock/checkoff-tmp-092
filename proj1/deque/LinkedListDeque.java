@@ -17,9 +17,12 @@ public class LinkedListDeque<T> implements Deque<T> {
         this._sentinel.setPrev(node);
         node.setPrev(this._sentinel);
         node.setNext(this._sentinel);
+
         this._size++;
     }
 
+    // ArrayList is used to ease iteration of my
+    // helper constructor.
     LinkedListDeque(ArrayList<Node<T>> nodes) {
         this._sentinel = new SentinelNode(0);
 
@@ -39,44 +42,72 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     @Override
-    public void addFirst(T t) {
+    public T removeFirst() {
+        Node<T> oldHead = this._sentinel.getNext();
+        T oldHeadVal = oldHead.getVal();
+
+        this._sentinel.setNext(oldHead.getNext());
+
+        return oldHeadVal;
+    }
+
+    @Override
+    public T removeLast() {
+        Node<T> oldTail = this._sentinel.getPrev();
+        T oldTailVal = oldTail.getVal();
+
+        this._sentinel.setPrev(oldTail.getPrev());
+
+        return oldTailVal;
+    }
+
+    @Override
+    public void addFirst(T val) {
+        Node<T> node = new Node<>(val);
         Node<T> head = this._sentinel.getNext();
         Node<T> tail = this._sentinel.getPrev();
 
-        Node test = this._sentinel.getNext();
-
-    }
-    //Node<T> node
-
-    @Override
-    public void addLast(Object o) {
-
+        node.setNext(head);
+        head.setPrev(node);
+        node.setPrev(tail);
+        tail.setNext(node);
     }
 
     @Override
-    public E removeFirst() {
+    public void addLast(T val) {
+        Node<T> node = new Node<>(val);
+        Node<T> head = this._sentinel.getNext();
+        Node<T> tail = this._sentinel.getPrev();
 
+        node.setPrev(tail);
+        tail.setNext(node);
+        node.setNext(head);
+        head.setPrev(node);
 
     }
 
-    @Override
-    public E removeLast() {
-
-    }
-
-    @Override
-    public E get(int index) {
-
+    public T get(int index) {
+        if (this._size == 0 || index > this._size) {
+            return null;
+        } else {
+            Node<T> curr = this._sentinel.getNext();
+            for (int i = 0; i < index; i++) {
+                curr = curr.getNext();
+            }
+            return curr.getVal();
+        }
     }
 
     @Override
     public int size() {
-        return 0;
+        return this._size;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        if () {
+
+        }
     }
 
     @Override
