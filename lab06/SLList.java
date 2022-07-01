@@ -138,6 +138,33 @@ public class SLList {
 
     /** Destructively reverses this list. */
     public void reverse() {
-        // TODO
+        if (this.size == 0) {
+            return;
+        }
+
+        IntListNode curr = this.sentinel.next;
+        int[] stack = new int[this.size];
+
+        for (int i = 0; i < this.size; i++) {
+            stack[i] = curr.item;
+            curr = curr.next;
+        }
+
+        curr = this.sentinel;
+
+        for (int i = this.size - 1; i > 0; i--) {
+            curr.next = new IntListNode(stack[i], this.sentinel);
+            curr = curr.next;
+        }
+        curr.next = new IntListNode(stack[0], this.sentinel);
     }
+
+//    public IntListNode recurse(IntListNode node) {
+//        if (node.item == 42) {
+//            return node;
+//        }
+//        addFirst(node.item);
+//
+//        return recurse(node.next);
+//    }
 }
