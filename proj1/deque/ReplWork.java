@@ -55,7 +55,7 @@ class DLL {
         if (node instanceof SentinelNode) {
             this._head = node;
         } else {
-            this._head.setNext(node);
+            this._head.setNext(node);   
             node.setPrev(this._head);
             this._size++;
         }
