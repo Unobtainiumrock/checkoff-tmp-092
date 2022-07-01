@@ -154,16 +154,17 @@ public class ReplWork2 {
 
     }
 
-    public Node get(int index) {
+    public T get(int index) {
         if (this._size == 0 || index > this._size) {
             return null;
         }
         else {
-            DLL current = this;
-            for (int i = 0; i < index; i++) {
-                current._head = current._head._next;
+            Node pointer = this._sentinel.getNext();
+            while (index > 0) {
+                pointer = pointer._next;
+                index -= 1;
             }
-            return current._head; //fix the return type
+            return pointer._val;
         }
     }
 }

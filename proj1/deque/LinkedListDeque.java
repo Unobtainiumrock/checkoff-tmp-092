@@ -2,50 +2,51 @@ package deque;
 import java.util.*;
 
 
-public class LinkedListDeque<T> implements deque.Deque {
+public class LinkedListDeque<T> implements Deque<T> {
 
-    private Node<T> _head;
-
-    private Node<T> _tail;
+    private SentinelNode _sentinel;
 
     private int _size = 0;
 
     LinkedListDeque() {
-        this._head = new SentinelNode<>(null);
-        this._tail = this._head;
+        this(new SentinelNode(0));
     }
 
     LinkedListDeque (Node<T> node) {
-        this._head.setNext(node);
-        node.setPrev(this._head);
+        this._sentinel.setNext(node);
+        this._sentinel.setPrev(node);
+        node.setPrev(this._sentinel);
+        node.setNext(this._sentinel);
         this._size++;
-        this._tail = node;
     }
 
     LinkedListDeque(ArrayList<Node<T>> nodes) {
-        int k = 0;
-        for (Node<T> node : nodes) {
-            if (k == 0) {
-                this._head = node;
-                this._tail = node;
-                k++;
-            } else {
-                node.setPrev(this._tail);
-                this._tail.setNext(node);
-                this._head.setPrev(node);
-                this._tail = node;
+        this._sentinel = new SentinelNode(0);
+
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i); //orig was nodes[i]
+
+            if (i == 0) {
+                this._sentinel.setNext(node);
+                this._sentinel.setPrev(node);
+                node.setPrev(this._sentinel);
+                node.setNext(this._sentinel);
             }
+            this._sentinel.getPrev().setNext(node);
+            node.setNext(this._sentinel);
         }
         this._size += nodes.size();
     }
 
     @Override
-    public void addFirst(Node<T> node) {
-        node.setNext(this._head.getNext());
-        this._head.getNext().setPrev(node);
-        node.setPrev(this._head);
-        this._head.setNext(node);
+    public void addFirst(T t) {
+        Node<T> head = this._sentinel.getNext();
+        Node<T> tail = this._sentinel.getPrev();
+
+        Node test = this._sentinel.getNext();
+
     }
+    //Node<T> node
 
     @Override
     public void addLast(Object o) {
