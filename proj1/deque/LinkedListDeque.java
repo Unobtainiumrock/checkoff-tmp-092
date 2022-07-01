@@ -3,33 +3,37 @@ import java.util.*;
 
 
 public class LinkedListDeque<T> implements Deque<T> {
-    private SentinelNode<T> _sentinel;
+
+    private SentinelNode _sentinel;
+
     private int _size = 0;
 
-    LinkedListDeque(T t) {
-        Node<T> n = new Node<>(t);
-        this._sentinel = new SentinelNode<>(null);
+    LinkedListDeque() {
+        this(new SentinelNode(0));
+    }
 
-        this._sentinel.setNext(n);
-        this._sentinel.setPrev(n);
-        n.setPrev(this._sentinel);
-        n.setNext(this._sentinel);
+    LinkedListDeque (Node<T> node) {
+        this._sentinel.setNext(node);
+        this._sentinel.setPrev(node);
+        node.setPrev(this._sentinel);
+        node.setNext(this._sentinel);
+
         this._size++;
     }
 
     // ArrayList is used to ease iteration of my
     // helper constructor.
     LinkedListDeque(ArrayList<Node<T>> nodes) {
-        this._sentinel = new SentinelNode<>(null);
-        int k = 0;
+        this._sentinel = new SentinelNode(0);
 
-        for (Node<T> node : nodes) {
-            if (k == 0) {
+        for (int i = 0; i < nodes.size(); i++) {
+            Node node = nodes.get(i); //orig was nodes[i]
+
+            if (i == 0) {
                 this._sentinel.setNext(node);
                 this._sentinel.setPrev(node);
                 node.setPrev(this._sentinel);
                 node.setNext(this._sentinel);
-                k++;
             }
             this._sentinel.getPrev().setNext(node);
             node.setNext(this._sentinel);

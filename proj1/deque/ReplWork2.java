@@ -1,3 +1,91 @@
+class Main {
+    public static void main(String[] args) {
+        // Node[] nodes = new Node[20];
+
+        // for (int i = 0; i < nodes.length; i++) {
+        //   nodes[i] = new Node(i + 1);
+        // }
+
+        DLL test = new DLL();
+
+        // for (int i = 0; i < nodes.length; i++) {
+        //   test.addLast(nodes[i]);
+        // }
+        // DLL test2 = new DLL(nodes);
+        // DLL test2 = new DLL(1,2,3,4);
+
+        // Node curr = test.getHead();
+        // System.out.println(curr.getVal());
+
+        // while (curr.hasNext()) {
+        //   curr = curr.getNext();
+        //   System.out.println(curr.getVal());
+        // }
+
+        // DLL testTwo = new DLL(new Node(69));
+        // System.out.println(testTwo.getHead().getVal());
+        // System.out.println(testTwo.getHead().getVal());
+        // System.out.println(testTwo.getHead().getPrev().getVal());
+        // System.out.println(testTwo.getHead().getNext().getVal());
+        // testTwo.add(new Node(99));
+        // System.out.println(testTwo.getHead().getNext().getVal());
+
+        // DLL testThree = new DLL();
+
+        // testThree.add(new Node(19));
+        // System.out.println(testThree.getHead().getVal());
+        // System.out.println(testThree.getHead().getNext().getVal());
+
+        // Test for RemoveFirst()
+        // System.out.println(test.removeFirst().getVal());
+        // Node current = test.getHead();
+        // // System.out.println(current.getVal());
+        // for (int i = 0; i < 19; i++) {
+        //   System.out.println(current.getVal());
+        //   current = current.getNext();
+        // }
+
+        //test for RemoveLast()
+        // System.out.println("=========");
+
+        // Node current = test.getHead();
+        // System.out.println(test.removeLast().getVal());
+        //   for (int i = 0; i < 20; i++) {
+        //   System.out.println(current.getVal());
+        //   current = current.getNext();
+
+        // System.out.println(test.isEmpty());
+        // System.out.println(test2.isEmpty());
+        // test2.printDeque();
+
+
+        test.addFirst(new Node(69));
+        test.addFirst(new Node(70));
+        test.addFirst(new Node(49));
+        test.printDeque();
+        Node curr = test.getHead().getNext();
+
+        while (!(curr instanceof SentinelNode)) {
+            System.out.println(curr.getVal());
+            curr = curr.getNext();
+        }
+
+        Node[] nodes = new Node[10];
+
+        for (int i = 0; i < nodes.length; i++) {
+            nodes[i] = new Node(i + 1);
+        }
+
+        DLL testThree = new DLL(nodes);
+        testThree.printDeque();
+        testThree.addFirst(new Node(69));
+        testThree.printDeque();
+    }
+
+}
+
+}
+=======
 //package deque;
 //
 //public class ReplWork2 {
