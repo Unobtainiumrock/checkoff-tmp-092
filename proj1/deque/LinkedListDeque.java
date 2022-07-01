@@ -4,25 +4,47 @@ import java.util.*;
 
 public class LinkedListDeque<T> implements deque.Deque {
 
-    private Node<T> head;
+    private Node<T> _head;
 
-    private Node<T> tail;
+    private Node<T> _tail;
 
-    public LinkedListDeque() {
-        this.head = new Node<T>();
-        this.tail = this.head;
+    private int _size = 0;
+
+    LinkedListDeque() {
+        this._head = new SentinelNode<>(null);
+        this._tail = this._head;
     }
 
-    public LinkedListDeque (T val) {
-        Node<T> newNode = new Node<>(val);
-        this.head.getNext() = (T) newNode;
-        this.head.getPrev() = (T) newNode;
-        this.tail = newNode;
+    LinkedListDeque (Node<T> node) {
+        this._head.setNext(node);
+        node.setPrev(this._head);
+        this._size++;
+        this._tail = node;
+    }
+
+    LinkedListDeque(ArrayList<Node<T>> nodes) {
+        int k = 0;
+        for (Node<T> node : nodes) {
+            if (k == 0) {
+                this._head = node;
+                this._tail = node;
+                k++;
+            } else {
+                node.setPrev(this._tail);
+                this._tail.setNext(node);
+                this._head.setPrev(node);
+                this._tail = node;
+            }
+        }
+        this._size += nodes.size();
     }
 
     @Override
-    public void addFirst(Object o) {
-
+    public void addFirst(Node<T> node) {
+        node.setNext(this._head.getNext());
+        this._head.getNext().setPrev(node);
+        node.setPrev(this._head);
+        this._head.setNext(node);
     }
 
     @Override

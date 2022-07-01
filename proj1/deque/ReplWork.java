@@ -1,46 +1,46 @@
 package deque;
 
-class Node {
-    int _val;
-    Node _next;
-    Node _prev;
+//class Node {
+//    int _val;
+//    Node _next;
+//    Node _prev;
+//
+//    Node(int val) {
+//        this._val = val;
+//        this._next = this;
+//        this._prev = this;
+//    }
+//
+//    public int getVal() {
+//        return this._val;
+//    }
+//
+//    public Node getNext() {
+//        return this._next;
+//    }
+//
+//    public Node getPrev() {
+//        return this._prev;
+//    }
+//
+//    public void setNext(Node next) {
+//        this._next = Node;
+//    }
+//
+//    public void setPrev(Node prev) {
+//        this._prev = prev;
+//    }
+//
+//    public boolean hasNext() {
+//        return this._next != null;
+//    }
+//}
 
-    Node(int val) {
-        this._val = val;
-        this._next = this;
-        this._prev = this;
-    }
-
-    public int getVal() {
-        return this._val;
-    }
-
-    public Node getNext() {
-        return this._next;
-    }
-
-    public Node getPrev() {
-        return this._prev;
-    }
-
-    public void setNext(Node next) {
-        this._next = next;
-    }
-
-    public void setPrev(Node prev) {
-        this._prev = prev;
-    }
-
-    public boolean hasNext() {
-        return this._next != null;
-    }
-}
-
-class SentinelNode extends Node {
-    SentinelNode(int val) {
-        super(val);
-    }
-}
+//class SentinelNode extends Node {
+//    SentinelNode(int val) {
+//        super(val);
+//    }
+//}
 
 class DLL {
     private Node _head;
@@ -97,7 +97,7 @@ class DLL {
 	public void printDeque() {
 		for (int i = 0; i < this._size; i++) {
 			System.out.print(this._head.getVal() + " ");
-			this._head = this.etNext();
+			this._head = this.getNext();
 		}
 		System.out.println(" ");
 	}
