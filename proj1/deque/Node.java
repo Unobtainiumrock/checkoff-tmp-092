@@ -32,7 +32,7 @@ public class Node<T> implements Comparable<Node<T>> {
     }
 
     public boolean hasNext() {
-        return this._next != null;
+        return !(this instanceof SentinelNode);
     }
 
     @Override

@@ -4,6 +4,8 @@ import java.util.Queue;
 
 // Source: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Deque.html#addFirst(E)
 public interface Deque<E> extends Queue {
+
+
     /**
      * Inserts the specified element at the front of this deque if it is possible to do so immediately without violating capacity restrictions,
      * throwing an IllegalStateException if no space is currently available. When using a capacity-restricted deque,
@@ -49,7 +51,7 @@ public interface Deque<E> extends Queue {
     E removeLast() throws NoSuchElementException;
 
     default boolean isEmpty() {
-        return this.size() == 0;
+        return size() == 0;
     }
 
     /**

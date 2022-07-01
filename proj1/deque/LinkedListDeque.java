@@ -1,6 +1,6 @@
 package deque;
 import java.util.*;
-
+import java.util.function.Consumer;
 
 public class LinkedListDeque<T> implements Deque<T> {
     private SentinelNode<T> _sentinel;
@@ -94,65 +94,113 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    @Override
     public int size() {
         return this._size;
     }
 
-    @Override
     public boolean contains(Object o) {
-        if () {
+        Node<T> curr = this._sentinel.getNext();
+        boolean res = false;
 
+        if (curr.equals(o)) {
+            return !res;
         }
+
+        while(curr.hasNext()) {
+            curr = curr.getNext();
+
+            if (curr.equals(o)) {
+                return !res;
+            }
+        }
+        return res;
     }
 
     @Override
     public Iterator iterator() {
-        return null;
+        return (Iterator) this._sentinel.getNext();
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Node<T> head = this._sentinel.getNext();
+        Object[] arr = new Object[this._size];
+        int k = 0;
+
+        while (head.hasNext()) {
+            arr[k] = head.getVal();
+            head = head.getNext();
+            k++;
+        }
+        return  arr;
     }
 
+    // Nuh uh. Deal with deep nesting later.
     @Override
-    public Object[] toArray(Object[] a) {
+    public Object[] toArray(Object[] objects) {
         return new Object[0];
     }
 
+    // Simply add to the end by default
     @Override
     public boolean add(Object o) {
-        return false;
+        T val = (T) o;
+        this.addLast(val);
+        return true;
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        Node<T> curr = this._sentinel.getNext();
+        boolean res = false;
+
+        if (curr.equals(o)) {
+            this.removeFirst();
+            return !res;
+        }
+
+        while(curr.hasNext()) {
+            curr = curr.getNext();
+
+            // Make sure the linked list re-links, if removing something
+            // in the middle.
+            if (curr.equals(o)) {
+                curr.getPrev().setNext(curr.getNext());
+                curr.getNext().setPrev(curr.getPrev());
+                return !res;
+            }
+        }
+        return res;
     }
 
     @Override
-    public boolean addAll(Collection c) {
-        return false;
+    public boolean addAll(Collection collection) {
+        Node<T> head = this._sentinel.getNext();
+        Arrays.asList(collection).forEach((val) -> {
+            head.setNext(new Node(val));
+        });
+        return true;
     }
 
+    // Nahh..
     @Override
     public void clear() {
 
     }
-
+    // The rest don't technically need to be implemented according to the project spec,
+    // I can add them later if we really want to have some fun..
     @Override
-    public boolean retainAll(Collection c) {
+    public boolean retainAll(Collection collection) {
         return false;
     }
 
     @Override
-    public boolean removeAll(Collection c) {
+    public boolean removeAll(Collection collection) {
         return false;
     }
 
     @Override
-    public boolean containsAll(Collection c) {
+    public boolean containsAll(Collection collection) {
         return false;
     }
 
@@ -179,16 +227,5 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public Object peek() {
         return null;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-
-    @Override
-    public String toString() {
-        return "";
     }
 }
