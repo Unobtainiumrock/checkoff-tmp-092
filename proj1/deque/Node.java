@@ -60,17 +60,8 @@ public class Node<T> implements Comparable<Node<T>> {
         return this._val.equals(otherNode.getVal()) && this._next.equals(otherNode.getNext());
     }
 
-//    @Override
-//    public String toString() {
-//        String nullChecker;
-//        Node<?> castNexttoNode = null;
-//        if (this._next == null) {
-//            nullChecker = "null";
-//        }
-//        else {
-//            castNexttoNode = (Node<?>) this._next;
-//            nullChecker = (String) castNexttoNode;
-//        }
-//        return  "{ \n val: " + this._val +  ",\n next: " + this._next. + "}";
-//    }
+    @Override
+    public String toString() {
+        return "" + this._val;
+    }
 }

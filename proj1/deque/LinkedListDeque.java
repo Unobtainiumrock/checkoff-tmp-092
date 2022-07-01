@@ -2,80 +2,108 @@ package deque;
 import java.util.*;
 
 
-public class LinkedListDeque<T> implements deque.Deque {
-
-    private Node<T> _head;
-
-    private Node<T> _tail;
-
+public class LinkedListDeque<T> implements Deque<T> {
+    private SentinelNode<T> _sentinel;
     private int _size = 0;
 
-    LinkedListDeque() {
-        this._head = new SentinelNode<>(null);
-        this._tail = this._head;
-    }
+    LinkedListDeque(T t) {
+        Node<T> n = new Node<>(t);
+        this._sentinel = new SentinelNode<>(null);
 
-    LinkedListDeque (Node<T> node) {
-        this._head.setNext(node);
-        node.setPrev(this._head);
+        this._sentinel.setNext(n);
+        this._sentinel.setPrev(n);
+        n.setPrev(this._sentinel);
+        n.setNext(this._sentinel);
         this._size++;
-        this._tail = node;
     }
 
+    // ArrayList is used to ease iteration of my
+    // helper constructor.
     LinkedListDeque(ArrayList<Node<T>> nodes) {
+        this._sentinel = new SentinelNode<>(null);
         int k = 0;
+
         for (Node<T> node : nodes) {
             if (k == 0) {
-                this._head = node;
-                this._tail = node;
+                this._sentinel.setNext(node);
+                this._sentinel.setPrev(node);
+                node.setPrev(this._sentinel);
+                node.setNext(this._sentinel);
                 k++;
-            } else {
-                node.setPrev(this._tail);
-                this._tail.setNext(node);
-                this._head.setPrev(node);
-                this._tail = node;
             }
+            this._sentinel.getPrev().setNext(node);
+            node.setNext(this._sentinel);
         }
         this._size += nodes.size();
     }
 
     @Override
-    public void addFirst(Node<T> node) {
-        node.setNext(this._head.getNext());
-        this._head.getNext().setPrev(node);
-        node.setPrev(this._head);
-        this._head.setNext(node);
+    public T removeFirst() {
+        Node<T> oldHead = this._sentinel.getNext();
+        T oldHeadVal = oldHead.getVal();
+
+        this._sentinel.setNext(oldHead.getNext());
+
+        return oldHeadVal;
     }
 
     @Override
-    public void addLast(Object o) {
+    public T removeLast() {
+        Node<T> oldTail = this._sentinel.getPrev();
+        T oldTailVal = oldTail.getVal();
 
+        this._sentinel.setPrev(oldTail.getPrev());
+
+        return oldTailVal;
     }
 
     @Override
-    public E removeFirst() {
+    public void addFirst(T val) {
+        Node<T> node = new Node<>(val);
+        Node<T> head = this._sentinel.getNext();
+        Node<T> tail = this._sentinel.getPrev();
 
-
+        node.setNext(head);
+        head.setPrev(node);
+        node.setPrev(tail);
+        tail.setNext(node);
     }
 
     @Override
-    public E removeLast() {
+    public void addLast(T val) {
+        Node<T> node = new Node<>(val);
+        Node<T> head = this._sentinel.getNext();
+        Node<T> tail = this._sentinel.getPrev();
+
+        node.setPrev(tail);
+        tail.setNext(node);
+        node.setNext(head);
+        head.setPrev(node);
 
     }
 
-    @Override
-    public E get(int index) {
-
+    public T get(int index) {
+        if (this._size == 0 || index > this._size) {
+            return null;
+        } else {
+            Node<T> curr = this._sentinel.getNext();
+            for (int i = 0; i < index; i++) {
+                curr = curr.getNext();
+            }
+            return curr.getVal();
+        }
     }
 
     @Override
     public int size() {
-        return 0;
+        return this._size;
     }
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        if () {
+
+        }
     }
 
     @Override
