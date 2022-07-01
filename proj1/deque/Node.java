@@ -2,37 +2,32 @@ package deque;
 
 public class Node<T> implements Comparable<Node<T>> {
     private T _val;
-    private T _next;
-    private T _prev;
-
-    public Node() {
-        this._val = null;
-        this._next = (T) this;
-        this._prev = (T) this;
-    }
+    private Node<T> _next;
+    private Node<T> _prev;
 
     public Node(T val) {
         this._val = val;
-        this._next = null;
+        this._next = this;
+        this._prev = this;
     }
 
-    public void setPrev(T val) {
-        this._prev = (T) new Node(val);
+    public void setPrev(Node<T> node) {
+        this._prev = node;
     }
 
-    public void setNext(T val) {
-        this._next = (T) new Node(val);
+    public void setNext(Node<T> node) {
+        this._next = node;
     }
 
     public T getVal() {
         return this._val;
     }
 
-    public T getNext() {
+    public Node<T> getNext() {
         return this._next;
     }
 
-    public T getPrev() {
+    public Node<T> getPrev() {
         return this._prev;
     }
 
