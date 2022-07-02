@@ -26,16 +26,19 @@ public class ListSet implements SimpleSet {
         this.elems.remove(toRemove);
     }
 
+
     /** Return true if k is in this set, false otherwise. */
     public boolean contains(int k) {
         return this.elems.contains(k);
     }
 
+    @Override
     /** Return true if this set is empty, false otherwise. */
     public boolean isEmpty() {
-      return this.size() == 0;
+        return this.elems.isEmpty();
     }
 
+    @Override
     /** Returns the number of items in the set. */
     public int size() {
         return this.elems.size();
@@ -44,6 +47,11 @@ public class ListSet implements SimpleSet {
     /** Returns an array containing all of the elements in this collection. */
     public int[] toIntArray() {
         int[] res = new int[this.size()];
+
+        if (this.isEmpty()) {
+            return res;
+        }
+
         int i = 0;
         Iterator<Integer> iter = this.elems.iterator();
 

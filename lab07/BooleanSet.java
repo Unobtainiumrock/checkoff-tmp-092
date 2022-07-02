@@ -25,8 +25,10 @@ public class BooleanSet implements SimpleSet {
     @Override
     /** Removes k from the set. */
     public void remove(int k) {
-        this.contains[k] = false;
-        this.size--;
+        if (this.contains(k)) {
+            this.contains[k] = false;
+            this.size--;
+        }
     }
 
     @Override
@@ -51,9 +53,13 @@ public class BooleanSet implements SimpleSet {
     public int[] toIntArray() {
         int[] res = new int[this.size()];
 
+        if (this.isEmpty()) {
+            return res;
+        }
+
         for (int i = 0; i < this.size(); i++) {
             if (this.contains(i)) {
-                res[i] = i + 1;
+                res[i] = i;
             }
         }
         return res;
