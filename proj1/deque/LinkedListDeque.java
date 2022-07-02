@@ -94,10 +94,32 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
+    public T recursiveGet(int index) {
+        Node<T> curr = this._sentinel.getNext();
+        return this.recursiveHelper(curr,index).getVal();
+    }
+
+    private Node<T> recursiveHelper(Node<T> node, int index) {
+        if (index == 0) {
+
+        }
+        return recursiveHelper(node.next, index - 1);
+    }
+
     public int size() {
         return this._size;
     }
 
+    @Override
+    public String toString() {
+        Node<T> curr = this._sentinel.getNext();
+        String out = "(";
+
+        return out;
+
+    }
+
+@Override
     public boolean contains(Object o) {
         Node<T> curr = this._sentinel.getNext();
         boolean res = false;
