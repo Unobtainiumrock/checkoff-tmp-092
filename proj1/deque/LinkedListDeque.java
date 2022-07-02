@@ -1,4 +1,5 @@
 package deque;
+
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -96,7 +97,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     public T recursiveGet(int index) {
         Node<T> curr = this._sentinel.getNext();
-        return this.recursiveHelper(curr,index).getVal();
+        return this.recursiveHelper(curr, index).getVal();
     }
 
     private Node<T> recursiveHelper(Node<T> node, int index) {
@@ -119,7 +120,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     }
 
-@Override
+    @Override
     public boolean contains(Object o) {
         Node<T> curr = this._sentinel.getNext();
         boolean res = false;
@@ -128,7 +129,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             return !res;
         }
 
-        while(curr.hasNext()) {
+        while (curr.hasNext()) {
             curr = curr.getNext();
 
             if (curr.equals(o)) {
@@ -136,6 +137,15 @@ public class LinkedListDeque<T> implements Deque<T> {
             }
         }
         return res;
+    }
+
+    public void printDeque() {
+        Node curr = this._sentinel.getNext();
+
+        for (int i = 0; i < this._size; i++) {
+            System.out.print(curr + " ");
+            curr = curr.getNext();
+        }
     }
 
     @Override
@@ -154,7 +164,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             head = head.getNext();
             k++;
         }
-        return  arr;
+        return arr;
     }
 
     // Nuh uh. Deal with deep nesting later.
@@ -181,7 +191,7 @@ public class LinkedListDeque<T> implements Deque<T> {
             return !res;
         }
 
-        while(curr.hasNext()) {
+        while (curr.hasNext()) {
             curr = curr.getNext();
 
             // Make sure the linked list re-links, if removing something
@@ -209,6 +219,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     public void clear() {
 
     }
+
     // The rest don't technically need to be implemented according to the project spec,
     // I can add them later if we really want to have some fun..
     @Override
