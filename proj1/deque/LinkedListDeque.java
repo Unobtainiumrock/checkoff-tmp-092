@@ -50,13 +50,22 @@ public class LinkedListDeque<T> implements Deque<T> {
         return this._sentinel.getPrev();
     }
 
+    public void setHead(Node<T> n) {
+        this._sentinel.setPrev(n);
+    }
+
+    public void setTail(Node<T> n) {
+        this._sentinel.setNext(n);
+    }
+
     @Override
     public T removeFirst() {
         Node<T> oldHead = this.getHead();
         T oldHeadVal = oldHead.getVal();
 
-        this._sentinel.setNext(oldHead.getNext());
-
+        this.setTail(oldHead.getNext());
+        oldHead.getNext().setPrev(this._sentinel);
+        this._size--;
         return oldHeadVal;
     }
 
@@ -65,8 +74,10 @@ public class LinkedListDeque<T> implements Deque<T> {
         Node<T> oldTail = this.getTail();
         T oldTailVal = oldTail.getVal();
 
-        this._sentinel.setPrev(oldTail.getPrev());
-
+        oldTail.getPrev().setNext(this._sentinel);
+        this.setHead(oldTail.getPrev());
+        oldTail.setNext(null);
+        this._size--;
         return oldTailVal;
     }
 
@@ -74,24 +85,25 @@ public class LinkedListDeque<T> implements Deque<T> {
     public void addFirst(T val) {
         Node<T> node = new Node<>(val);
         Node<T> head = this.getHead();
-        Node<T> tail = this.getTail();
 
         node.setNext(head);
         head.setPrev(node);
-        node.setPrev(tail);
-        tail.setNext(node);
+        node.setPrev(this._sentinel);
+        this.setTail(node);
+
+        this._size++;
     }
 
     @Override
     public void addLast(T val) {
         Node<T> node = new Node<>(val);
-        Node<T> head = this.getHead();
         Node<T> tail = this.getTail();
 
         node.setPrev(tail);
         tail.setNext(node);
-        node.setNext(head);
-        head.setPrev(node);
+        node.setNext(this._sentinel);
+        this.setHead(node);
+        this._size++;
 
     }
 
@@ -154,9 +166,10 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public String toString() {
         Node<T> curr = this.getHead();
-        String out = "(";
+        String out = "";
 
         while (curr.hasNext()) {
+            out += "(";
             out += curr.getVal();
             out += ") -> ";
             curr = curr.getNext();
@@ -185,6 +198,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
+    @Override
     public void printDeque() {
         Node<T> curr = this.getHead();
 

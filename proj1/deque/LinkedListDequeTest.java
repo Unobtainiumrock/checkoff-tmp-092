@@ -44,33 +44,24 @@ public class LinkedListDequeTest {
         assertTrue(Integer.compare(2, lld.removeFirst()) == 0);
 
 
-        lld.addLast(10); //lld = 2, 10
-        assertTrue(Integer.compare(10, lld.removeLast()) == 0);
+        lld.addLast(10); //lld = 10
+        assertTrue(Integer.compare(10, lld.removeFirst()) == 0);
 
 
-        lld.addLast(20); //lld = 2, 10, 20
-        lld.addFirst(7); //lld = 7, 2, 10, 20
-        lld.addFirst(3); //lld = 3, 7, 2, 10, 20
-        lld.removeLast(); //lld = 3, 7, 2, 10
-        assertTrue(Integer.compare(10, lld.removeLast()) == 0);
-
-        lld.removeFirst(); //lld = 7, 2, 10
-        assertTrue(Integer.compare(7, lld.removeFirst()) == 0);
-
-        lld.removeFirst(); //lld = 2, 10
-        assertTrue(Integer.compare(2, lld.removeLast()) == 0);
-
-        lld.removeLast(); // lld = 2
-        assertTrue(Integer.compare(2, lld.removeLast()) == 0);
-        assertTrue(Integer.compare(2, lld.removeLast()) == 0);
-
-        lld.removeFirst(); // lld = 2
+        lld.addLast(20); //lld = 20
+//        System.out.println(lld);
+        lld.addFirst(7); //lld = 7, 20
+//        System.out.println(lld);//lld = 7, 20
+        lld.addFirst(3); //lld = 3, 7, 20
+        System.out.print(lld);
+        lld.removeLast(); //lld = 3, 7
+        assertTrue(Integer.compare(7, lld.removeLast()) == 0); //lld = 3
+//
+        lld.removeFirst(); //lld = empty
         assertNull(lld.removeFirst());
-        assertNull(lld.removeLast());
-
-        lld.addFirst(17);
+//
+        lld.addFirst(17); //lld = 17
         assertTrue(Integer.compare(17, lld.removeFirst()) == 0);
-        assertTrue(Integer.compare(17, lld.removeLast()) == 0);
 
         update();
 //        lld = new LinkedListDeque<Integer>(); //do we need this?
@@ -108,6 +99,7 @@ public class LinkedListDequeTest {
         test3.addFirst(l);
         assertTrue("test3 should now contain list l", test3.contains(l));
 
+        update();
 
     }
 
@@ -130,31 +122,34 @@ public class LinkedListDequeTest {
         assertEquals(null, lld.get(5));
 
         //test for getting an index that is out of bounds of the list returns null
-        lld.addFirst(5);
+        lld.addFirst(5); //lld = 5
         assertEquals(null, lld.get(10));
 
         //test for getting the first index gets the first item, not sentinel
         assertTrue(Integer.compare(5, lld.get(0)) == 0);
         //also test that deque is not altered after using get()
-        assertTrue(Integer.compare(5, lld.removeFirst()) == 0);
+        assertTrue(Integer.compare(5, lld.removeFirst()) == 0); //lld = empty
 
 
         //test for getting the last index gets the tail item, not sentinel
         //also test that deque is not altered after using get()
+        lld.addFirst(5); //lld = 5
         lld.addFirst(13); //lld: 13, 5
         lld.addLast(20); // lld: 13, 5, 20
         assertTrue(Integer.compare(20, lld.get(2)) == 0);
-        assertTrue(Integer.compare(20, lld.removeLast()) == 0);
+
+        assertTrue(Integer.compare(20, lld.removeLast()) == 0); //lld = 13, 5
 
         //test getting an index somewhere within the list
         //also test that deque is not altered after using get()
-        lld.addLast(3); // lld: 13, 5, 20, 3
-        lld.addFirst(9); // lld: 9, 13, 5, 20, 3
+        lld.addLast(3); // lld: 13, 5, 3
+        lld.addFirst(9); // lld: 9, 13, 5, 3
         assertTrue(Integer.compare(13, lld.get(1)) == 0);
 
-        lld.removeLast(); // lld: 9, 13, 5, 20
+        lld.removeLast(); // lld: 9, 13, 5
         assertTrue(Integer.compare(13, lld.get(1)) == 0);
-        assertEquals(null, lld.get(4));
+        assertEquals(null, lld.get(3));
+        System.out.println(lld); //lld: 9, 13, 5
 
         update();
 
@@ -163,7 +158,14 @@ public class LinkedListDequeTest {
 
     @Test
     public void printDequeTest() {
+        lld.addFirst(5);
+        lld.addFirst(10);
+        lld.addFirst(3);
+        lld.addLast(14);
+        lld.addLast(20); // lld = 3, 10, 5, 14, 20
+        lld.printDeque();
 
+        update();
     }
 
     @Test
@@ -175,11 +177,11 @@ public class LinkedListDequeTest {
         assertEquals(null, testComparison.get(0));
         assertTrue(lld.equals(testComparison) == true);
 
-        lld.addFirst(14);
+        lld.addFirst(14); //lld = 14
         assertTrue(Integer.compare(lld.size(), testComparison.size()) > 0);
         assertTrue(lld.equals(testComparison) == false);
 
-        testComparison.addLast(14);
+        testComparison.addLast(14); //TC = 14
         assertTrue(Integer.compare(lld.size(), testComparison.size()) == 0);
         assertTrue(lld.equals(testComparison) == true);
 
@@ -214,6 +216,8 @@ public class LinkedListDequeTest {
         lld.addLast(15);
         lld.addFirst(1);
         assertEquals(3, lld.size());
+
+        update();
 
     }
 

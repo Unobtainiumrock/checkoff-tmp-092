@@ -61,4 +61,9 @@ public interface Deque<E> extends Queue {
      * @return
      */
     E get(int index) throws NoSuchElementException;
+
+    /**
+     * Prints the deque, separated by whitespace, ends with a new line
+     */
+    void printDeque();
 }
