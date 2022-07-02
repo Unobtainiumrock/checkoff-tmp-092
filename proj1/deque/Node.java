@@ -1,7 +1,7 @@
 package deque;
 
 public class Node<T> implements Comparable<Node<T>> {
-    private T _val;
+    private final T _val;
     private Node<T> _next;
     private Node<T> _prev;
 
@@ -9,14 +9,6 @@ public class Node<T> implements Comparable<Node<T>> {
         this._val = val;
         this._next = this;
         this._prev = this;
-    }
-
-    public void setPrev(Node<T> node) {
-        this._prev = node;
-    }
-
-    public void setNext(Node<T> node) {
-        this._next = node;
     }
 
     public T getVal() {
@@ -27,8 +19,16 @@ public class Node<T> implements Comparable<Node<T>> {
         return this._next;
     }
 
+    public void setNext(Node<T> node) {
+        this._next = node;
+    }
+
     public Node<T> getPrev() {
         return this._prev;
+    }
+
+    public void setPrev(Node<T> node) {
+        this._prev = node;
     }
 
     public boolean hasNext() {
@@ -39,8 +39,7 @@ public class Node<T> implements Comparable<Node<T>> {
     public int compareTo(Node<T> o) {
         if (this._val instanceof String) {
             return ((String) this._val).compareTo((String) o.getVal());
-        }
-        else {
+        } else {
             Integer a = ((Integer) this._val).intValue();
             Integer b = ((Integer) o.getVal()).intValue();
             return Integer.compare(a, b);
@@ -51,17 +50,15 @@ public class Node<T> implements Comparable<Node<T>> {
     public boolean equals(Object o) {
         if (o == this) {
             return true;
-        }
-        else if (o == null || !(o instanceof Node)) {
+        } else if (o == null || !(o instanceof Node)) {
             return false;
         }
         Node<?> otherNode = (Node<?>) o;
-
-        return this._val.equals(otherNode.getVal()) && this._next.equals(otherNode.getNext());
+        return this._val.equals(otherNode.getVal());
     }
 
     @Override
     public String toString() {
-        return "" + this._val;
+        return this.getVal() + " ";
     }
 }
