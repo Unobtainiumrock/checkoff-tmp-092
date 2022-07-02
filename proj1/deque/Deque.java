@@ -4,6 +4,7 @@ import java.util.Queue;
 
 // Source: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Deque.html#addFirst(E)
 public interface Deque<E> extends Queue {
+
     /**
      * Inserts the specified element at the front of this deque if it is possible to do so immediately without violating capacity restrictions,
      * throwing an IllegalStateException if no space is currently available. When using a capacity-restricted deque,
@@ -31,7 +32,7 @@ public interface Deque<E> extends Queue {
     void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
 
     /**
-     * Retrieves and removes the first element of this deque. Thi   s method differs from pollFirst only in that
+     * Retrieves and removes the first element of this deque. This method differs from pollFirst only in that
      * it throws an exception if this deque is empty.
      *
      * @return the head of this deque.
@@ -49,7 +50,7 @@ public interface Deque<E> extends Queue {
     E removeLast() throws NoSuchElementException;
 
     default boolean isEmpty() {
-        return this.size() > 0;
+        return this.size() == 0;
     }
 
     /**
@@ -61,5 +62,10 @@ public interface Deque<E> extends Queue {
      */
     E get(int index) throws NoSuchElementException;
 
-    boolean equals(Object o);
+    /**
+     * Prints the deque, separated by whitespace, ends with a new line
+     */
+    void printDeque();
+
+    E recursiveGet(int index);
 }
