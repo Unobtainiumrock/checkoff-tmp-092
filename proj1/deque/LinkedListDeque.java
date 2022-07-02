@@ -42,9 +42,17 @@ public class LinkedListDeque<T> implements Deque<T> {
         this._size += nodes.size();
     }
 
+    public Node<T> getHead() {
+        return this._sentinel.getNext();
+    }
+
+    public Node<T> getTail() {
+        return this._sentinel.getPrev();
+    }
+
     @Override
     public T removeFirst() {
-        Node<T> oldHead = this._sentinel.getNext();
+        Node<T> oldHead = this.getHead();
         T oldHeadVal = oldHead.getVal();
 
         this._sentinel.setNext(oldHead.getNext());
@@ -54,7 +62,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T removeLast() {
-        Node<T> oldTail = this._sentinel.getPrev();
+        Node<T> oldTail = this.getTail();
         T oldTailVal = oldTail.getVal();
 
         this._sentinel.setPrev(oldTail.getPrev());
@@ -65,8 +73,8 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public void addFirst(T val) {
         Node<T> node = new Node<>(val);
-        Node<T> head = this._sentinel.getNext();
-        Node<T> tail = this._sentinel.getPrev();
+        Node<T> head = this.getHead();
+        Node<T> tail = this.getTail();
 
         node.setNext(head);
         head.setPrev(node);
@@ -77,8 +85,8 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public void addLast(T val) {
         Node<T> node = new Node<>(val);
-        Node<T> head = this._sentinel.getNext();
-        Node<T> tail = this._sentinel.getPrev();
+        Node<T> head = this.getHead();
+        Node<T> tail = this.getTail();
 
         node.setPrev(tail);
         tail.setNext(node);
@@ -91,7 +99,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         if (this._size == 0 || index > this._size) {
             return null;
         } else {
-            Node<T> curr = this._sentinel.getNext();
+            Node<T> curr = this.getHead();
             for (int i = 0; i < index; i++) {
                 curr = curr.getNext();
             }
@@ -100,7 +108,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     public T recursiveGet(int index) {
-        Node<T> curr = this._sentinel.getNext();
+        Node<T> curr = this.getHead();
         return this.recursiveHelper(curr, index).getVal();
     }
 
@@ -116,8 +124,36 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof LinkedListDeque)) {
+            return false;
+        }
+
+        LinkedListDeque<T> otherLLD = (LinkedListDeque<T>) o;
+
+        if (this._size != otherLLD.size()) {
+            return false;
+        }
+
+        Node<T> thisHead = this.getHead();
+        Node<T> otherHead = otherLLD.getHead();
+
+
+        boolean res = true;
+
+        // All nodes in this
+        // All nodes in other
+        while (thisHead.hasNext() && otherHead.hasNext()) {
+            res = res && thisHead.equals(otherHead);
+            thisHead = thisHead.getNext();
+            otherHead = otherHead.getNext();
+        }
+        return res;
+    }
+
+    @Override
     public String toString() {
-        Node<T> curr = this._sentinel.getNext();
+        Node<T> curr = this.getHead();
         String out = "(";
 
         while (curr.hasNext()) {
@@ -132,7 +168,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public boolean contains(Object o) {
-        Node<T> curr = this._sentinel.getNext();
+        Node<T> curr = this.getHead();
         boolean res = false;
 
         if (curr.equals(o)) {
@@ -150,22 +186,23 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     public void printDeque() {
-        Node curr = this._sentinel.getNext();
+        Node<T> curr = this.getHead();
 
         for (int i = 0; i < this._size; i++) {
-            System.out.print(curr + " ");
+            System.out.print(curr);
             curr = curr.getNext();
         }
+        System.out.println("");
     }
 
     @Override
     public Iterator iterator() {
-        return (Iterator) this._sentinel.getNext();
+        return (Iterator) this.getHead();
     }
 
     @Override
     public Object[] toArray() {
-        Node<T> head = this._sentinel.getNext();
+        Node<T> head = this.getHead();
         Object[] arr = new Object[this._size];
         int k = 0;
 
@@ -193,7 +230,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public boolean remove(Object o) {
-        Node<T> curr = this._sentinel.getNext();
+        Node<T> curr = this.getHead();
         boolean res = false;
 
         if (curr.equals(o)) {
@@ -217,7 +254,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public boolean addAll(Collection collection) {
-        Node<T> head = this._sentinel.getNext();
+        Node<T> head = this.getHead();
         Arrays.asList(collection).forEach((val) -> {
             head.setNext(new Node(val));
         });
