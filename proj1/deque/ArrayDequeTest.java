@@ -1,23 +1,22 @@
 package deque;
+import java.util.*;
 
-import org.junit.Test;
 
-import static org.junit.Assert.*;
-
-/* Performs some basic array deque tests. */
 public class ArrayDequeTest {
+    public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>();
 
-    /** You MUST use the variable below for all of your tests. If you test
-     * using a local variable, and not this static variable below, the
-     * autograder will not grade that test. If you would like to test
-     * ArrayDeques with types other than Integer (and you should),
-     * you can define a new local variable. However, the autograder will
-     * not grade that test. */
+        test.add(1);
+        test.add(2);
+        test.add(3);
 
-<<<<<<< HEAD
-    public static Deque<Integer> ad = new ArrayDeque<Integer>();
-=======
-    //public static Deque<Integer> ad = new ArrayDeque<Integer>();
->>>>>>> 6d79048 (Releasing proj1)
+        Deque<Integer> dal = new ArrayDeque<>(test);
 
+        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
+                .forEach((e) -> {
+                    System.out.println(e);
+                });
+
+        System.out.printf("My size is: %s", dal.size());
+    }
 }
