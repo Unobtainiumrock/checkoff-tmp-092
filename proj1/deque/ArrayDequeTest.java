@@ -1,14 +1,28 @@
 package deque;
 
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.*;
 import static org.junit.Assert.*;
 
 /* Performs some basic array deque tests. */
 public class ArrayDequeTest {
+
+  public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>();
+
+        test.add(1);
+        test.add(2);
+        test.add(3);
+
+        Deque<Integer> dal = new ArrayDeque<>(test);
+
+        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
+                .forEach((e) -> {
+                    System.out.println(e);
+                });
+
+        System.out.printf("My size is: %s", dal.size());
+    }
 
     /** You MUST use the variable below for all of your tests. If you test
      * using a local variable, and not this static variable below, the
@@ -262,6 +276,10 @@ public class ArrayDequeTest {
     public void update() {
         ad = new LinkedListDeque<Integer>();
     }
+
+    
+
+
 
 }
 
