@@ -40,24 +40,25 @@ public class LinkedListDequeTest {
     /** Adds an item, removes an item, and ensures that lld is empty afterwards. */
     @Test
     public void addRemoveTest() {
-        lld.addFirst(2);
-        assertFalse("LLDeque should not be empty", lld.isEmpty());
+        assertTrue(new LinkedListDeque<>(2) == lld.addFirst(2));
 
         lld.addLast(10);
         assertEquals(2, lld.size());
 
-        lld.removeFirst();
-        assertFalse("LLDeque should not be empty yet", lld.isEmpty());
-        assertEquals(1, lld.size());
+        assertEquals(2, lld.removeFirst());
+        assertEquals(10, lld.removeLast());
+
+        assertTrue(new LinkedListDeque<>(14) == lld.addLast(14););
 
         lld.addFirst(7);
-        lld.removeLast();
-        assertFalse("LLDeque should not be empty yet", lld.isEmpty());
-        lld.removeFirst();
-
+        lld.addFirst(3);
+        lld.addFirst(15); //lld = 15, 3, 7, 14
+        assertEquals(14, lld.removeLast()); //lld = 15, 3, 7
+        assertEquals(15, lld.removeFirst()); //lld = 3, 7
+        assertEquals(7, lld.removeLast());
 
         update();
-        lld = new LinkedListDeque<Integer>(); //do we need this?
+//        lld = new LinkedListDeque<Integer>(); //do we need this?
 
     }
 
@@ -107,30 +108,7 @@ public class LinkedListDequeTest {
      * numbers of elements, and test any other methods you haven't yet tested!
      */
 
-    @Test
-    public void addFirstTest() {
-        //test for adding item into an empty DLL
-        assertTrue(new LinkedListDeque<>(5) == lld.addFirst(5));
 
-        //test for a DLL with a value in it already (10), and adding a 5 in results in 5, 10
-        Deque<Integer> test2 = new LinkedListDeque<>(10);
-        assertTrue(new LinkedListDeque<>(5) == lld.addFirst(5));
-
-        //test for a DLL with multiple values in it (10, 4, 6, 2), result = (5, 10, 4, 6, 2)
-
-
-
-    }
-
-    @Test
-    public void addLastTest(){
-        //test for adding item into an empty DLL
-        assertTrue(new LinkedListDeque<>(5) == lld.addLast(5));
-
-        //test for DLL with value in it already (10), add in 5 result = 10, 5
-
-        // test for a DLL with multiple values (10, 4, 6, 2), result = (10, 4, 6, 2, 5)
-    }
 
     @Test
     public void getTest() {
