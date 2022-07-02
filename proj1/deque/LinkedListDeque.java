@@ -1,11 +1,15 @@
 package deque;
-
 import java.util.*;
 import java.util.function.Consumer;
 
 public class LinkedListDeque<T> implements Deque<T> {
     private SentinelNode<T> _sentinel;
     private int _size = 0;
+
+    LinkedListDeque() {
+        Node<T> n = new SentinelNode<>(null);
+        this._sentinel = (SentinelNode<T>) n;
+    }
 
     LinkedListDeque(T t) {
         Node<T> n = new Node<>(t);
@@ -102,9 +106,9 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     private Node<T> recursiveHelper(Node<T> node, int index) {
         if (index == 0) {
-
+            return node;
         }
-        return recursiveHelper(node.next, index - 1);
+        return recursiveHelper(node.getNext(), index - 1);
     }
 
     public int size() {
@@ -115,6 +119,12 @@ public class LinkedListDeque<T> implements Deque<T> {
     public String toString() {
         Node<T> curr = this._sentinel.getNext();
         String out = "(";
+
+        while (curr.hasNext()) {
+            out += curr.getVal();
+            out += ") -> ";
+            curr = curr.getNext();
+        }
 
         return out;
 
