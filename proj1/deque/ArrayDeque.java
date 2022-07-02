@@ -142,4 +142,14 @@ public class ArrayDeque<E> implements Deque<E> {
     public E get(int index) throws NoSuchElementException {
         return null;
     }
+
+    @Override
+    public void printDeque() {
+
+    }
+
+    @Override
+    public E recursiveGet(int index) {
+        return null;
+    }
 }

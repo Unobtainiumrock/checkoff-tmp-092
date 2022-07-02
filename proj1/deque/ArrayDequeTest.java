@@ -1,14 +1,11 @@
 package deque;
-//
-//import org.junit.Test;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import static org.junit.Assert.*;
-//
-///* Performs some basic array deque tests. */
-//public class ArrayDequeTest {
+
+import org.junit.Test;
+import java.util.*;
+import static org.junit.Assert.*;
+
+/* Performs some basic array deque tests. */
+public class ArrayDequeTest {
 
     public static void main(String[] args) {
         List<Integer> test = new ArrayList<>();
@@ -27,7 +24,7 @@ package deque;
         System.out.printf("My size is: %s", dal.size());
     }
 
-//
+
 //    /** You MUST use the variable below for all of your tests. If you test
 //     * using a local variable, and not this static variable below, the
 //     * autograder will not grade that test. If you would like to test
@@ -83,7 +80,7 @@ package deque;
 //        update();
 //
 //    }
-//
+
 //    /** Make sure that removing from an empty LinkedListDeque does nothing */
 //    @Test
 //    public void removeEmptyTest() {
@@ -280,6 +277,6 @@ package deque;
 //    public void update() {
 //        ad = new LinkedListDeque<Integer>();
 //    }
-//
-//}
+
+}
 
