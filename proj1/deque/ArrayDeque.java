@@ -4,23 +4,35 @@ package deque;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
     int _size;
+    double _capacity;
     Object[] _items;
+    int _nextFirst, _nextLast;
 
     ArrayDeque() {
-        this._size = 8;
+        this._capacity = 8;
+        this._size = 0;
         this._items = new Object[this._size];
+        this._nextFirst = (int) (this._capacity - 1) / 2;
+        this._nextLast = (int) (this._capacity + 1) / 2;
     }
 
     ArrayDeque(int numElements) {
-        this._size = numElements;
+        this._capacity = numElements;
+        this._size = 0;
         this._items = new Object[numElements];
     }
 
     ArrayDeque(Collection<? extends E> c) {
         this._size = c.size();
+        this._capacity = this._size;
+
+        // Increase capacity s.t. the size (number of elements) is at least 25% of the capacity
+        while (Math.log2()) {}
+
         this._items = new Object[this._size];
         Iterator<? extends  E> it = c.iterator();
         int i = 0;
@@ -32,6 +44,8 @@ public class ArrayDeque<E> implements Deque<E> {
         }
 
     }
+
+
 
 
     @Override
@@ -121,7 +135,14 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
+        //src_arr, src_pos, dest_arr, dest_pos, len
 
+        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
+        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
+
+        if ((double) this._size * 0.75 >= ) {
+
+        }
     }
 
     @Override
