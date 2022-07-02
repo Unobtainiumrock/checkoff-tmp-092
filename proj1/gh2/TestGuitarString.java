@@ -1,8 +1,18 @@
 package gh2;
 
 /* Imports the required audio library from the
+<<<<<<< HEAD
+<<<<<<< HEAD
  * edu.princeton.cs.algs4 package. */
 import edu.princeton.cs.algs4.StdAudio;
+=======
+ * edu.princeton.cs.introcs package. */
+import edu.princeton.cs.introcs.StdAudio;
+>>>>>>> 6d79048 (Releasing proj1)
+=======
+ * edu.princeton.cs.algs4 package. */
+import edu.princeton.cs.algs4.StdAudio;
+>>>>>>> 759b4c4e2d4cd1397a7d85cefc5a88b9f440e6bf
 
 import org.junit.Test;
 import static org.junit.Assert.*;

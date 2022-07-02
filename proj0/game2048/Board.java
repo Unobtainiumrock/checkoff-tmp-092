@@ -43,7 +43,8 @@ public class Board implements Iterable<Tile> {
         }
     }
 
-    /** Returns the size of the board. */
+    /** Returns the size of the board.
+     * _values is a 2d array, and .length of it returns the # of rows. */
     public int size() {
         return _values.length;
     }

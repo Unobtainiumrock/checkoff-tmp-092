@@ -121,11 +121,53 @@ public class SLList {
 
     /** Adds x to the list at the specified index. */
     public void add(int index, int x) {
-        // TODO
+        IntListNode curr = index == 0 ? this.sentinel : this.sentinel.next;
+
+        if (index  - 1 >= this.size) {
+            IntListNode node = new IntListNode(x, curr.next);
+            curr.next = node;
+            this.size++;
+            return;
+        }
+
+        for (int i = 0; i < index - 1; i++) {
+            curr = curr.next;
+        }
+
+        IntListNode node = new IntListNode(x, curr.next);
+        curr.next = node;
+        this.size++;
     }
 
     /** Destructively reverses this list. */
     public void reverse() {
-        // TODO
+        if (this.size == 0) {
+            return;
+        }
+
+        IntListNode curr = this.sentinel.next;
+        int[] stack = new int[this.size];
+
+        for (int i = 0; i < this.size; i++) {
+            stack[i] = curr.item;
+            curr = curr.next;
+        }
+
+        curr = this.sentinel;
+
+        for (int i = this.size - 1; i > 0; i--) {
+            curr.next = new IntListNode(stack[i], this.sentinel);
+            curr = curr.next;
+        }
+        curr.next = new IntListNode(stack[0], this.sentinel);
     }
+
+//    public IntListNode recurse(IntListNode node) {
+//        if (node.item == 42) {
+//            return node;
+//        }
+//        addFirst(node.item);
+//
+//        return recurse(node.next);
+//    }
 }
