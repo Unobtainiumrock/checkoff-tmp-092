@@ -58,6 +58,11 @@ public class LinkedListDeque<T> implements Deque<T> {
         this._sentinel.setNext(n);
     }
 
+    public void nullifyNode(Node<T> n) {
+        n.setNext(null);
+        n.setPrev(null);
+    }
+
     @Override
     public T removeFirst() {
         Node<T> oldHead = this.getHead();
@@ -65,6 +70,8 @@ public class LinkedListDeque<T> implements Deque<T> {
 
         this.setTail(oldHead.getNext());
         oldHead.getNext().setPrev(this._sentinel);
+        nullifyNode(oldHead); //make eligible for GC
+
         this._size--;
         return oldHeadVal;
     }
@@ -76,7 +83,8 @@ public class LinkedListDeque<T> implements Deque<T> {
 
         oldTail.getPrev().setNext(this._sentinel);
         this.setHead(oldTail.getPrev());
-        oldTail.setNext(null);
+        nullifyNode(oldTail); //make eligible for GC
+
         this._size--;
         return oldTailVal;
     }
@@ -107,6 +115,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     }
 
+    @Override
     public T get(int index) {
         if (this._size == 0 || index > this._size) {
             return null;
@@ -119,7 +128,11 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
+    @Override
     public T recursiveGet(int index) {
+        if (this._size == 0 || index > this._size) {
+            return null;
+        }
         Node<T> curr = this.getHead();
         return this.recursiveHelper(curr, index).getVal();
     }

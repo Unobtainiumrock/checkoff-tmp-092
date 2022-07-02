@@ -64,7 +64,6 @@ public class LinkedListDequeTest {
         assertTrue(Integer.compare(17, lld.removeFirst()) == 0);
 
         update();
-//        lld = new LinkedListDeque<Integer>(); //do we need this?
 
     }
 
@@ -149,6 +148,46 @@ public class LinkedListDequeTest {
         lld.removeLast(); // lld: 9, 13, 5
         assertTrue(Integer.compare(13, lld.get(1)) == 0);
         assertEquals(null, lld.get(3));
+        System.out.println(lld); //lld: 9, 13, 5
+
+        update();
+
+    }
+
+
+    @Test
+    public void recursiveGetTest() {
+        //test for getting an index from an empty list should return null
+        assertEquals(null, lld.recursiveGet(5));
+
+        //test for getting an index that is out of bounds of the list returns null
+        lld.addFirst(5); //lld = 5
+        assertEquals(null, lld.recursiveGet(10));
+
+        //test for getting the first index gets the first item, not sentinel
+        assertTrue(Integer.compare(5, lld.recursiveGet(0)) == 0);
+        //also test that deque is not altered after using get()
+        assertTrue(Integer.compare(5, lld.removeFirst()) == 0); //lld = empty
+
+
+        //test for getting the last index gets the tail item, not sentinel
+        //also test that deque is not altered after using get()
+        lld.addFirst(5); //lld = 5
+        lld.addFirst(13); //lld: 13, 5
+        lld.addLast(20); // lld: 13, 5, 20
+        assertTrue(Integer.compare(20, lld.recursiveGet(2)) == 0);
+
+        assertTrue(Integer.compare(20, lld.removeLast()) == 0); //lld = 13, 5
+
+        //test getting an index somewhere within the list
+        //also test that deque is not altered after using get()
+        lld.addLast(3); // lld: 13, 5, 3
+        lld.addFirst(9); // lld: 9, 13, 5, 3
+        assertTrue(Integer.compare(13, lld.recursiveGet(1)) == 0);
+
+        lld.removeLast(); // lld: 9, 13, 5
+        assertTrue(Integer.compare(13, lld.recursiveGet(1)) == 0);
+        assertEquals(null, lld.recursiveGet(3));
         System.out.println(lld); //lld: 9, 13, 5
 
         update();
