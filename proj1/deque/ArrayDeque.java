@@ -1,4 +1,4 @@
-//package deque;
-//
-//public class ArrayDeque {
-//}
+package deque;
+
+public class ArrayDeque {
+}
