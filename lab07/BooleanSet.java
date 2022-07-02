@@ -13,6 +13,7 @@ public class BooleanSet implements SimpleSet {
         size = 0;
     }
 
+    @Override
     /** Adds k to the set. */
     public void add(int k) {
         if (!(this.contains(k))) {
@@ -21,22 +22,26 @@ public class BooleanSet implements SimpleSet {
         }
     }
 
+    @Override
     /** Removes k from the set. */
     public void remove(int k) {
         this.contains[k] = false;
         this.size--;
     }
 
+    @Override
     /** Return true if k is in this set, false otherwise. */
     public boolean contains(int k) {
         return contains[k];
     }
 
+    @Override
     /** Return true if this set is empty, false otherwise. */
     public boolean isEmpty() {
         return this.size() == 0;
     }
 
+    @Override
     /** Returns the number of items in the set. */
     public int size() {
         return this.size;

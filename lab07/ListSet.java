@@ -15,7 +15,9 @@ public class ListSet implements SimpleSet {
 
     /** Adds k to the set. */
     public void add(int k) {
-        this.elems.add(k);
+        if(!(this.contains(k))) {
+            this.elems.add(k);
+        }
     }
 
     /** Removes k from the set. */
