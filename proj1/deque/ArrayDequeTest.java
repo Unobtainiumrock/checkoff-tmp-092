@@ -1,54 +1,39 @@
-//package deque;
-//
-//import org.junit.Test;
-//import java.util.*;
-//import static org.junit.Assert.*;
-//
-///* Performs some basic array deque tests. */
-//public class ArrayDequeTest {
-//
-//  public static void main(String[] args) {
-//        List<Integer> test = new ArrayList<>();
-//
-//        test.add(1);
-//        test.add(2);
-//        test.add(3);
-//
-//        Deque<Integer> dal = new ArrayDeque<>(test);
-//
-//        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
-//                .forEach((e) -> {
-//                    System.out.println(e);
-//                });
-//
-//        System.out.printf("My size is: %s", dal.size());
-//    }
-//
-//    /** You MUST use the variable below for all of your tests. If you test
-//     * using a local variable, and not this static variable below, the
-//     * autograder will not grade that test. If you would like to test
-//     * ArrayDeques with types other than Integer (and you should),
-//     * you can define a new local variable. However, the autograder will
-//     * not grade that test. */
-//
-//    public static Deque<Integer> ad = new ArrayDeque<>();
-//
-//    @Test
-//    /** Adds a few things to the list, checks that isEmpty() is correct.
-//     * This is one simple test to remind you how junit tests work. You
-//     * should write more tests of your own.
-//     *
-//     * && is the "and" operation. */
-//    public void addIsEmptySizeTest() {
-//
-//        assertTrue("A newly initialized LLDeque should be empty", ad.isEmpty());
-//        ad.addFirst(0);
-//
-//        assertFalse("lld1 should now contain 1 item", ad.isEmpty());
-//
-//        update(); //Assigns lld equal to a new, clean LinkedListDeque!
-//
-//    }
+package deque;
+import java.util.*;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/* Performs some basic array deque tests. */
+public class ArrayDequeTest {
+
+  public static void main(String[] args) {
+        List<Integer> test = new ArrayList<>();
+
+        test.add(1);
+        test.add(2);
+        test.add(3);
+
+        Deque<Integer> dal = new ArrayDeque<>(test);
+
+        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
+                .forEach((e) -> {
+                    System.out.println(e);
+                });
+
+        System.out.printf("My size is: %s\n", dal.size());
+
+        Deque<Integer> testTwo = new ArrayDeque<>(17);
+        System.out.println(testTwo.size());
+  }
+
+    /** You MUST use the variable below for all of your tests. If you test
+     * using a local variable, and not this static variable below, the
+     * autograder will not grade that test. If you would like to test
+     * ArrayDeques with types other than Integer (and you should),
+     * you can define a new local variable. However, the autograder will
+     * not grade that test. */
+
 //
 //    /** Adds an item, removes an item, and ensures that lld is empty afterwards. */
 //    @Test
@@ -282,4 +267,6 @@
 //
 //
 //}
-//
+
+}
+
