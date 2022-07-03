@@ -14,7 +14,7 @@ public class ArrayDeque<E> implements Deque<E> {
     ArrayDeque() {
         this._capacity = 8;
         this._size = 0;
-        this._items = new Object[this._size];
+        this._items = new Object[this._capacity];
         this._nextFirst = (this._capacity - 1) / 2;
         this._nextLast = (this._capacity + 1) / 2;
     }
@@ -22,24 +22,27 @@ public class ArrayDeque<E> implements Deque<E> {
     ArrayDeque(int numElements) {
         this._capacity = numElements;
         this._size = 0;
-        this.notPowerOfTwoUpsize();
+        this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
+        this._items = new Object[this._capacity]; // Capacity is changed by power2 upsize.
         this._nextFirst = (int) (this._capacity - 1) / 2;
         this._nextLast = (int) (this._capacity + 1) / 2;
-        this._items = new Object[numElements];
     }
 
     ArrayDeque(Collection<? extends E> c) {
         this._size = c.size();
         this._capacity = this._size;
+        this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
+        this._items = new Object[this._capacity]; // Capacity is changed by power2 upsize.
+        this._nextLast = 0;
+        this._nextFirst = this._capacity - 1;
 
-
-        this._items = new Object[this._size];
         Iterator<? extends E> it = c.iterator();
         int i = 0;
 
         while (it.hasNext()) {
-            this._items[i] = it.next();
-            i++;
+//            this._items[i] = it.next();
+//            i++;
+            this.addLast(it.next());
         }
 
     }
@@ -250,7 +253,7 @@ public class ArrayDeque<E> implements Deque<E> {
      * Increase capacity s.t. the size (number of elements) is at least 25% of the capacity --used for
      * non-powers of two when instantiating an ArrayDeque i.e. preemptively add padding.
      */
-    private void notPowerOfTwoUpsize() {
+    private void powerOfTwoUpsize() {
         double logTwo = this._log2(this._capacity);
 
         while (Math.floor(logTwo) != logTwo) {
@@ -279,7 +282,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._items = dest;
         this._capacity *= 2;
     }
-    
+
     private void shrink() {
         int oldCapacity = this._capacity;
         Object[] src = this._items;
