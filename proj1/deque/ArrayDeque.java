@@ -372,33 +372,50 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public E removeFirst() {
-        if ((this._size - 1) / this._capacity < 0.25) {
+        if ((this._size - 1) / this._capacity < 0.25 && this._capacity >= 16) {
             shrink();
         }
         int a = this._nextFirst;
         int b = this._capacity;
+        Object temp = this._items[cyclicIndexing(a + 1, b)];
+        this._items[cyclicIndexing(a + 1, b)] = null;
         this._nextFirst = cyclicIndexing(a + 1, b);
         this._size--;
 
-        return (E) this._items[this._nextFirst];
+        return (E) temp;
     }
 
     @Override
     public E removeLast() {
-        if ((this._size - 1) / this._capacity < 0.25) {
+        if ((this._size - 1) / this._capacity < 0.25 && this._capacity >= 16) {
             shrink();
         }
         int a = this._nextLast;
         int b = this._capacity;
+        Object temp = this._items[cyclicIndexing(a - 1, b)];
+        this._items[cyclicIndexing(a - 1, b)] = null;
         this._nextLast = cyclicIndexing(a - 1, b);
         this._size--;
 
-        return (E) this._items[cyclicIndexing(a, b)];
+        return (E) temp;
     }
 
     @Override
     public E get(int index) {
-        return (E) this._items[index];
+        if (index > this._capacity - 1 || this._size == 0) {
+            return null;
+        }
+        int L = this._nextLast;
+        int F = this._nextFirst;
+        if (F < L) {
+            return (E) this._items[cyclicIndexing((F + index + 1), this._capacity)];
+//            0  0  0  0   0 2 3 0 1 3 0  4  5  6  7  8  9
+//            12 13 14 15 16 0 1 2 3 4 5  6  7  8  9  10 11   --index for user
+//            0   1  2  3  4 5 6 7 8 9 10 11 12 13 14 15 16   --index
+//                         F       L
+        }
+            return (E) this._items[cyclicIndexing((L + index + 1), this._capacity)];
+
     }
 
     @Override
@@ -423,6 +440,25 @@ public class ArrayDeque<E> implements Deque<E> {
     @Override
     public int size() {
         return this._size;
+    }
+
+
+    public boolean equals(Object[] o) {
+        System.out.println("I was invoked!");
+        boolean res = true;
+        if (o.length != this._capacity) {
+            return  !res;
+        }
+
+        for (int i = 0; i < this._capacity; i++) {
+            if  (o[i] != null && this._items[i] != null) {
+                res = res && (o[i].equals(this._items[i]));
+                if (res == false) {
+                    return false;
+                }
+            }
+        }
+        return res;
     }
 
     @Override
