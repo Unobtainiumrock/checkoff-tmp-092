@@ -23,8 +23,9 @@ public class ArrayDequeTest {
 
         System.out.printf("My size is: %s\n", dal.size());
 
-        Deque<Integer> testTwo = new ArrayDeque<>(17);
+        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
         System.out.println(testTwo.size());
+        System.out.println(testTwo.getCapacity());
   }
 
     /** You MUST use the variable below for all of your tests. If you test
