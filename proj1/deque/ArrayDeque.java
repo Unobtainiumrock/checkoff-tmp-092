@@ -7,7 +7,7 @@ import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
     int _size;
-    double _capacity;
+    int _capacity;
     Object[] _items;
     int _nextFirst, _nextLast;
 
@@ -15,14 +15,14 @@ public class ArrayDeque<E> implements Deque<E> {
         this._capacity = 8;
         this._size = 0;
         this._items = new Object[this._size];
-        this._nextFirst = (int) (this._capacity - 1) / 2;
-        this._nextLast = (int) (this._capacity + 1) / 2;
+        this._nextFirst = (this._capacity - 1) / 2;
+        this._nextLast = (this._capacity + 1) / 2;
     }
 
     ArrayDeque(int numElements) {
         this._capacity = numElements;
         this._size = 0;
-        this._upsize();
+        this.notPowerOfTwoCommaUpsize();
         this._nextFirst = (int) (this._capacity - 1) / 2;
         this._nextLast = (int) (this._capacity + 1) / 2;
         this._items = new Object[numElements];
@@ -114,9 +114,10 @@ public class ArrayDeque<E> implements Deque<E> {
      *         L  F
      * About to overlap, if we were to advance any pointers. Conveniently enough,
      * this happens to be when the number of elements if 75% of the available capacity!
-     * 6 / 8 = 0.75 also observe that the "length" of the empty spaces is two, this will
-     * come into play later
+     * 6 / 8 = 0.75
      *
+     * note: observe that the "length" of the empty spaces is two, this will
+     * come into play later when observing a pattern.
      *
      * This is when we will double the capacity from 8 to 16.
      *
@@ -124,6 +125,15 @@ public class ArrayDeque<E> implements Deque<E> {
      * how the initial state of an arbitrary emtpy array looks like with respect to
      * the initial positions of their nextFirst and nextLast pointers.
      * (they should always be next to each other)
+     *
+     * {_,_,_,_,_,_,_,_}
+     *        F L
+     * Padding should always be distributed evenly, meaning that when doubling the size from
+     * 8 to 16, padding of 4 should go after the L pointer, and a padding of 8 should
+     * go before the F pointer.
+     *
+     * The tricky part to take into account is what happens for each
+     *
      *
      * source {5, 6, _, _, 1, 2, 3, 4}
      *               L  F
@@ -154,7 +164,7 @@ public class ArrayDeque<E> implements Deque<E> {
      * transformation 2: a, L, b, len(b) - (len(a) - L), len(a) - L
      *
      * expect: {4, 3, 2, 1, _, _, _, _, _, _, _, _, _, _, 6, 5}
-     * comfirmed!
+     * Comfirmed!
      *
      * {_,_,_,_,_,_,_,_}
      *        F L
@@ -184,11 +194,28 @@ public class ArrayDeque<E> implements Deque<E> {
      *  Transformation 2: a, L, b, len(b) - (len(a) - L), len(a) - L
      *
      *  expect: {_,_,_,_,_,_,_,_,_,_,3,1,2,4,69,69}
+     *           L                 F
      *  confirmed!
      *
+     *
+     *  List of things to implement.
+     *  transformation
+     *  checkCapacity
+     *  upsize
+     *  cyclic iteration
+     *  pointers for first and last
+     *  logic for advancing pointers
+     *  a way to check configurations [L, F] and [F, L]
+     *  downsizing (last)
+     *
+     *
      */
-    private void _upsize() {
-        // Increase capacity s.t. the size (number of elements) is at least 25% of the capacity
+
+    /**
+     * Increase capacity s.t. the size (number of elements) is at least 25% of the capacity --used for
+     * non-powers of two.
+     */
+    private void notPowerOfTwoCommaUpsize() {
         double logTwo = this._log2(this._capacity);
 
         while (Math.floor(logTwo) != logTwo) {
@@ -197,32 +224,69 @@ public class ArrayDeque<E> implements Deque<E> {
         }
     }
 
-    @Override
-    public void addFirst(E e) {
-        //src_arr, src_pos, dest_arr, dest_pos, len
+    private int cyclicIndexing(int k) {
+        return k % this._size;
+    }
 
-        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
-        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
-        if ((double) this._size * 0.75 >= 0) {
+    private void grow() {
+        double percentageFilled = this._size / this._capacity;
 
+        if (percentageFilled >= 0.75) {
+            Object[] doubledCapacity = new Object[this._capacity * 2];
+            transform(this._items, doubledCapacity);
+            this._items = doubledCapacity;
+            this._capacity = doubledCapacity.length;
         }
     }
-//  {_, _, _, _, _, _, _ F, L, _, _, _, _, _, _, _}
-//  {5, 6,_, _, _, _, 69, 69, 69, 69, 69, 69, 1, 2, 3, 4,} -Nick was here.
-//        L           F
-//
-    @Override
-    public void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
 
+    private void shrink() {
+        double percentageFilled = this._size / this._capacity;
+
+        if (percentageFilled <= 0.75) {
+            Object[] halvedCapacity = new Object[this._capacity * 2];
+            
+        }
+    }
+
+    private void transform(Object[] src, Object[] dest) {
+        int L = this._nextLast;
+        int F = this._nextFirst;
+        if (L < F) {
+            System.arraycopy(src, 0, dest, 0, F);
+            System.arraycopy(src, F, dest, dest.length - (src.length - F), src.length - F);
+        } else {
+            System.arraycopy(src, 0, dest, 0, L);
+            System.arraycopy(src, L, dest, dest.length - (src.length - L), src.length - L);
+        }
     }
 
     @Override
-    public E removeFirst() throws NoSuchElementException {
+    public void addFirst(E e) {
+        int i = this._size;
+        this._items[cyclicIndexing(i)] = e;
+        this._nextFirst = cyclicIndexing(i - 1);
+        this._size++;
+        grow();
+    }
+
+    @Override
+    public void addLast(E e)  {
+        int i = this._size;
+        this._items[cyclicIndexing(i)] = e;
+        this._nextLast = cyclicIndexing(i + 1);
+        this._size++;
+        grow();
+    }
+
+    @Override
+    public E removeFirst() {
+        shrink();
         return null;
     }
 
     @Override
-    public E removeLast() throws NoSuchElementException {
+    public E removeLast() {
+        shrink();
         return null;
     }
 
