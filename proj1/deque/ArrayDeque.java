@@ -1,8 +1,6 @@
 package deque;
 
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
@@ -32,9 +30,14 @@ public class ArrayDeque<E> implements Deque<E> {
         this._size = c.size();
         this._capacity = this._size;
         this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
+        // Bumps up to 4 at minimum
+        if (this._capacity < 8) {
+            this._capacity *= 2;
+        }
         this._items = new Object[this._capacity]; // Capacity is changed by power2 upsize.
         this._nextLast = 0;
         this._nextFirst = this._capacity - 1;
+        this._size = 0; // temporarily reset size, it will be updated in the addLast within while loop.
 
         Iterator<? extends E> it = c.iterator();
         int i = 0;
@@ -279,6 +282,14 @@ public class ArrayDeque<E> implements Deque<E> {
             System.arraycopy(src, 0, dest, 0, L);
             System.arraycopy(src, L, dest, dest.length - (src.length - L), src.length - L);
         }
+        // Grow
+        //      newF = cyclic16(oldF + double size)
+        //      newL = cyclic16(oldL + double size)
+        int a = this._nextFirst + (2 * this._capacity);
+        int b = this._nextLast + (2 * this._capacity);
+        int c = (int) (2 * this._capacity);
+        this._nextFirst = cyclicIndexing(a, c);
+        this._nextLast = cyclicIndexing(b, c);
         this._items = dest;
         this._capacity *= 2;
     }
@@ -309,6 +320,15 @@ public class ArrayDeque<E> implements Deque<E> {
             int b = dest.length;
             dest[i] = newSrc[cyclicIndexing(a, b)];
         }
+
+        // Shrink
+        //      newF = cyclic8(oldF - half size)
+        //      newL = cyclic8(oldL - half size)
+        int a = this._nextFirst - ((int) (0.5 * this._capacity));
+        int b = this._nextLast - ((int) 0.5 * this._capacity);
+        int c = (int) (0.5 * this._capacity);
+        this._nextFirst = cyclicIndexing(a, c);
+        this._nextLast = cyclicIndexing(b, c);
         this._items = dest;
         this._capacity /= 2;
     }
@@ -331,7 +351,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._nextFirst = cyclicIndexing(a - 1, b);
         this._size++;
 
-        if (this._size >= 0.75) {
+        if (this._size / this._capacity >= 0.75) {
             grow();
         }
 
@@ -345,7 +365,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._nextLast = cyclicIndexing(a + 1, b);
         this._size++;
 
-        if (this._size >= 0.75) {
+        if (this._size / this._capacity >= 0.75) {
             grow();
         }
     }
@@ -377,13 +397,27 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public E get(int index) throws NoSuchElementException {
-        return null;
+    public E get(int index) {
+        return (E) this._items[index];
     }
 
     @Override
     public void printDeque() {
+        // Needs to print from F to L
+        int a = this._nextFirst;
+        int b = this._capacity;
+        int c = this._nextLast;
 
+        int F = cyclicIndexing(a + 1, b);
+        int L = cyclicIndexing(c - 1, b);
+
+        for (int i = F; i <= L; i = cyclicIndexing(i + 1, b)) {
+            Object val = this.get(i);
+            if (val != null) {
+                System.out.print(val + " ");
+            }
+        }
+        System.out.println("");
     }
 
     @Override
@@ -393,44 +427,58 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public boolean contains(Object o) {
+        for (int i = 0; i < this._items.length; i++) {
+            if (o.equals(this._items[i])) {
+                return true;
+            }
+        }
         return false;
     }
 
     @Override
     public Iterator iterator() {
-        return null;
+        return Arrays.asList(this._items).iterator();
     }
+
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        return this._items;
     }
 
+    // Leave this not implemented. It's extra and not necessary
+    // for the project
     @Override
     public Object[] toArray(Object[] objects) {
         return new Object[0];
     }
 
+    // Leave this not implemented. It's extra and not necessary
+    // for the project
     @Override
     public boolean add(Object o) {
         return false;
     }
 
+    // ditto
     @Override
     public boolean remove(Object o) {
         return false;
     }
 
+    // ditto
     @Override
     public boolean addAll(Collection collection) {
         return false;
     }
 
+    // ditto
     @Override
     public void clear() {
 
     }
 
+    // ditto
     @Override
     public boolean retainAll(Collection collection) {
         return false;
@@ -441,11 +489,13 @@ public class ArrayDeque<E> implements Deque<E> {
         return false;
     }
 
+    // ditto
     @Override
     public boolean containsAll(Collection collection) {
         return false;
     }
 
+    // ditto
     @Override
     public boolean offer(Object o) {
         return false;

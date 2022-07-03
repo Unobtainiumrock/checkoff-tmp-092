@@ -22,10 +22,13 @@ public class ArrayDequeTest {
                 });
 
         System.out.printf("My size is: %s\n", dal.size());
+        System.out.printf("Capacity is: %s\n", ((ArrayDeque<Integer>) dal)._capacity);
 
-        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
-        System.out.println(testTwo.size());
-        System.out.println(testTwo.getCapacity());
+        dal.printDeque();
+
+//        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
+//        System.out.println(testTwo.size());
+//        System.out.println(testTwo.getCapacity());
   }
 
     /** You MUST use the variable below for all of your tests. If you test
