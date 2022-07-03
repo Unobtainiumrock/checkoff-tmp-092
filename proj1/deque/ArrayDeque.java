@@ -22,7 +22,7 @@ public class ArrayDeque<E> implements Deque<E> {
     ArrayDeque(int numElements) {
         this._capacity = numElements;
         this._size = 0;
-        this.notPowerOfTwoCommaUpsize();
+        this.notPowerOfTwoUpsize();
         this._nextFirst = (int) (this._capacity - 1) / 2;
         this._nextLast = (int) (this._capacity + 1) / 2;
         this._items = new Object[numElements];
@@ -248,9 +248,9 @@ public class ArrayDeque<E> implements Deque<E> {
 
     /**
      * Increase capacity s.t. the size (number of elements) is at least 25% of the capacity --used for
-     * non-powers of two.
+     * non-powers of two when instantiating an ArrayDeque i.e. preemptively add padding.
      */
-    private void notPowerOfTwoCommaUpsize() {
+    private void notPowerOfTwoUpsize() {
         double logTwo = this._log2(this._capacity);
 
         while (Math.floor(logTwo) != logTwo) {
@@ -259,54 +259,16 @@ public class ArrayDeque<E> implements Deque<E> {
         }
     }
 
-    private int cyclicIndexing(int k) {
-        return k % this._capacity;
+    private int cyclicIndexing(int k, int capacity) {
+        return k % capacity;
     }
 
-    // Rename to grow checker
     private void grow() {
-        double percentageFilled = this._size / this._capacity;
-
-        if (percentageFilled >= 0.75) {
-            Object[] doubledCapacity = new Object[this._capacity * 2];
-            transform(this._items, doubledCapacity);
-            this._items = doubledCapacity;
-            this._capacity = doubledCapacity.length;
-        }
-    }
-
-    // rename to shrink transform. [L, F] => F
-    private void shrink() {
-        int oldCapacity = this._capacity;
         Object[] src = this._items;
-        Object[] halvedCapacity = new Object[oldCapacity / 2];
-        int F = this._nextFirst;
-
-        // Build thing
-        for (int i = 0; i < halvedCapacity.length; i++) {
-            halvedCapacity[i] = src[cyclicIndexing(F + i)];
-        }
-
-        Object[] newSrc = new Object[oldCapacity / 2];
-
-        // Make copy
-        for (int i = 0; i < newSrc.length; i++) {
-            newSrc[i] = halvedCapacity[i];
-        }
-
-        // Offset with a cyclic-back-shift
-        for (int i = 0; i < halvedCapacity.length; i++) {
-            int a = i + (src.length - F);
-            int b = oldCapacity / 2;
-            halvedCapacity[i] = newSrc[a % b];
-        }
-        this._items = halvedCapacity;
-    }
-
-    // Rename to grow transform
-    private void transform(Object[] src, Object[] dest) {
+        Object[] dest = new Object[this._capacity * 2];
         int L = this._nextLast;
         int F = this._nextFirst;
+
         if (L < F) {
             System.arraycopy(src, 0, dest, 0, F);
             System.arraycopy(src, F, dest, dest.length - (src.length - F), src.length - F);
@@ -314,24 +276,75 @@ public class ArrayDeque<E> implements Deque<E> {
             System.arraycopy(src, 0, dest, 0, L);
             System.arraycopy(src, L, dest, dest.length - (src.length - L), src.length - L);
         }
+        this._items = dest;
+        this._capacity *= 2;
+    }
+    
+    private void shrink() {
+        int oldCapacity = this._capacity;
+        Object[] src = this._items;
+        Object[] dest = new Object[oldCapacity / 2];
+        int F = this._nextFirst;
+
+        // Build thing
+        for (int i = 0; i < dest.length; i++) {
+            int a = F + i;
+            int b = this._capacity;
+            dest[i] = src[cyclicIndexing(a, b)];
+        }
+
+        // Make copy
+        Object[] newSrc = new Object[oldCapacity / 2];
+
+        for (int i = 0; i < newSrc.length; i++) {
+            newSrc[i] = dest[i];
+        }
+
+        // Offset with a cyclic-back-shift
+        for (int i = 0; i < dest.length; i++) {
+            int a = i + (src.length - F);
+            int b = dest.length;
+            dest[i] = newSrc[cyclicIndexing(a, b)];
+        }
+        this._items = dest;
+        this._capacity /= 2;
+    }
+
+    // May not need this.
+    private int gcd(int a, int b) {
+        int k = a > b ? b : a;
+
+        while (a % k > 0 || b % k > 0) {
+            k --;
+        }
+        return k;
     }
 
     @Override
     public void addFirst(E e) {
-        int i = this._capacity;
-        this._items[cyclicIndexing(i)] = e;
-        this._nextFirst = cyclicIndexing(i - 1);
+        int a = this._nextFirst;
+        int b = this._capacity;
+        this._items[a] = e;
+        this._nextFirst = cyclicIndexing(a - 1, b);
         this._size++;
-        grow();
+
+        if (this._size >= 0.75) {
+            grow();
+        }
+
     }
 
     @Override
     public void addLast(E e) {
-        int i = this._capacity;
-        this._items[cyclicIndexing(i)] = e;
-        this._nextLast = cyclicIndexing(i + 1);
+        int a = this._nextLast;
+        int b = this._capacity;
+        this._items[a] = e;
+        this._nextLast = cyclicIndexing(a + 1, b);
         this._size++;
-        grow();
+
+        if (this._size >= 0.75) {
+            grow();
+        }
     }
 
     @Override
@@ -339,8 +352,12 @@ public class ArrayDeque<E> implements Deque<E> {
         if ((this._size - 1) / this._capacity < 0.25) {
             shrink();
         }
+        int a = this._nextFirst;
+        int b = this._capacity;
+        this._nextFirst = cyclicIndexing(a + 1, b);
         this._size--;
-        return null;
+
+        return (E) this._items[this._nextFirst];
     }
 
     @Override
@@ -348,8 +365,12 @@ public class ArrayDeque<E> implements Deque<E> {
         if ((this._size - 1) / this._capacity < 0.25) {
             shrink();
         }
+        int a = this._nextLast;
+        int b = this._capacity;
+        this._nextLast = cyclicIndexing(a - 1, b);
         this._size--;
-        return null;
+
+        return (E) this._items[cyclicIndexing(a, b)];
     }
 
     @Override
