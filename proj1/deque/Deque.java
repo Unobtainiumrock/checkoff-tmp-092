@@ -66,6 +66,4 @@ public interface Deque<E> extends Queue {
      * Prints the deque, separated by whitespace, ends with a new line
      */
     void printDeque();
-
-    E recursiveGet(int index);
 }

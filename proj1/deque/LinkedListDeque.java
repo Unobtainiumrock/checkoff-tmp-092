@@ -128,7 +128,6 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    @Override
     public T recursiveGet(int index) {
         if (this._size == 0 || index > this._size) {
             return null;
@@ -148,7 +147,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return this._size;
     }
 
-    @Override
+
     public boolean equals(Object o) {
         if (!(o instanceof LinkedListDeque)) {
             return false;
@@ -176,7 +175,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
-    @Override
+
     public String toString() {
         Node<T> curr = this.getHead();
         String out = "";
@@ -192,7 +191,6 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     }
 
-    @Override
     public boolean contains(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;
@@ -222,12 +220,12 @@ public class LinkedListDeque<T> implements Deque<T> {
         System.out.println("");
     }
 
-    @Override
+
     public Iterator iterator() {
         return (Iterator) this.getHead();
     }
 
-    @Override
+
     public Object[] toArray() {
         Node<T> head = this.getHead();
         Object[] arr = new Object[this._size];
@@ -242,20 +240,20 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     // Nuh uh. Deal with deep nesting later.
-    @Override
+
     public Object[] toArray(Object[] objects) {
         return new Object[0];
     }
 
     // Simply add to the end by default
-    @Override
+
     public boolean add(Object o) {
         T val = (T) o;
         this.addLast(val);
         return true;
     }
 
-    @Override
+
     public boolean remove(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;
@@ -279,7 +277,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
-    @Override
+
     public boolean addAll(Collection collection) {
         Node<T> head = this.getHead();
         Arrays.asList(collection).forEach((val) -> {
@@ -289,49 +287,49 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     // Nahh..
-    @Override
+
     public void clear() {
 
     }
 
     // The rest don't technically need to be implemented according to the project spec,
     // I can add them later if we really want to have some fun..
-    @Override
+
     public boolean retainAll(Collection collection) {
         return false;
     }
 
-    @Override
+
     public boolean removeAll(Collection collection) {
         return false;
     }
 
-    @Override
+
     public boolean containsAll(Collection collection) {
         return false;
     }
 
-    @Override
+
     public boolean offer(Object o) {
         return false;
     }
 
-    @Override
+
     public Object remove() {
         return null;
     }
 
-    @Override
+
     public Object poll() {
         return null;
     }
 
-    @Override
+
     public Object element() {
         return null;
     }
 
-    @Override
+
     public Object peek() {
         return null;
     }
