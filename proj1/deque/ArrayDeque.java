@@ -44,7 +44,7 @@ public class ArrayDeque<E> implements Deque<E> {
 
     }
 
-    public double getCapacity () {
+    public double getCapacity() {
         return this._capacity;
     }
 
@@ -209,6 +209,41 @@ public class ArrayDeque<E> implements Deque<E> {
      *  downsizing (last)
      *
      *
+     * Tests for downsizing
+     *                 0  1  2  3  4  5  6  7  8  9 10 11 12  13 14 15
+     * transform this {_, _, _, _, _, _, _, _, _, _, _, 4, 3, 2, 1, _} into...
+     *                                               F              L
+     *
+     * this
+     *  0  1  2  3  4  5  6  7
+     * {_, _, _, 4, 3, 2, 1, _}
+     *        F              L
+     *
+     * gap is defined as length of array - the number of elements between L and F
+     *
+     * F: 10 -> 2, example: 10 / gcd(10, 15) = 2, possible function: F / gcd(L, F) is the new position of F
+     * L: 15 -> 7,  example: (15 - 1) / 2 = 7, possible function: (L - 1) / 2, or possibly (L - 1) / [1/2 number of elements between F and L]
+     *
+     *
+     *
+     *
+     * len(gap): 12 -> 4, 12 - 8 = 4, possible function: len(gap) - (1/2 of downsize)
+     *
+     *
+     * src, src_start, dest, dest_start, length of copy
+     *
+     * Let newF = oldF / gcd(oldL, oldF)
+     * Let newL = (oldL - 1) / [1/2 of number of elements between oldF and oldL] <- currently not used.
+     * newL is maybe (oldL - 1) / [1/2 * [(oldL - oldF - 1)]
+     *
+     *  Transformation 1: src, oldF, dest, newF + 1, L - F
+     *
+     *  Transformation 2:
+     *
+     *
+     *
+     * To D: Implement the updating of pointers for upsizing, as we are doing for downsizing.
+     *
      */
 
     /**
@@ -225,9 +260,10 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     private int cyclicIndexing(int k) {
-        return k % this._size;
+        return k % this._capacity;
     }
 
+    // Rename to grow checker
     private void grow() {
         double percentageFilled = this._size / this._capacity;
 
@@ -239,15 +275,35 @@ public class ArrayDeque<E> implements Deque<E> {
         }
     }
 
+    // rename to shrink transform. [L, F] => F
     private void shrink() {
-        double percentageFilled = this._size / this._capacity;
+        int oldCapacity = this._capacity;
+        Object[] src = this._items;
+        Object[] halvedCapacity = new Object[oldCapacity / 2];
+        int F = this._nextFirst;
 
-        if (percentageFilled <= 0.75) {
-            Object[] halvedCapacity = new Object[this._capacity * 2];
-            
+        // Build thing
+        for (int i = 0; i < halvedCapacity.length; i++) {
+            halvedCapacity[i] = src[cyclicIndexing(F + i)];
         }
+
+        Object[] newSrc = new Object[oldCapacity / 2];
+
+        // Make copy
+        for (int i = 0; i < newSrc.length; i++) {
+            newSrc[i] = halvedCapacity[i];
+        }
+
+        // Offset with a cyclic-back-shift
+        for (int i = 0; i < halvedCapacity.length; i++) {
+            int a = i + (src.length - F);
+            int b = oldCapacity / 2;
+            halvedCapacity[i] = newSrc[a % b];
+        }
+        this._items = halvedCapacity;
     }
 
+    // Rename to grow transform
     private void transform(Object[] src, Object[] dest) {
         int L = this._nextLast;
         int F = this._nextFirst;
@@ -262,7 +318,7 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public void addFirst(E e) {
-        int i = this._size;
+        int i = this._capacity;
         this._items[cyclicIndexing(i)] = e;
         this._nextFirst = cyclicIndexing(i - 1);
         this._size++;
@@ -270,8 +326,8 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public void addLast(E e)  {
-        int i = this._size;
+    public void addLast(E e) {
+        int i = this._capacity;
         this._items[cyclicIndexing(i)] = e;
         this._nextLast = cyclicIndexing(i + 1);
         this._size++;
@@ -280,13 +336,19 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public E removeFirst() {
-        shrink();
+        if ((this._size - 1) / this._capacity < 0.25) {
+            shrink();
+        }
+        this._size--;
         return null;
     }
 
     @Override
     public E removeLast() {
-        shrink();
+        if ((this._size - 1) / this._capacity < 0.25) {
+            shrink();
+        }
+        this._size--;
         return null;
     }
 
