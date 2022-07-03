@@ -22,7 +22,8 @@ public class ArrayDeque<E> implements Deque<E> {
 
     ArrayDeque(int numElements) {
         this._capacity = numElements;
-        this._size = 0;
+        this._size = numElements;
+        this._upsize();
         this._items = new Object[numElements];
     }
 
@@ -30,11 +31,9 @@ public class ArrayDeque<E> implements Deque<E> {
         this._size = c.size();
         this._capacity = this._size;
 
-        // Increase capacity s.t. the size (number of elements) is at least 25% of the capacity
-        while (Math.log2()) {}
 
         this._items = new Object[this._size];
-        Iterator<? extends  E> it = c.iterator();
+        Iterator<? extends E> it = c.iterator();
         int i = 0;
 
         while (it.hasNext()) {
@@ -45,12 +44,67 @@ public class ArrayDeque<E> implements Deque<E> {
 
     }
 
+    private double _log2(double k) {
+        return Math.log(k) / Math.log(2);
+    }
 
+    private void _upsize() {
+        // Increase capacity s.t. the size (number of elements) is at least 25% of the capacity
+        double logTwo = this._log2(this._capacity);
+
+        while (Math.floor(logTwo) != logTwo) {
+            this._capacity++;
+            logTwo = this._log2(this._capacity);
+        }
+    }
+
+    @Override
+    public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
+//        System.arraycopy();
+//        //src_arr, src_pos, dest_arr, dest_pos, len
+//
+//        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
+//        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
+//
+//        if ((double) this._size * 0.75 >=) {
+//
+//        }
+    }
+
+    @Override
+    public void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
+
+    }
+
+    @Override
+    public E removeFirst() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E removeLast() throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public E get(int index) throws NoSuchElementException {
+        return null;
+    }
+
+    @Override
+    public void printDeque() {
+
+    }
+
+    @Override
+    public E recursiveGet(int index) {
+        return null;
+    }
 
 
     @Override
     public int size() {
-        return 0;
+        return this._size;
     }
 
     @Override
@@ -133,45 +187,4 @@ public class ArrayDeque<E> implements Deque<E> {
         return null;
     }
 
-    @Override
-    public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
-        //src_arr, src_pos, dest_arr, dest_pos, len
-
-        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
-        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
-
-        if ((double) this._size * 0.75 >= ) {
-
-        }
-    }
-
-    @Override
-    public void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
-
-    }
-
-    @Override
-    public E removeFirst() throws NoSuchElementException {
-        return null;
-    }
-
-    @Override
-    public E removeLast() throws NoSuchElementException {
-        return null;
-    }
-
-    @Override
-    public E get(int index) throws NoSuchElementException {
-        return null;
-    }
-
-    @Override
-    public void printDeque() {
-
-    }
-
-    @Override
-    public E recursiveGet(int index) {
-        return null;
-    }
 }
