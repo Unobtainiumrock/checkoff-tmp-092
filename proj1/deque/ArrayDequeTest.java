@@ -1,7 +1,7 @@
 package deque;
+import java.util.*;
 
 import org.junit.Test;
-import java.util.*;
 import static org.junit.Assert.*;
 
 /* Performs some basic array deque tests. */
@@ -33,25 +33,7 @@ public class ArrayDequeTest {
      * ArrayDeques with types other than Integer (and you should),
      * you can define a new local variable. However, the autograder will
      * not grade that test. */
-//
-//    public static Deque<Integer> ad = new ArrayDeque<>();
-//
-//    @Test
-//    /** Adds a few things to the list, checks that isEmpty() is correct.
-//     * This is one simple test to remind you how junit tests work. You
-//     * should write more tests of your own.
-//     *
-//     * && is the "and" operation. */
-//    public void addIsEmptySizeTest() {
-//
-//        assertTrue("A newly initialized LLDeque should be empty", ad.isEmpty());
-//        ad.addFirst(0);
-//
-//        assertFalse("lld1 should now contain 1 item", ad.isEmpty());
-//
-//        update(); //Assigns lld equal to a new, clean LinkedListDeque!
-//
-//    }
+
 //
 //    /** Adds an item, removes an item, and ensures that lld is empty afterwards. */
 //    @Test
@@ -279,10 +261,12 @@ public class ArrayDequeTest {
 //    public void update() {
 //        ad = new LinkedListDeque<Integer>();
 //    }
-
-    
-
-
+//
+//
+//
+//
+//
+//}
 
 }
 

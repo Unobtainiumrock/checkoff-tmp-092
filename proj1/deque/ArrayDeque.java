@@ -1,6 +1,5 @@
 package deque;
 
-
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -60,15 +59,16 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException {
-//        System.arraycopy();
-//        //src_arr, src_pos, dest_arr, dest_pos, len
-//
-//        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
-//        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
-//
-//        if ((double) this._size * 0.75 >=) {
-//
-//        }
+        System.arraycopy();
+        //src_arr, src_pos, dest_arr, dest_pos, len
+
+        // copy inclusive range of elements from src_pos to src_pos + len - 1 from src array to..
+        // dest_arr at inclusive range of dest_post to dest_pos + len - 1
+
+
+ //       if ((double) this._size * 0.75 >= ) {
+
+   //     }
     }
 
     @Override
@@ -100,7 +100,6 @@ public class ArrayDeque<E> implements Deque<E> {
     public E recursiveGet(int index) {
         return null;
     }
-
 
     @Override
     public int size() {
