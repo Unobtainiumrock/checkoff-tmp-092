@@ -1,4 +1,5 @@
 package deque;
+
 import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
@@ -329,7 +330,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._capacity /= 2;
     }
 
-    private Object[] cyclicBackShift(Object[] toBeShifted, Object[]reference, int by) {
+    private Object[] cyclicBackShift(Object[] toBeShifted, Object[] reference, int by) {
         int len = toBeShifted.length;
         // Offset with a cyclic-back-shift
         for (int i = 0; i < toBeShifted.length; i++) {
@@ -341,7 +342,7 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     // Super freaking naive approach
-    private Object[] rotateUntilAligned(Object[] toBeShifted, Object[]reference) {
+    private Object[] rotateUntilAligned(Object[] toBeShifted, Object[] reference) {
         boolean aligned = false;
         int k = 0;
 
@@ -363,7 +364,7 @@ public class ArrayDeque<E> implements Deque<E> {
     private boolean elementWiseCompare(Object[] a, Object[] b) {
         boolean res = true;
 
-        for (int i = 0; i < a.length; i ++) {
+        for (int i = 0; i < a.length; i++) {
             if (a[i] != null && b[i] != null) {
                 res = res && a[i].equals(b[i]);
             }
@@ -443,8 +444,27 @@ public class ArrayDeque<E> implements Deque<E> {
         if (index > this._capacity - 1 || this._size == 0) {
             return null;
         }
-        return (E) this._items[index];
+        Object[] a = {4, null, null, null, 0, 1, 2, 3};
+        Object[] b = new Object[8];
+        int F = 3;
+
+        int i = 0;
+
+        while (i < 7) {
+            b[i] = a[(F + i + 1) % 8];
+            i++;
+        }
+
+
+        for (int j = 0; j < b.length; j++) {
+            System.out.printf("idx: %s, val: %s\n", j, b[j]);
+        }
+
     }
+//  0 1 2 3 4 5 6 7
+//    // {4 _ _ _ 0 1 2 3 } = a
+//      // {0 1 3 _ _ _ _ _ } = b
+
 
     @Override
     public void printDeque() {
