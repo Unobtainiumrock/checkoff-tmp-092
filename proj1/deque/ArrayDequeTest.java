@@ -32,11 +32,15 @@ public class ArrayDequeTest {
         test.addLast(1);
         test.addLast(2);
         test.addLast(3);
-//        System.out.println(((ArrayDeque<Integer>) test)._capacity);
-//        System.out.println(test);
+        System.out.println(((ArrayDeque<Integer>) test)._capacity);
+        System.out.println(test);
 
+        // Convert to primitive array without padding
+        Object[] converted = ((ArrayDeque<Integer>) test).toArray();
 
-        System.out.println(((ArrayDeque<Integer>) test).toArray());
+        for (int i = 0; i < converted.length; i++) {
+            System.out.println(converted[i]);
+        }
   }
 
     /** You MUST use the variable below for all of your tests. If you test

@@ -340,6 +340,37 @@ public class ArrayDeque<E> implements Deque<E> {
         return toBeShifted;
     }
 
+    // Super freaking naive approach
+    private Object[] rotateUntilAligned(Object[] toBeShifted, Object[]reference) {
+        boolean aligned = false;
+        int k = 0;
+
+        while (!aligned) {
+            aligned = elementWiseCompare(toBeShifted, reference);
+            if (aligned) {
+                break;
+            }
+            cyclicBackShift(toBeShifted, reference, 1);
+            if (k > this._capacity) {
+                break;
+            }
+            k++;
+        }
+        return toBeShifted;
+    }
+
+    // Part of super naive approach. Assume a & b have same length
+    private boolean elementWiseCompare(Object[] a, Object[] b) {
+        boolean res = true;
+
+        for (int i = 0; i < a.length; i ++) {
+            if (a[i] != null && b[i] != null) {
+                res = res && a[i].equals(b[i]);
+            }
+        }
+        return res;
+    }
+
     // May not need this.
     private int gcd(int a, int b) {
         int k = a > b ? b : a;
@@ -542,7 +573,7 @@ public class ArrayDeque<E> implements Deque<E> {
         int F = cyclicIndexing(a + 1, c);
         int L = cyclicIndexing(b - 1, c);
 
-        Object[] tmpThis = new Object[this._size];
+        Object[] tmpThis = new Object[Math.abs(F - L)];
         int k = 0;
 
         for (int i = F; i <= L; i = cyclicIndexing(i + 1, c)) {
