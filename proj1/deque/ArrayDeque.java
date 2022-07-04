@@ -442,9 +442,15 @@ public class ArrayDeque<E> implements Deque<E> {
         System.out.println("");
     }
 
+
     @Override
     public int size() {
         return this._size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this._size == 0;
     }
 
     public boolean equals(Object o) {
@@ -547,84 +553,8 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
 
-    @Override
     public Object[] toArray() {
         return this._items;
-    }
-
-    // Leave this not implemented. It's extra and not necessary
-    // for the project
-    @Override
-    public Object[] toArray(Object[] objects) {
-        return new Object[0];
-    }
-
-    // Leave this not implemented. It's extra and not necessary
-    // for the project
-    @Override
-    public boolean add(Object o) {
-        return false;
-    }
-
-    // ditto
-    @Override
-    public boolean remove(Object o) {
-        return false;
-    }
-
-    // ditto
-    @Override
-    public boolean addAll(Collection collection) {
-        return false;
-    }
-
-    // ditto
-    @Override
-    public void clear() {
-
-    }
-
-    // ditto
-    @Override
-    public boolean retainAll(Collection collection) {
-        return false;
-    }
-
-    @Override
-    public boolean removeAll(Collection collection) {
-        return false;
-    }
-
-    // ditto
-    @Override
-    public boolean containsAll(Collection collection) {
-        return false;
-    }
-
-    // ditto
-    @Override
-    public boolean offer(Object o) {
-        return false;
-    }
-
-    @Override
-    public Object remove() {
-        return null;
-    }
-
-    @Override
-    public Object poll() {
-        return null;
-    }
-
-    @Override
-    public Object element() {
-        return null;
-    }
-
-    @Override
-    public Object peek() {
-        return null;
     }
 
 }

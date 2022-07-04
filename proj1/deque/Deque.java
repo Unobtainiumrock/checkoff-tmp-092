@@ -1,9 +1,8 @@
 package deque;
-import java.util.NoSuchElementException;
-import java.util.Queue;
+import java.util.*;
 
 // Source: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Deque.html#addFirst(E)
-public interface Deque<E> extends Queue {
+public interface Deque<E> {
 
     /**
      * Inserts the specified element at the front of this deque if it is possible to do so immediately without violating capacity restrictions,
@@ -49,9 +48,17 @@ public interface Deque<E> extends Queue {
      */
     E removeLast() throws NoSuchElementException;
 
-    default boolean isEmpty() {
-        return this.size() == 0;
-    }
+//    default boolean isEmpty() {
+//        return this.size() == 0;
+//    }
+
+    boolean isEmpty();
+
+    int size();
+
+    boolean contains(E e);
+
+    public Iterator iterator();
 
     /**
      * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.

@@ -8,30 +8,30 @@ import static org.junit.Assert.*;
 /* Performs some basic array deque tests. */
 public class ArrayDequeTest {
 
-  public static void main(String[] args) {
-        List<Integer> test = new ArrayList<>();
-
-        test.add(1);
-        test.add(2);
-        test.add(3);
-
-        Deque<Integer> dal = new ArrayDeque<>(test);
-
-        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
-                .forEach((e) -> {
-                    System.out.println(e);
-                });
-
-        System.out.printf("My size is: %s\n", dal.size());
-        System.out.printf("Capacity is: %s\n", ((ArrayDeque<Integer>) dal)._capacity);
-
-        dal.printDeque();
-
-//        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
-//        System.out.println(testTwo.size());
-//        System.out.println(testTwo.getCapacity());
-
-  }
+//  public static void main(String[] args) {
+//        List<Integer> test = new ArrayList<>();
+//
+//        test.add(1);
+//        test.add(2);
+//        test.add(3);
+//
+//        Deque<Integer> dal = new ArrayDeque<>(test);
+//
+//        Arrays.asList(((ArrayDeque<Integer>) dal)._items)
+//                .forEach((e) -> {
+//                    System.out.println(e);
+//                });
+//
+//        System.out.printf("My size is: %s\n", dal.size());
+//        System.out.printf("Capacity is: %s\n", ((ArrayDeque<Integer>) dal)._capacity);
+//
+//        dal.printDeque();
+//
+////        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
+////        System.out.println(testTwo.size());
+////        System.out.println(testTwo.getCapacity());
+//
+//  }
 
     /** You MUST use the variable below for all of your tests. If you test
      * using a local variable, and not this static variable below, the
@@ -109,11 +109,11 @@ public class ArrayDequeTest {
     }
 
     /** Make sure that removing from an empty ArrayDeque returns null */
-    @Test
-    public void emptyNullReturn() {
-        assertNull("removing from an empty ArrayDeque should do nothing", ad.remove());
-        update();
-    }
+//    @Test
+//    public void emptyNullReturn() {
+//        assertNull("removing from an empty ArrayDeque should do nothing", ad.remove());
+//        update();
+//    }
 
 
     /** TODO: Write tests to ensure that your implementation works for really large
