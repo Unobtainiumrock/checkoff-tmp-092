@@ -1,17 +1,16 @@
 package deque;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class LinkedListDeque<T> implements Deque<T> {
     private SentinelNode<T> _sentinel;
     private int _size = 0;
 
-    LinkedListDeque() {
+    public LinkedListDeque() {
         Node<T> n = new SentinelNode<>(null);
         this._sentinel = (SentinelNode<T>) n;
     }
 
-    LinkedListDeque(T t) {
+    public LinkedListDeque(T t) {
         Node<T> n = new Node<>(t);
         this._sentinel = new SentinelNode<>(null);
 
@@ -90,6 +89,11 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     @Override
+    public boolean isEmpty() {
+        return this._size == 0;
+    }
+
+    @Override
     public void addFirst(T val) {
         Node<T> node = new Node<>(val);
         Node<T> head = this.getHead();
@@ -143,11 +147,13 @@ public class LinkedListDeque<T> implements Deque<T> {
         return recursiveHelper(node.getNext(), index - 1);
     }
 
+    @Override
     public int size() {
         return this._size;
     }
 
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof LinkedListDeque)) {
             return false;
@@ -221,6 +227,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
 
+    @Override
     public Iterator iterator() {
         return (Iterator) this.getHead();
     }
@@ -277,60 +284,11 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
-
     public boolean addAll(Collection collection) {
         Node<T> head = this.getHead();
         Arrays.asList(collection).forEach((val) -> {
             head.setNext(new Node(val));
         });
         return true;
-    }
-
-    // Nahh..
-
-    public void clear() {
-
-    }
-
-    // The rest don't technically need to be implemented according to the project spec,
-    // I can add them later if we really want to have some fun..
-
-    public boolean retainAll(Collection collection) {
-        return false;
-    }
-
-
-    public boolean removeAll(Collection collection) {
-        return false;
-    }
-
-
-    public boolean containsAll(Collection collection) {
-        return false;
-    }
-
-
-    public boolean offer(Object o) {
-        return false;
-    }
-
-
-    public Object remove() {
-        return null;
-    }
-
-
-    public Object poll() {
-        return null;
-    }
-
-
-    public Object element() {
-        return null;
-    }
-
-
-    public Object peek() {
-        return null;
     }
 }

@@ -8,7 +8,7 @@ public class ArrayDeque<E> implements Deque<E> {
     Object[] _items;
     int _nextFirst, _nextLast;
 
-    ArrayDeque() {
+    public ArrayDeque() {
         this._capacity = 8;
         this._size = 0;
         this._items = new Object[this._capacity];
@@ -16,7 +16,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._nextLast = (this._capacity + 1) / 2;
     }
 
-    ArrayDeque(int numElements) {
+    public ArrayDeque(int numElements) {
         this._capacity = numElements;
         this._size = 0;
         this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
@@ -39,11 +39,8 @@ public class ArrayDeque<E> implements Deque<E> {
         this._size = 0; // temporarily reset size, it will be updated in the addLast within while loop.
 
         Iterator<? extends E> it = c.iterator();
-        int i = 0;
 
         while (it.hasNext()) {
-//            this._items[i] = it.next();
-//            i++;
             this.addLast(it.next());
         }
 
@@ -436,7 +433,6 @@ public class ArrayDeque<E> implements Deque<E> {
         System.out.println("");
     }
 
-
     @Override
     public int size() {
         return this._size;
@@ -447,6 +443,7 @@ public class ArrayDeque<E> implements Deque<E> {
         return this._size == 0;
     }
 
+    @Override
     public boolean equals(Object o) {
         ArrayDeque<? extends E> other = ((ArrayDeque<? extends E>) o);
         int oSize = other._size;
@@ -537,7 +534,6 @@ public class ArrayDeque<E> implements Deque<E> {
     public Iterator iterator() {
         return Arrays.asList(this._items).iterator();
     }
-
 
     public Object[] toArray() {
         return this._items;

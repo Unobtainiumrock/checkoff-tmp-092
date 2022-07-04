@@ -58,6 +58,8 @@ public interface Deque<E> {
 
     boolean contains(E e);
 
+    boolean equals(Object o);
+
     public Iterator iterator();
 
     /**
