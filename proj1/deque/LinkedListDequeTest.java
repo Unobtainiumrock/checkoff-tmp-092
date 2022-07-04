@@ -94,6 +94,18 @@ public class LinkedListDequeTest {
 
     }
 
+    @Test
+    public void arraylinkedEqualTest() {
+        Deque<Integer> ad = new ArrayDeque<>();
+
+        ad.addLast(5);
+        lld.addFirst(5);
+
+        assertTrue(lld.equals(ad));
+
+        assertTrue(ad.equals(lld));
+    }
+
     /** Make sure that removing from an empty LinkedListDeque returns null */
 //    @Test
 //    public void emptyNullReturn() {

@@ -70,7 +70,9 @@ public class LinkedListDeque<T> implements Deque<T> {
         oldHead.getNext().setPrev(this._sentinel);
         nullifyNode(oldHead); //make eligible for GC
 
-        this._size--;
+        if (this._size != 0) {
+            this._size--;
+        }
         return oldHeadVal;
     }
 
@@ -83,7 +85,9 @@ public class LinkedListDeque<T> implements Deque<T> {
         this.setHead(oldTail.getPrev());
         nullifyNode(oldTail); //make eligible for GC
 
-        this._size--;
+        if (this._size != 0) {
+            this._size--;
+        }
         return oldTailVal;
     }
 
