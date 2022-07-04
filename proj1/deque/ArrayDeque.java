@@ -417,42 +417,12 @@ public class ArrayDeque<E> implements Deque<E> {
         if (index > this._capacity - 1 || this._size == 0) {
             return null;
         }
-        int L = this._nextLast;
-        int F = this._nextFirst;
-        if (F < L) {
-            return (E) this._items[cyclicIndexing(this._capacity - index, this._capacity)];
-
-            // 5 0 0 0 1 2 3 4 <-- vals
-            // 4 5 6 7 0 1 2 3 <-- f(capacity, index, 8) = code index f(8, 0, 8) = 0
-            // 0 1 2 3 4 5 6 7 <-- user indices
-            //   L   F
-
-        }
-
-        // cyclic-back-shift user input by 4
-        // (capacity + codeIndex) % 8
-        // 0 -> 4
-        // 1 -> 5
-        // 2 -> 6
-        // 3 -> 7
-        // 4 -> 0
-        // 5 -> 1
-        // 6 -> 2
-        // 7 -> 3
-
-        // (capacity - userIndex) % capacity = codeIndex
-        // (8 - 3) % 8 = 5
-        // (8 - 2) % 8 = 6
-        // (8 - 1) % 8 = 7
-        // (8 - 0) % 8 = 0
-        // (8 - 7) % 8 = 1
-        // (8 - 6) % 8 = 2
-        // (8 - 5) % 8 = 3
-        // (8 - 4) % 8 = 4
-
-        return (E) this._items[cyclicIndexing(this._capacity + index, this._capacity)];
-
+        return (E) this._items[index];
     }
+
+
+
+
 
     @Override
     public void printDeque() {
@@ -524,19 +494,28 @@ public class ArrayDeque<E> implements Deque<E> {
         Object[] tmpOther = new Object[oSize];
 
         // Corresponds to this
+        int k = 0;
+
         for (int i = F; i <= L; i = cyclicIndexing(i + 1, c)) {
             Object val = this.get(i);
             if (val != null) {
-                tmpThis[i] = val;
+                tmpThis[k] = val;
+                k++;
             }
         }
+        // 0 0 0 14 15 0 0 0
+        // 5 6 7  0  1 2 3 4 -- user input index
+        // 0 1 2  3  4 5 6 7 -- index for F and L
+        //     F       L
         // end corresponds to this
 
         // corresponds to other
+        int j = 0;
         for (int i = otherF; i <= otherL; i = cyclicIndexing(i + 1, f)) {
             Object val = other.get(i);
             if (val != null) {
-                tmpOther[i] = val;
+                tmpOther[j] = val;
+                j++;
             }
         }
         // end corresponds to other
