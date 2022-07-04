@@ -3,7 +3,6 @@ package deque;
 import jh61b.junit.In;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import java.util.*;
 
 
 
@@ -90,12 +89,6 @@ public class LinkedListDequeTest {
 
         test2.removeLast();
         assertTrue("test2 should now be empty", test2.isEmpty());
-
-
-        Deque<Object> test3 = new LinkedListDeque<>();
-        List <Integer> l = new ArrayList<>();
-        test3.addFirst(l);
-//        assertTrue("test3 should now contain list l", test3.contains(l));
 
         update();
 

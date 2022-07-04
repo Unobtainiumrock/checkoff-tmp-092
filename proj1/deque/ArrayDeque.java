@@ -1,5 +1,4 @@
 package deque;
-import java.util.*;
 import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
@@ -25,26 +24,27 @@ public class ArrayDeque<E> implements Deque<E> {
         this._nextLast = (int) (this._capacity + 1) / 2;
     }
 
-    ArrayDeque(Collection<? extends E> c) {
-        this._size = c.size();
-        this._capacity = this._size;
-        this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
-        // Bumps up to 4 at minimum
-        if (this._capacity < 8) {
-            this._capacity *= 2;
-        }
-        this._items = new Object[this._capacity]; // Capacity is changed by power2 upsize.
-        this._nextLast = 0;
-        this._nextFirst = this._capacity - 1;
-        this._size = 0; // temporarily reset size, it will be updated in the addLast within while loop.
-
-        Iterator<? extends E> it = c.iterator();
-
-        while (it.hasNext()) {
-            this.addLast(it.next());
-        }
-
-    }
+// Stupid AG
+//    ArrayDeque(Collection<? extends E> c) {
+//        this._size = c.size();
+//        this._capacity = this._size;
+//        this.powerOfTwoUpsize(); // Make sure the capacity is a clean power of 2.
+//        // Bumps up to 4 at minimum
+//        if (this._capacity < 8) {
+//            this._capacity *= 2;
+//        }
+//        this._items = new Object[this._capacity]; // Capacity is changed by power2 upsize.
+//        this._nextLast = 0;
+//        this._nextFirst = this._capacity - 1;
+//        this._size = 0; // temporarily reset size, it will be updated in the addLast within while loop.
+//
+//        Iterator<? extends E> it = c.iterator();
+//
+//        while (it.hasNext()) {
+//            this.addLast(it.next());
+//        }
+//
+//    }
 
     public double getCapacity() {
         return this._capacity;
@@ -529,9 +529,9 @@ public class ArrayDeque<E> implements Deque<E> {
         return false;
     }
 
-    public Iterator iterator() {
-        return Arrays.asList(this._items).iterator();
-    }
+//    public Iterator iterator() {
+//        return Arrays.asList(this._items).iterator();
+//    }
 
     public Object[] toArray() {
         return this._items;

@@ -1,5 +1,4 @@
 package deque;
-import java.util.*;
 
 public class LinkedListDeque<T> implements Deque<T> {
     private SentinelNode<T> _sentinel;
@@ -22,24 +21,24 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
     // ArrayList is used to ease iteration of my
-    // helper constructor.
-    LinkedListDeque(ArrayList<Node<T>> nodes) {
-        this._sentinel = new SentinelNode<>(null);
-        int k = 0;
-
-        for (Node<T> node : nodes) {
-            if (k == 0) {
-                this._sentinel.setNext(node);
-                this._sentinel.setPrev(node);
-                node.setPrev(this._sentinel);
-                node.setNext(this._sentinel);
-                k++;
-            }
-            this._sentinel.getPrev().setNext(node);
-            node.setNext(this._sentinel);
-        }
-        this._size += nodes.size();
-    }
+    // helper constructor. Stupid AG..
+//    LinkedListDeque(ArrayList<Node<T>> nodes) {
+//        this._sentinel = new SentinelNode<>(null);
+//        int k = 0;
+//
+//        for (Node<T> node : nodes) {
+//            if (k == 0) {
+//                this._sentinel.setNext(node);
+//                this._sentinel.setPrev(node);
+//                node.setPrev(this._sentinel);
+//                node.setNext(this._sentinel);
+//                k++;
+//            }
+//            this._sentinel.getPrev().setNext(node);
+//            node.setNext(this._sentinel);
+//        }
+//        this._size += nodes.size();
+//    }
 
     public Node<T> getHead() {
         return this._sentinel.getNext();
@@ -227,9 +226,10 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
 
-    public Iterator iterator() {
-        return (Iterator) this.getHead();
-    }
+// Stupid AG
+//    public Iterator iterator() {
+//        return (Iterator) this.getHead();
+//    }
 
 
     public Object[] toArray() {
@@ -282,12 +282,12 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
         return res;
     }
-
-    public boolean addAll(Collection collection) {
-        Node<T> head = this.getHead();
-        Arrays.asList(collection).forEach((val) -> {
-            head.setNext(new Node(val));
-        });
-        return true;
-    }
+//    Stupid AG
+//    public boolean addAll(Collection collection) {
+//        Node<T> head = this.getHead();
+//        Arrays.asList(collection).forEach((val) -> {
+//            head.setNext(new Node(val));
+//        });
+//        return true;
+//    }
 }

@@ -1,5 +1,5 @@
 package deque;
-import java.util.*;
+import java.util.NoSuchElementException;
 
 // Source: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Deque.html#addFirst(E)
 public interface Deque<E> {
