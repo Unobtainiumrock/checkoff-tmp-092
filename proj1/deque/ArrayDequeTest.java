@@ -186,9 +186,8 @@ public class ArrayDequeTest {
         assertTrue(Integer.compare(ad.size(), testComparison.size()) == 0);
         assertEquals(null, ad.get(0));
         assertEquals(null, testComparison.get(0));
-       // ad.equals(testComparison);
-//        assertTrue(ad.equals(testComparison) == true);
-        ad.equals(new Integer(1));
+        ad.equals(testComparison);
+        assertTrue(ad.equals(testComparison) == true);
         ad.addFirst(14); //lld = 14
         assertTrue(Integer.compare(ad.size(), testComparison.size()) > 0);
         assertTrue(ad.equals(testComparison) == false);

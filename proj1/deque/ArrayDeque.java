@@ -333,12 +333,24 @@ public class ArrayDeque<E> implements Deque<E> {
         this._capacity /= 2;
     }
 
+    private Object[] cyclicBackShift(Object[] toBeShifted, Object[]reference) {
+        int len = toBeShifted.length;
+        int F = this._nextFirst;
+        // Offset with a cyclic-back-shift
+        for (int i = 0; i < toBeShifted.length; i++) {
+            int a = i + (len - F);
+            int b = toBeShifted.length;
+            toBeShifted[i] = reference[cyclicIndexing(a, b)];
+        }
+        return toBeShifted;
+    }
+
     // May not need this.
     private int gcd(int a, int b) {
         int k = a > b ? b : a;
 
         while (a % k > 0 || b % k > 0) {
-            k --;
+            k--;
         }
         return k;
     }
@@ -408,13 +420,37 @@ public class ArrayDeque<E> implements Deque<E> {
         int L = this._nextLast;
         int F = this._nextFirst;
         if (F < L) {
-            return (E) this._items[cyclicIndexing((F + index + 1), this._capacity)];
-//            0  0  0  0   0 2 3 0 1 3 0  4  5  6  7  8  9
-//            12 13 14 15 16 0 1 2 3 4 5  6  7  8  9  10 11   --index for user
-//            0   1  2  3  4 5 6 7 8 9 10 11 12 13 14 15 16   --index
-//                         F       L
+            return (E) this._items[cyclicIndexing(this._capacity - index, this._capacity)];
+
+            // 5 0 0 0 1 2 3 4 <-- vals
+            // 4 5 6 7 0 1 2 3 <-- f(capacity, index, 8) = code index f(8, 0, 8) = 0
+            // 0 1 2 3 4 5 6 7 <-- user indices
+            //   L   F
+
         }
-            return (E) this._items[cyclicIndexing((L + index + 1), this._capacity)];
+
+        // cyclic-back-shift user input by 4
+        // (capacity + codeIndex) % 8
+        // 0 -> 4
+        // 1 -> 5
+        // 2 -> 6
+        // 3 -> 7
+        // 4 -> 0
+        // 5 -> 1
+        // 6 -> 2
+        // 7 -> 3
+
+        // (capacity - userIndex) % capacity = codeIndex
+        // (8 - 3) % 8 = 5
+        // (8 - 2) % 8 = 6
+        // (8 - 1) % 8 = 7
+        // (8 - 0) % 8 = 0
+        // (8 - 7) % 8 = 1
+        // (8 - 6) % 8 = 2
+        // (8 - 5) % 8 = 3
+        // (8 - 4) % 8 = 4
+
+        return (E) this._items[cyclicIndexing(this._capacity + index, this._capacity)];
 
     }
 
@@ -422,13 +458,12 @@ public class ArrayDeque<E> implements Deque<E> {
     public void printDeque() {
         // Needs to print from F to L
         int a = this._nextFirst;
-        int b = this._capacity;
-        int c = this._nextLast;
+        int b = this._nextLast;
+        int c = this._capacity;
+        int F = cyclicIndexing(a + 1, c);
+        int L = cyclicIndexing(b - 1, c);
 
-        int F = cyclicIndexing(a + 1, b);
-        int L = cyclicIndexing(c - 1, b);
-
-        for (int i = F; i <= L; i = cyclicIndexing(i + 1, b)) {
+        for (int i = F; i <= L; i = cyclicIndexing(i + 1, c)) {
             Object val = this.get(i);
             if (val != null) {
                 System.out.print(val + " ");
@@ -442,23 +477,79 @@ public class ArrayDeque<E> implements Deque<E> {
         return this._size;
     }
 
+    public boolean equals(Object o) {
+        ArrayDeque<? extends E> other = ((ArrayDeque<? extends E>) o);
+        int oSize = other._size;
+        Object[] oItems = other._items;
 
-    public boolean equals(Object[] o) {
-        System.out.println("I was invoked!");
         boolean res = true;
-        if (o.length != this._capacity) {
-            return  !res;
+
+        // Case for different sizes
+        if (oSize != this._size) {
+            return !res;
         }
 
-        for (int i = 0; i < this._capacity; i++) {
-            if  (o[i] != null && this._items[i] != null) {
-                res = res && (o[i].equals(this._items[i]));
-                if (res == false) {
-                    return false;
-                }
+        // Case for both empty
+        if (((ArrayDeque<?>) o).isEmpty() && this.isEmpty()) {
+            return true;
+        }
+
+        // Corresponds to "this"
+        int a = this._nextFirst;
+        int b = this._nextLast;
+        int c = this._capacity;
+        int F = cyclicIndexing(a + 1, c);
+        int L = cyclicIndexing(b - 1, c);
+        // end corresponds to "this"
+
+
+        // Corresponds to other
+        int d = other._nextFirst;
+        int e = other._nextLast;
+        int f = other._capacity;
+        int otherF = cyclicIndexing(d + 1, f);
+        int otherL = cyclicIndexing(e - 1, f);
+        // ends corresponds to other
+
+        // Edge case for two equivalent single element arrays.
+        if (Math.abs(F - L) == 0 && Math.abs(otherF - otherL) == 0) {
+//            if (F < L) {
+//                return this._items[F + 1].equals(oItems[L - 1]);
+//            }
+//            return this._items[F - 1].equals(oItems[L + 1]);
+            return this._items[F].equals(other._items[otherF]);
+        }
+
+        Object[] tmpThis = new Object[this._size];
+        Object[] tmpOther = new Object[oSize];
+
+        // Corresponds to this
+        for (int i = F; i <= L; i = cyclicIndexing(i + 1, c)) {
+            Object val = this.get(i);
+            if (val != null) {
+                tmpThis[i] = val;
             }
         }
-        return res;
+        // end corresponds to this
+
+        // corresponds to other
+        for (int i = otherF; i <= otherL; i = cyclicIndexing(i + 1, f)) {
+            Object val = other.get(i);
+            if (val != null) {
+                tmpOther[i] = val;
+            }
+        }
+        // end corresponds to other
+
+        // Compare the two tmp arrays
+        for (int i = 0; i < tmpThis.length; i++) {
+            if (!(tmpThis[i].equals(tmpOther[i]))) {
+                return false;
+            }
+        }
+
+        System.out.println("");
+        return true;
     }
 
     @Override
