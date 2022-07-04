@@ -132,7 +132,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         }
     }
 
-    public T recursiveGet(int index) {
+    public T getRecursive(int index) {
         if (this._size == 0 || index > this._size) {
             return null;
         }
@@ -196,7 +196,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return out;
 
     }
-
+    @Override
     public boolean contains(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;
@@ -227,7 +227,6 @@ public class LinkedListDeque<T> implements Deque<T> {
     }
 
 
-    @Override
     public Iterator iterator() {
         return (Iterator) this.getHead();
     }

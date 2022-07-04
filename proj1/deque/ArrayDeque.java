@@ -530,7 +530,6 @@ public class ArrayDeque<E> implements Deque<E> {
         return false;
     }
 
-    @Override
     public Iterator iterator() {
         return Arrays.asList(this._items).iterator();
     }

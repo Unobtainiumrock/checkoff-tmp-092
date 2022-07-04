@@ -60,8 +60,6 @@ public interface Deque<E> {
 
     boolean equals(Object o);
 
-    public Iterator iterator();
-
     /**
      * Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
      * Must not mutate the deque.
