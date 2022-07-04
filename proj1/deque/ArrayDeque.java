@@ -2,10 +2,10 @@ package deque;
 import java.lang.Math;
 
 public class ArrayDeque<E> implements Deque<E> {
-    int _size;
-    int _capacity;
-    Object[] _items;
-    int _nextFirst, _nextLast;
+    int _size; // No time to refactor to private
+    int _capacity; // ditto
+    Object[] _items; // ditto
+    int _nextFirst, _nextLast; // ditto
 
     public ArrayDeque() {
         this._capacity = 8;
@@ -534,6 +534,24 @@ public class ArrayDeque<E> implements Deque<E> {
 //    }
 
     public Object[] toArray() {
+        ArrayDeque<? extends E> other = ((ArrayDeque<? extends E>) this);
+
+        int a = this._nextFirst;
+        int b = this._nextLast;
+        int c = this._capacity;
+        int F = cyclicIndexing(a + 1, c);
+        int L = cyclicIndexing(b - 1, c);
+
+        Object[] tmpThis = new Object[this._size];
+        int k = 0;
+
+        for (int i = F; i <= L; i = cyclicIndexing(i + 1, c)) {
+            Object val = this.get(i);
+            if (val != null) {
+                tmpThis[k] = val;
+            }
+            k++;
+        }
         return this._items;
     }
 

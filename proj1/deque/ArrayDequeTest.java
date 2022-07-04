@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 /* Performs some basic array deque tests. */
 public class ArrayDequeTest {
 
-//  public static void main(String[] args) {
+  public static void main(String[] args) {
 //        List<Integer> test = new ArrayList<>();
 //
 //        test.add(1);
@@ -28,8 +28,16 @@ public class ArrayDequeTest {
 ////        ArrayDeque<Integer> testTwo = new ArrayDeque<>(17);
 ////        System.out.println(testTwo.size());
 ////        System.out.println(testTwo.getCapacity());
-//
-//  }
+        Deque<Integer> test = new ArrayDeque<>();
+        test.addLast(1);
+        test.addLast(2);
+        test.addLast(3);
+//        System.out.println(((ArrayDeque<Integer>) test)._capacity);
+//        System.out.println(test);
+
+
+        System.out.println(((ArrayDeque<Integer>) test).toArray());
+  }
 
     /** You MUST use the variable below for all of your tests. If you test
      * using a local variable, and not this static variable below, the
@@ -106,12 +114,6 @@ public class ArrayDequeTest {
 //        assertNull("removing from an empty ArrayDeque should do nothing", ad.remove());
 //        update();
 //    }
-
-
-    /** TODO: Write tests to ensure that your implementation works for really large
-     * numbers of elements, and test any other methods you haven't yet tested!
-     */
-
 
     @Test
     public void getTest() {
