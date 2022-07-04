@@ -287,8 +287,21 @@ public class ArrayDeque<E> implements Deque<E> {
         int c = (int) (2 * this._capacity);
         this._nextFirst = cyclicIndexing(a, c);
         this._nextLast = cyclicIndexing(b, c);
-        this._items = dest;
+        this._items = cyclicForwardShift(dest);
         this._capacity *= 2;
+    }
+
+    private Object[] cyclicForwardShift(Object[] toBeShifted) {
+        Object[] a = toBeShifted;
+        Object[] b = new Object[this._capacity];
+        int F = this._nextFirst;
+        int i = 0;
+
+        while (i < this._capacity) {
+            b[i] = a[(F + i + 1) % this._capacity];
+            i++;
+        }
+        return b;
     }
 
     private void shrink() {
@@ -386,13 +399,13 @@ public class ArrayDeque<E> implements Deque<E> {
     public void addFirst(E e) {
         int a = this._nextFirst;
         int b = this._capacity;
-        this._items[a] = e;
-        this._nextFirst = cyclicIndexing(a - 1, b);
-        this._size++;
-
-        if (this._size / this._capacity >= 0.75) {
+        if ((this._size + 1) / this._capacity >= 0.75) {
             grow();
         }
+        this._items[a] = e;
+        this._nextFirst = cyclicIndexing((a - 1), b);
+        this._size++;
+
 
     }
 
@@ -400,13 +413,14 @@ public class ArrayDeque<E> implements Deque<E> {
     public void addLast(E e) {
         int a = this._nextLast;
         int b = this._capacity;
+        if ((this._size + 1) / this._capacity >= 0.75) {
+            grow();
+        }
         this._items[a] = e;
         this._nextLast = cyclicIndexing(a + 1, b);
         this._size++;
 
-        if (this._size / this._capacity >= 0.75) {
-            grow();
-        }
+
     }
 
     @Override
@@ -444,22 +458,16 @@ public class ArrayDeque<E> implements Deque<E> {
         if (index > this._capacity - 1 || this._size == 0) {
             return null;
         }
-        Object[] a = {4, null, null, null, 0, 1, 2, 3};
-        Object[] b = new Object[8];
-        int F = 3;
-
+        Object[] a = this._items;
+        Object[] b = new Object[this._capacity];
+        int F = this._nextFirst;
         int i = 0;
 
-        while (i < 7) {
-            b[i] = a[(F + i + 1) % 8];
+        while (i < this._capacity - 1) {
+            b[i] = a[(F + i + 1) % this._capacity];
             i++;
         }
-
-
-        for (int j = 0; j < b.length; j++) {
-            System.out.printf("idx: %s, val: %s\n", j, b[j]);
-        }
-
+        return (E) b[index];
     }
 //  0 1 2 3 4 5 6 7
 //    // {4 _ _ _ 0 1 2 3 } = a
