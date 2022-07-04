@@ -196,7 +196,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return out;
 
     }
-    @Override
+
     public boolean contains(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;

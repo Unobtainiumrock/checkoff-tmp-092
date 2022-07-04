@@ -520,7 +520,6 @@ public class ArrayDeque<E> implements Deque<E> {
         return true;
     }
 
-    @Override
     public boolean contains(Object o) {
         for (int i = 0; i < this._items.length; i++) {
             if (o.equals(this._items[i])) {

@@ -56,7 +56,7 @@ public interface Deque<E> {
 
     int size();
 
-    boolean contains(E e);
+//    boolean contains(E e);
 
     boolean equals(Object o);
 
