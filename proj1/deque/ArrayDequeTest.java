@@ -140,6 +140,7 @@ public class ArrayDequeTest {
         ad.addFirst(5); //lld = 5, F = index 4, L = index 1
         ad.addFirst(13); //lld: 13, 5, F = index 3, L = index 1
         ad.addLast(20); // lld: 13, 5, 20
+        ad.get(2);
         assertTrue(Integer.compare(20, ad.get(2)) == 0);
 
         assertTrue(Integer.compare(20, ad.removeLast()) == 0); //lld = 13, 5
@@ -152,6 +153,7 @@ public class ArrayDequeTest {
         ad.addLast(2); //ad: 8, 9, 13, 5, 3, 2
         ad.addLast(1); //ad: 8, 9, 13, 5, 3, 2, 1
         ad.addLast(1); //ad: 8, 9, 13, 5, 3, 2, 1, 1
+        ad.get(1);
         assertTrue(Integer.compare(13, ad.get(1)) == 0);
 
         ad.removeLast(); // lld: 9, 13, 5
