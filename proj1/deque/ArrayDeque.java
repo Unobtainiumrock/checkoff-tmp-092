@@ -1,5 +1,4 @@
 package deque;
-
 import java.util.*;
 import java.lang.Math;
 
@@ -314,12 +313,12 @@ public class ArrayDeque<E> implements Deque<E> {
             newSrc[i] = dest[i];
         }
 
-        // Offset with a cyclic-back-shift
-        for (int i = 0; i < dest.length; i++) {
-            int a = i + (src.length - F);
-            int b = dest.length;
-            dest[i] = newSrc[cyclicIndexing(a, b)];
-        }
+//        // Offset with a cyclic-back-shift
+//        for (int i = 0; i < dest.length; i++) {
+//            int a = i + (src.length - F);
+//            int b = dest.length;
+//            dest[i] = newSrc[cyclicIndexing(a, b)];
+//        }
 
         // Shrink
         //      newF = cyclic8(oldF - half size)
@@ -329,16 +328,15 @@ public class ArrayDeque<E> implements Deque<E> {
         int c = (int) (0.5 * this._capacity);
         this._nextFirst = cyclicIndexing(a, c);
         this._nextLast = cyclicIndexing(b, c);
-        this._items = dest;
+        this._items = cyclicBackShift(dest, newSrc, F);
         this._capacity /= 2;
     }
 
-    private Object[] cyclicBackShift(Object[] toBeShifted, Object[]reference) {
+    private Object[] cyclicBackShift(Object[] toBeShifted, Object[]reference, int by) {
         int len = toBeShifted.length;
-        int F = this._nextFirst;
         // Offset with a cyclic-back-shift
         for (int i = 0; i < toBeShifted.length; i++) {
-            int a = i + (len - F);
+            int a = i + (len - by);
             int b = toBeShifted.length;
             toBeShifted[i] = reference[cyclicIndexing(a, b)];
         }
@@ -420,10 +418,6 @@ public class ArrayDeque<E> implements Deque<E> {
         return (E) this._items[index];
     }
 
-
-
-
-
     @Override
     public void printDeque() {
         // Needs to print from F to L
@@ -489,10 +483,6 @@ public class ArrayDeque<E> implements Deque<E> {
 
         // Edge case for two equivalent single element arrays.
         if (Math.abs(F - L) == 0 && Math.abs(otherF - otherL) == 0) {
-//            if (F < L) {
-//                return this._items[F + 1].equals(oItems[L - 1]);
-//            }
-//            return this._items[F - 1].equals(oItems[L + 1]);
             return this._items[F].equals(other._items[otherF]);
         }
 
@@ -509,10 +499,6 @@ public class ArrayDeque<E> implements Deque<E> {
                 k++;
             }
         }
-        // 0 0 0 14 15 0 0 0
-        // 5 6 7  0  1 2 3 4 -- user input index
-        // 0 1 2  3  4 5 6 7 -- index for F and L
-        //     F       L
         // end corresponds to this
 
         // corresponds to other
