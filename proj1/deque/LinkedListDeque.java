@@ -40,23 +40,23 @@ public class LinkedListDeque<T> implements Deque<T> {
 //        this._size += nodes.size();
 //    }
 
-    public Node<T> getHead() {
+    private Node<T> getHead() {
         return this._sentinel.getNext();
     }
 
-    public Node<T> getTail() {
+    private Node<T> getTail() {
         return this._sentinel.getPrev();
     }
 
-    public void setHead(Node<T> n) {
+    private void setHead(Node<T> n) {
         this._sentinel.setPrev(n);
     }
 
-    public void setTail(Node<T> n) {
+    private void setTail(Node<T> n) {
         this._sentinel.setNext(n);
     }
 
-    public void nullifyNode(Node<T> n) {
+    private void nullifyNode(Node<T> n) {
         n.setNext(null);
         n.setPrev(null);
     }
@@ -91,7 +91,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         return oldTailVal;
     }
 
-    @Override
+
     public boolean isEmpty() {
         return this._size == 0;
     }
@@ -212,7 +212,7 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     }
 
-    public boolean contains(Object o) {
+    private boolean contains(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;
 
@@ -263,20 +263,20 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     // Nuh uh. Deal with deep nesting later.
 
-    public Object[] toArray(Object[] objects) {
+    private Object[] toArray(Object[] objects) {
         return new Object[0];
     }
 
     // Simply add to the end by default
 
-    public boolean add(Object o) {
+    private boolean add(Object o) {
         T val = (T) o;
         this.addLast(val);
         return true;
     }
 
 
-    public boolean remove(Object o) {
+    private boolean remove(Object o) {
         Node<T> curr = this.getHead();
         boolean res = false;
 
