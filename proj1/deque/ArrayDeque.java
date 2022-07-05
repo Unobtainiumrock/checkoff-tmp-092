@@ -214,7 +214,19 @@ public class ArrayDeque<T> implements Deque<T> {
     @Override
     public T get(int k) {
         return (T) this._items[k];
+//        if (k > this._capacity - 1 || this._size == 0) {
+//            return null;
+//        }
+//        double L = this._L;
+//        double F = this._F;
+//        if (F < L) {
+//            return (T) this._items[cyclicShift(( F + k + 1), this._capacity)];
+////
+//        }
+//        return (T) this._items[cyclicShift((L + k + 1), this._capacity)];
+
     }
+
 
     @Override
     public void printDeque() {
