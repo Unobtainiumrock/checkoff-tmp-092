@@ -202,7 +202,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         String out = "";
 
         while (curr.hasNext()) {
-            out += "(";
+                out += "(";
             out += curr.getVal();
             out += ") -> ";
             curr = curr.getNext();
