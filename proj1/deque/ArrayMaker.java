@@ -1,4 +1,6 @@
 package deque;
+
+import javax.print.attribute.standard.JobKOctets;
 import java.lang.Math;
 
 public class ArrayMaker<E> {
@@ -25,6 +27,17 @@ public class ArrayMaker<E> {
     }
 
     /**
+     * Used by createArr to initialize "weird" numbered arrays to
+     * have capacities that are powers of 2.
+     *
+     * @param x
+     * @return
+     */
+    private static double log2(int x) {
+        return Math.log(x) / Math.log(2);
+    }
+
+    /**
      * Used by the Array constructor. It creates an array and bumps up its size to
      * a nice power of two to make it friendly to doubling and handling the position of F and L pointers.
      */
@@ -42,16 +55,7 @@ public class ArrayMaker<E> {
         return new Object[capacity];
     }
 
-    /**
-     * Used by createArr to initialize "weird" numbered arrays to
-     * have capacities that are powers of 2.
-     *
-     * @param x
-     * @return
-     */
-    private static double log2(int x) {
-        return Math.log(x) / Math.log(2);
-    };
+    ;
 
     public void addFirst(int val) {
         System.out.println("Adding value: " + val + " to the front");
@@ -81,12 +85,9 @@ public class ArrayMaker<E> {
      * The doubled array is then filled from
      * pre-pad null, to F, to L to post-pad null.
      */
-    public void grow(){
+    public void grow() {
         Object[] doubled = new Object[this._capacity * 2];
-        double A = 0.5 * this._capacity;
-
-//        this.setF((int) A + 1);
-
+        double A = this._capacity / 2;
         // fill in doubled by starting at the end of the padding before F ,
         // reading from F + 1 until L - 1 on the _items array
         // example _items = [5, 4, 2, 1, 3, L, F, 6]
@@ -104,9 +105,34 @@ public class ArrayMaker<E> {
         this._L = doubled.length - (A + 1);
     }
 
-//    public static int[] shrink() {
-//
-//    }
+    public void shrink() {
+        Object[] halved = new Object[this._capacity / 2];
+        double A = this._capacity / 4;
+
+        // grab elements from A to capacity - (A + 1)
+        for (int i = 0; i < halved.length; i ++) {
+            halved[i] = this._items[(int) A + i];
+        }
+        // Cycle back by A - 1
+        halved = cyclicShift(halved, (int)A - 1);
+        this._items = halved;
+
+    }
+
+    // Positive corresponds to shifting cyclically left
+    // Negative corresponds to shifting cyclically right
+    public static Object[] cyclicShift(Object[] reference, int by) {
+        Object[] shifted = new Object[reference.length];
+        int len = shifted.length;
+
+        for (int i = 0; i < len; i++) {
+            int a = i + (len + by);
+            int b = len;
+            shifted[i] = reference[Math.floorMod(a, b)];
+        }
+
+        return shifted;
+    }
 
     public double[] setFandL(Object[] arr) {
         double[] pointers = new double[2];
@@ -120,12 +146,12 @@ public class ArrayMaker<E> {
         return this._F;
     }
 
-    public double getL() {
-        return this._L;
-    }
-
     public void setF(int k) {
         this._F = (double) k;
+    }
+
+    public double getL() {
+        return this._L;
     }
 
     public void setL(int k) {
@@ -138,6 +164,7 @@ public class ArrayMaker<E> {
 
     /**
      * Used for testing purposes.
+     *
      * @return the total capacity of the _items
      */
     public int getCapacity() {

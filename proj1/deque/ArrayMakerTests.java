@@ -1,6 +1,7 @@
 package deque;
 
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 public class ArrayMakerTests {
@@ -8,7 +9,27 @@ public class ArrayMakerTests {
     private static ArrayMaker<Object> testArr;
 
     public static void main(String[] args) {
-        System.out.println(((double)(6) / 8));
+        Object[] reference = {0, 0, 0, 0, 0, 6, 5, 4, 3, 2, 1, 0, 0, 0, 0, 0};
+
+        Object[] halved = new Object[reference.length / 2];
+        double A = 4;
+
+        // grab elements from A to capacity - (A + 1)
+        for (int i = 0; i < halved.length; i ++) {
+            halved[i] = reference[(int) A + i];
+        }
+        // Cycle back by A - 1
+        halved = ArrayMaker.cyclicShift(halved, (int)A - 1);
+
+        for (Object i : halved) {
+            System.out.print(i + " ");
+        }
+
+    }
+
+
+    public static void reset(ArrayMaker arr) {
+        testArr = arr;
     }
 
     @Test
@@ -44,7 +65,7 @@ public class ArrayMakerTests {
         System.out.println("");
         System.out.println("Expect the array's capacity to always be in powers of 2, if given non-power of two values in constructor.");
 
-        for (int i = 0; i < 69; i ++) {
+        for (int i = 0; i < 69; i++) {
             System.out.println("");
             reset(new ArrayMaker<Object>(i));
             capacity = testArr.getCapacity();
@@ -120,9 +141,5 @@ public class ArrayMakerTests {
         testArr.addFirst(6);
         testArr.printArrayStats();
 
-    }
-
-    public static void reset(ArrayMaker arr) {
-        testArr = arr;
     }
 }
