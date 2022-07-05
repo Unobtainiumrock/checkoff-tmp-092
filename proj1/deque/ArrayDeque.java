@@ -111,6 +111,9 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
+        if (this.isEmpty()) {
+            return null;
+        }
         T thing = (T) this._items[(int) this._F + 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._F + 1] = null;
@@ -118,16 +121,21 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._F = nextF;
 
-        if (((double) (this._size - 1) / this._capacity) <= 0.25) {
+        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
             System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
-        this._size--;
+        if (this.size() > 0) {
+            this._size--;
+        }
         return thing;
     }
 
     @Override
     public T removeLast() {
+        if (this.isEmpty()) {
+            return null;
+        }
         T thing = (T) this._items[(int) this._L - 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._L - 1] = null;
@@ -135,11 +143,13 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._L = nextL;
 
-        if (((double) (this._size - 1) / this._capacity) <= 0.25) {
+        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
             System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
-        this._size--;
+        if (this.size() > 0) {
+            this._size--;
+        }
         return thing;
     }
 
