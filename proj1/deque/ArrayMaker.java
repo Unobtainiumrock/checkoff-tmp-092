@@ -60,7 +60,7 @@ public class ArrayMaker<E> {
         System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._size++;
         this._F = nextF;
-        if (((this._size + 1) / this._capacity) >= 0.75) {
+        if (((double) (this._size) / this._capacity) >= 0.75) {
             this.grow();
         }
     }
@@ -79,20 +79,29 @@ public class ArrayMaker<E> {
      * Doubles the size of the array and evenly distributes half of the upsize padding
      * before F, and the other half of the upsize padding for after L.
      * The doubled array is then filled from
-     * pre pad zeroes, to F, to L to post pad zeroes.
+     * pre-pad null, to F, to L to post-pad null.
      */
     public void grow(){
-        int[] doubled = new int[this._capacity * 2];
+        Object[] doubled = new Object[this._capacity * 2];
         double A = 0.5 * this._capacity;
 
-        // The zero padding before F. It adds half of the upsize zeroes before F.
-//        for (int i = 0; i < A; i++) {
-//            if 9)
-//        }
+//        this.setF((int) A + 1);
 
-        for (int i = 0; i < this._capacity; i++) {
+        // fill in doubled by starting at the end of the padding before F ,
+        // reading from F + 1 until L - 1 on the _items array
+        // example _items = [5, 4, 2, 1, 3, L, F, 6]
+        //         doubled = [0, 0, 0, 0, F, 6, 5, 4, 2, 1, 3, L, 0, 0, 0, 0]
+        int k = 1;
 
+        for (int i = (int) A + 1; i < doubled.length - (A + 1); i++) {
+            doubled[i] = this._items[mod((int) this._F + k, this._capacity)];
+            k++;
         }
+
+        this._items = doubled;
+        this._capacity = doubled.length;
+        this._F = A;
+        this._L = doubled.length - (A + 1);
     }
 
 //    public static int[] shrink() {

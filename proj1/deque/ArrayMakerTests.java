@@ -8,8 +8,7 @@ public class ArrayMakerTests {
     private static ArrayMaker<Object> testArr;
 
     public static void main(String[] args) {
-//        System.out.println((10 % 8 + 8) % 8 );
-//        System.out.println(Math.floorMod(10, 8));
+        System.out.println(((double)(6) / 8));
     }
 
     @Test
@@ -119,7 +118,7 @@ public class ArrayMakerTests {
         System.out.println("");
         System.out.println("When capacity reaches 75%, the array should upsize.");
         testArr.addFirst(6);
-
+        testArr.printArrayStats();
 
     }
 
