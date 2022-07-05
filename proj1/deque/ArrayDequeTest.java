@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /* Performs some basic array deque tests. */
-public class ArrayMakerDequeTest {
+public class ArrayDequeTest {
 
   public static void main(String[] args) {
 //        List<Integer> test = new ArrayList<>();
