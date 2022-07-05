@@ -63,6 +63,9 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T removeFirst() {
+        if (this.isEmpty()) {
+            return null;
+        }
         Node<T> oldHead = this.getHead();
         T oldHeadVal = oldHead.getVal();
 
@@ -70,7 +73,7 @@ public class LinkedListDeque<T> implements Deque<T> {
         oldHead.getNext().setPrev(this._sentinel);
         nullifyNode(oldHead); //make eligible for GC
 
-        if (this._size != 0) {
+        if (this._size > 0) {
             this._size--;
         }
         return oldHeadVal;
@@ -78,6 +81,9 @@ public class LinkedListDeque<T> implements Deque<T> {
 
     @Override
     public T removeLast() {
+        if (this.isEmpty()) {
+            return null;
+        }
         Node<T> oldTail = this.getTail();
         T oldTailVal = oldTail.getVal();
 
@@ -85,13 +91,14 @@ public class LinkedListDeque<T> implements Deque<T> {
         this.setHead(oldTail.getPrev());
         nullifyNode(oldTail); //make eligible for GC
 
-        if (this._size != 0) {
+        if (this._size > 0) {
             this._size--;
         }
         return oldTailVal;
     }
 
 
+    @Override
     public boolean isEmpty() {
         return this._size == 0;
     }
@@ -159,6 +166,32 @@ public class LinkedListDeque<T> implements Deque<T> {
     @Override
     public boolean equals(Object o) {
 
+        if (!(o instanceof LinkedListDeque)) {
+            return false;
+        }
+
+        LinkedListDeque<T> otherLLD = (LinkedListDeque<T>) o;
+
+        if (this._size != otherLLD.size()) {
+            return false;
+        }
+
+        Node<T> thisHead = this.getHead();
+        Node<T> otherHead = otherLLD.getHead();
+
+
+        boolean res = true;
+
+        // All nodes in this
+        // All nodes in other
+        while (thisHead.hasNext() && otherHead.hasNext()) {
+            res = res && thisHead.equals(otherHead);
+            thisHead = thisHead.getNext();
+            otherHead = otherHead.getNext();
+        }
+        return res;
+    }
+
 //        if (!(o instanceof LinkedListDeque)) {
 //            return false;
 //        }
@@ -194,24 +227,22 @@ public class LinkedListDeque<T> implements Deque<T> {
 //            }
 //            return res;
 //        }
-        return true;
-    }
 
 
-    public String toString() {
-        Node<T> curr = this.getHead();
-        String out = "";
-
-        while (curr.hasNext()) {
-                out += "(";
-            out += curr.getVal();
-            out += ") -> ";
-            curr = curr.getNext();
-        }
-
-        return out;
-
-    }
+//    public String toString() {
+//        Node<T> curr = this.getHead();
+//        String out = "";
+//
+//        while (curr.hasNext()) {
+//                out += "(";
+//            out += curr.getVal();
+//            out += ") -> ";
+//            curr = curr.getNext();
+//        }
+//
+//        return out;
+//
+//    }
 
     private boolean contains(Object o) {
         Node<T> curr = this.getHead();
@@ -249,24 +280,24 @@ public class LinkedListDeque<T> implements Deque<T> {
 //    }
 
 
-    public Object[] toArray() {
-        Node<T> head = this.getHead();
-        Object[] arr = new Object[this._size];
-        int k = 0;
-
-        while (head.hasNext()) {
-            arr[k] = head.getVal();
-            head = head.getNext();
-            k++;
-        }
-        return arr;
-    }
+//    public Object[] toArray() {
+//        Node<T> head = this.getHead();
+//        Object[] arr = new Object[this._size];
+//        int k = 0;
+//
+//        while (head.hasNext()) {
+//            arr[k] = head.getVal();
+//            head = head.getNext();
+//            k++;
+//        }
+//        return arr;
+//    }
 
     // Nuh uh. Deal with deep nesting later.
 
-    private Object[] toArray(Object[] objects) {
-        return new Object[0];
-    }
+//    private Object[] toArray(Object[] objects) {
+//        return new Object[0];
+//    }
 
     // Simply add to the end by default
 
