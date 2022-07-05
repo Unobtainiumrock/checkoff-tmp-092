@@ -109,6 +109,7 @@ public class ArrayDeque<E> implements Deque<E> {
         }
     }
 
+    @Override
     public E removeFirst() {
         E thing = (E) this._items[(int) this._F + 1];
         System.out.println("Removing value: " + thing);
@@ -125,6 +126,7 @@ public class ArrayDeque<E> implements Deque<E> {
         return thing;
     }
 
+    @Override
     public E removeLast() {
         E thing = (E) this._items[(int) this._L - 1];
         System.out.println("Removing value: " + thing);
@@ -209,6 +211,7 @@ public class ArrayDeque<E> implements Deque<E> {
         return pointers;
     }
 
+    @Override
     public E get(int k) {
         return (E) this._items[k];
     }
