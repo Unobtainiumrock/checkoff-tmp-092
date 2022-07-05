@@ -2,7 +2,7 @@ package deque;
 import java.util.NoSuchElementException;
 
 // Source: https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/Deque.html#addFirst(E)
-public interface Deque<E> {
+public interface Deque<T> {
 
     /**
      * Inserts the specified element at the front of this deque if it is possible to do so immediately without violating capacity restrictions,
@@ -15,7 +15,7 @@ public interface Deque<E> {
      * @throws NullPointerException     - if the specified element is null and this deque does not permit null elements
      * @throws IllegalArgumentException - if some property of the specified element prevents it from being added to this deque
      */
-    void addFirst(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
+    void addFirst(T e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
 
     /**
      * Inserts the specified element at the end of this deque if it is possible to do so immediately without violating capacity restrictions,
@@ -28,7 +28,7 @@ public interface Deque<E> {
      * @throws NullPointerException     - if the specified element is null and this deque does not permit null elements
      * @throws IllegalArgumentException - if some property of the specified element prevents it from being added to this deque
      */
-    void addLast(E e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
+    void addLast(T e) throws IllegalStateException, ClassCastException, NullPointerException, IllegalArgumentException;
 
     /**
      * Retrieves and removes the first element of this deque. This method differs from pollFirst only in that
@@ -37,7 +37,7 @@ public interface Deque<E> {
      * @return the head of this deque.
      * @throws NoSuchElementException -if this deque is empty
      */
-    E removeFirst() throws NoSuchElementException;
+    T removeFirst() throws NoSuchElementException;
 
     /**
      * Retrieves and removes the last element of this deque. This method differs from pollLast only in that
@@ -46,7 +46,7 @@ public interface Deque<E> {
      * @return
      * @throws NoSuchElementException - if the deque is empty
      */
-    E removeLast() throws NoSuchElementException;
+    T removeLast() throws NoSuchElementException;
 
 //    default boolean isEmpty() {
 //        return this.size() == 0;
@@ -68,7 +68,7 @@ public interface Deque<E> {
      * @param index
      * @return
      */
-    E get(int index) throws NoSuchElementException;
+    T get(int index) throws NoSuchElementException;
 
     /**
      * Prints the deque, separated by whitespace, ends with a new line

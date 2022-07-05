@@ -2,7 +2,7 @@ package deque;
 
 import java.lang.Math;
 
-public class ArrayDeque<E> implements Deque<E> {
+public class ArrayDeque<T> implements Deque<T> {
     private double _F;
     private double _L;
     private int _size;
@@ -83,7 +83,7 @@ public class ArrayDeque<E> implements Deque<E> {
 //    }
 
     @Override
-    public void addFirst(E val) {
+    public void addFirst(T val) {
         System.out.println("Adding value: " + val + " to the front");
         this._items[(int) this._F] = val;
         double nextF = this.mod((int) (this._F - 1), this._capacity);
@@ -97,7 +97,7 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public void addLast(E val) {
+    public void addLast(T val) {
         System.out.println("Adding value: " + val + " to the back");
         this._items[(int) this._L] = val;
         double nextL = this.mod((int) (this._L + 1), this._capacity);
@@ -110,8 +110,8 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public E removeFirst() {
-        E thing = (E) this._items[(int) this._F + 1];
+    public T removeFirst() {
+        T thing = (T) this._items[(int) this._F + 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._F + 1] = null;
         double nextF = this.mod((int) (this._F + 1), this._capacity);
@@ -127,8 +127,8 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public E removeLast() {
-        E thing = (E) this._items[(int) this._L - 1];
+    public T removeLast() {
+        T thing = (T) this._items[(int) this._L - 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._L - 1] = null;
         double nextL = this.mod((int) (this._L - 1), this._capacity);
@@ -154,7 +154,7 @@ public class ArrayDeque<E> implements Deque<E> {
      * The doubled array is then filled from
      * pre-pad null, to F, to L to post-pad null.
      */
-    public void grow() {
+    private void grow() {
         Object[] doubled = new Object[this._capacity * 2];
         double A = this._capacity / 2;
         int k = 1;
@@ -170,7 +170,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this._L = doubled.length - (A + 1);
     }
 
-    public void shrink() {
+    private void shrink() {
         Object[] halved = new Object[this._capacity / 2];
         double A = this._capacity / 4;
 
@@ -190,7 +190,7 @@ public class ArrayDeque<E> implements Deque<E> {
 
     // Positive corresponds to shifting cyclically left
     // Negative corresponds to shifting cyclically right
-    public Object[] cyclicShift(Object[] reference, int by) {
+    private Object[] cyclicShift(Object[] reference, int by) {
         Object[] shifted = new Object[reference.length];
         int len = shifted.length;
 
@@ -203,7 +203,7 @@ public class ArrayDeque<E> implements Deque<E> {
         return shifted;
     }
 
-    public double[] setFandL(Object[] arr) {
+    private double[] setFandL(Object[] arr) {
         double[] pointers = new double[2];
 
         pointers[0] = Math.floor((arr.length - 1) / 2); // F
@@ -212,8 +212,8 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     @Override
-    public E get(int k) {
-        return (E) this._items[k];
+    public T get(int k) {
+        return (T) this._items[k];
     }
 
     @Override
@@ -240,14 +240,17 @@ public class ArrayDeque<E> implements Deque<E> {
      *
      * @return the total capacity of the _items
      */
-    public int getCapacity() {
+    //used to be public int... changed to satisfy AG API
+    int getCapacity() {
         return this._capacity;
     }
 
-    public double getPercentageFull() {
+    //used to be public double...changed to satisfy AG API
+    double getPercentageFull() {
         return ((double) this._size / (double) this._capacity);
     }
 
+    @Override
     public int size() {
         return this._size;
     }
@@ -256,7 +259,7 @@ public class ArrayDeque<E> implements Deque<E> {
         return ((a % b + b) % b);
     }
 
-    public void printArrayStats() {
+    void printArrayStats() {
         System.out.println("Values (including 'gaps'): ");
         for (int i = 0; i < this._capacity; i++) {
             System.out.print(this._items[i] + " ");
