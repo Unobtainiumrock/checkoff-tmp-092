@@ -69,14 +69,16 @@ public class ArrayMaker<E> {
         }
     }
 
-    public int[] addLast(int[] arr, int val) {
-        if ((arr.length + 1) >= 0.75) {
+    public void addLast(int val) {
+        System.out.println("Adding value: " + val + " to the back");
+        this._items[(int) this._L] = val;
+        double nextL = this.mod((int) (this._L - 1), this._capacity);
+        System.out.println("Moving pointer F from " + this._F + " to " + nextL);
+        this._size++;
+        this._F = nextL;
+        if (((double) (this._size) / this._capacity) >= 0.75) {
             this.grow();
         }
-        arr[(int) this._L] = val;
-        this._L = (this._L + 1) % arr.length;
-        this._size++;
-        return arr;
     }
 
     /**
@@ -88,10 +90,6 @@ public class ArrayMaker<E> {
     public void grow() {
         Object[] doubled = new Object[this._capacity * 2];
         double A = this._capacity / 2;
-        // fill in doubled by starting at the end of the padding before F ,
-        // reading from F + 1 until L - 1 on the _items array
-        // example _items = [5, 4, 2, 1, 3, L, F, 6]
-        //         doubled = [0, 0, 0, 0, F, 6, 5, 4, 2, 1, 3, L, 0, 0, 0, 0]
         int k = 1;
 
         for (int i = (int) A + 1; i < doubled.length - (A + 1); i++) {
@@ -117,6 +115,11 @@ public class ArrayMaker<E> {
         halved = cyclicShift(halved, (int)A - 1);
         this._items = halved;
 
+        this._items = halved;
+        this._capacity = halved.length;
+        double[] pointers = this.setFandL(halved);
+        this._F = pointers[0];
+        this._L = pointers[1];
     }
 
     // Positive corresponds to shifting cyclically left
@@ -169,6 +172,10 @@ public class ArrayMaker<E> {
      */
     public int getCapacity() {
         return this._capacity;
+    }
+
+    public double getPercentageFull() {
+        return ((double) this._size / (double) this._capacity);
     }
 
     public int size() {

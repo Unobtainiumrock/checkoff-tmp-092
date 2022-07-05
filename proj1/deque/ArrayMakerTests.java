@@ -140,6 +140,14 @@ public class ArrayMakerTests {
         System.out.println("When capacity reaches 75%, the array should upsize.");
         testArr.addFirst(6);
         testArr.printArrayStats();
+        System.out.println(testArr.getPercentageFull());
+        assertTrue(testArr.getPercentageFull() == 0.75);
+
+        System.out.println("");
+        System.out.println("Elements should continue to be prepended properly for addFirst");
+        testArr.addFirst(69);
+        testArr.printArrayStats();
+        assertTrue(Integer.compare((Integer) testArr.get(0), 69) == 0);
 
     }
 }
