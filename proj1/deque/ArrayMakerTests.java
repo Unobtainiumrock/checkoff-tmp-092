@@ -107,7 +107,7 @@ public class ArrayMakerTests {
     }
 
     @Test
-    public void addFirstTests() {
+    public void addTests() {
         reset(new ArrayMaker<Integer>());
 
         System.out.println("");
@@ -140,14 +140,43 @@ public class ArrayMakerTests {
         System.out.println("When capacity reaches 75%, the array should upsize.");
         testArr.addFirst(6);
         testArr.printArrayStats();
-        System.out.println(testArr.getPercentageFull());
-        assertTrue(testArr.getPercentageFull() == 0.75);
+        assertTrue(testArr.getPercentageFull() == 0.375);
 
         System.out.println("");
         System.out.println("Elements should continue to be prepended properly for addFirst");
         testArr.addFirst(69);
         testArr.printArrayStats();
-        assertTrue(Integer.compare((Integer) testArr.get(0), 69) == 0);
+        assertTrue(Integer.compare((Integer) testArr.get(4), 69) == 0);
 
+        System.out.println("");
+        System.out.println("Add Last should properly append");
+        testArr.addLast(144);
+        testArr.printArrayStats();
+        assertTrue(Integer.compare((Integer) testArr.get(11), 144) == 0);
+
+        System.out.println("");
+        System.out.println("Alternating adds should work");
+        testArr.addLast(13);
+        testArr.printArrayStats();
+        testArr.addFirst(11);
+        testArr.printArrayStats();
+        assertTrue(Integer.compare((Integer) testArr.get(3), 11) == 0);
+        assertTrue(Integer.compare((Integer) testArr.get(12), 13) == 0);
+
+        System.out.println("");
+        System.out.println("The array should continue to grow properly when hitting 75% capacity");
+        testArr.addFirst(123);
+        testArr.addFirst(456);
+        testArr.printArrayStats();
+        assertTrue(testArr.getCapacity() == 32);
+        assertTrue(testArr.getPercentageFull() < 0.75);
+
+        System.out.println("")
+
+    }
+
+    @Test
+    public void removeTests() {
+        
     }
 }

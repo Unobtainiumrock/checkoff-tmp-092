@@ -65,6 +65,7 @@ public class ArrayMaker<E> {
         this._size++;
         this._F = nextF;
         if (((double) (this._size) / this._capacity) >= 0.75) {
+            System.out.println("Array is growing. F and L positions will change");
             this.grow();
         }
     }
@@ -72,10 +73,10 @@ public class ArrayMaker<E> {
     public void addLast(int val) {
         System.out.println("Adding value: " + val + " to the back");
         this._items[(int) this._L] = val;
-        double nextL = this.mod((int) (this._L - 1), this._capacity);
-        System.out.println("Moving pointer F from " + this._F + " to " + nextL);
+        double nextL = this.mod((int) (this._L + 1), this._capacity);
+        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._size++;
-        this._F = nextL;
+        this._L = nextL;
         if (((double) (this._size) / this._capacity) >= 0.75) {
             this.grow();
         }
