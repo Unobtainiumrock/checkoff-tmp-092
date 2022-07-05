@@ -170,13 +170,52 @@ public class ArrayMakerTests {
         testArr.printArrayStats();
         assertTrue(testArr.getCapacity() == 32);
         assertTrue(testArr.getPercentageFull() < 0.75);
-
-        System.out.println("")
-
     }
 
     @Test
     public void removeTests() {
-        
+        reset(new ArrayMaker<Integer>());
+
+        for (int i = 0; i < 6; i++) {
+            testArr.addFirst(i + 1);
+        }
+
+        testArr.printArrayStats();
+
+        System.out.println("");
+        System.out.println("Remove first should remove elements from the front");
+        testArr.removeFirst();
+        testArr.printArrayStats();
+        testArr.removeFirst();
+        testArr.printArrayStats();
+
+        System.out.println("");
+        System.out.println("Attempting to upsize after downsizing should work properly");
+        testArr.addFirst(100);
+        testArr.printArrayStats();
+        testArr.addLast(200);
+        testArr.printArrayStats();
+
+
+        System.out.println("");
+        System.out.println("Remove last should remove elements from the back");
+        testArr.removeLast();
+        testArr.printArrayStats();
+        testArr.removeLast();
+        testArr.printArrayStats();
+
+        System.out.println("");
+        System.out.println("Should still addLast correctly");
+        testArr.addLast(69);
+        testArr.printArrayStats();
+
+        System.out.println("");
+        System.out.println("Should still addLast correctly");
+        testArr.addFirst(96);
+        testArr.printArrayStats();
+
+
     }
+
+//    public void
 }

@@ -82,6 +82,34 @@ public class ArrayMaker<E> {
         }
     }
 
+    public void removeFirst() {
+        System.out.println("Removing value: " + this._items[(int) this._F + 1]);
+        this._items[(int) this._F + 1] = null;
+        double nextF = this.mod((int) (this._F + 1), this._capacity);
+        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
+        this._F = nextF;
+
+        if (((double) (this._size - 1) / this._capacity) <= 0.25) {
+            System.out.println("Array is shrinking. F and L positions will change");
+            this.shrink();
+        }
+        this._size--;
+    }
+
+    public void removeLast() {
+        System.out.println("Removing value: " + this._items[(int) this._L - 1]);
+        this._items[(int) this._L - 1] = null;
+        double nextL = this.mod((int) (this._L - 1), this._capacity);
+        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
+        this._L = nextL;
+
+        if (((double) (this._size - 1) / this._capacity) <= 0.25) {
+            System.out.println("Array is shrinking. F and L positions will change");
+            this.shrink();
+        }
+        this._size--;
+    }
+
     /**
      * Doubles the size of the array and evenly distributes half of the upsize padding
      * before F, and the other half of the upsize padding for after L.
@@ -118,9 +146,8 @@ public class ArrayMaker<E> {
 
         this._items = halved;
         this._capacity = halved.length;
-        double[] pointers = this.setFandL(halved);
-        this._F = pointers[0];
-        this._L = pointers[1];
+        this._F = Math.floorMod((int) ((int) this._F - (2 * A) + 1), halved.length);
+        this._L = Math.floorMod((int) ((int) this._L - (2 * A) + 1), halved.length);
     }
 
     // Positive corresponds to shifting cyclically left
