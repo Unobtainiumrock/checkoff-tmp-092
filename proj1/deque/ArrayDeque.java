@@ -209,22 +209,6 @@ public class ArrayDeque<E> implements Deque<E> {
         return pointers;
     }
 
-    public double getF() {
-        return this._F;
-    }
-
-    public void setF(int k) {
-        this._F = (double) k;
-    }
-
-    public double getL() {
-        return this._L;
-    }
-
-    public void setL(int k) {
-        this._L = (double) k;
-    }
-
     public E get(int k) {
         return (E) this._items[k];
     }
@@ -270,7 +254,6 @@ public class ArrayDeque<E> implements Deque<E> {
     }
 
     public void printArrayStats() {
-
         System.out.println("Values (including 'gaps'): ");
         for (int i = 0; i < this._capacity; i++) {
             System.out.print(this._items[i] + " ");
@@ -283,13 +266,11 @@ public class ArrayDeque<E> implements Deque<E> {
         }
 
         System.out.println("");
-
         System.out.println("Pointer F is at: " + this._F);
         System.out.println("Pointer L is at: " + this._L);
         System.out.println("Size: " + this._size);
         System.out.println("Capacity: " + this._capacity);
         System.out.println("Percentage of array filled: " + (100 * ((double) this._size / (double) this._capacity)) + "%");
-
         System.out.println("");
         System.out.println("");
         System.out.println("");

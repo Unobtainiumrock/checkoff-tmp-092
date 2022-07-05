@@ -11,7 +11,7 @@ public class LinkedListDequeTest {
 
     /** You MUST use the variable below for all of your tests. If you test
      * using a local variable, and not this static variable below, the
-     * autograder will not grade that test. If you would like to test
+     * autograder will not grade that test. If you would like to test 
      * LinkedListDeques with types other than Integer (and you should),
      * you can define a new local variable. However, the autograder will
      * not grade that test. Please do not import java.util.Deque here!*/
