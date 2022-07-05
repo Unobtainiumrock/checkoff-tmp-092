@@ -163,37 +163,38 @@ public class LinkedListDeque<T> implements Deque<T> {
 //            return false;
 //        }
 
-        if (o instanceof ArrayDeque) {
-            // get AD as a regular collapsed array
-            Object[] otherItems = ((ArrayDeque<T>) o)._items;
-            Deque<T> other = new LinkedListDeque<>();
-
-
-
-            // convert the items element-wise from AD into a newly instantiated LLD
-            return true;
-        } else {
-            LinkedListDeque<T> otherLLD = (LinkedListDeque<T>) o;
-
-            if (this._size != otherLLD.size()) {
-                return false;
-            }
-
-            Node<T> thisHead = this.getHead();
-            Node<T> otherHead = otherLLD.getHead();
-
-
-            boolean res = true;
-
-            // All nodes in this
-            // All nodes in other
-            while (thisHead.hasNext() && otherHead.hasNext()) {
-                res = res && thisHead.equals(otherHead);
-                thisHead = thisHead.getNext();
-                otherHead = otherHead.getNext();
-            }
-            return res;
-        }
+//        if (o instanceof ArrayDeque) {
+//            // get AD as a regular collapsed array
+//            Object[] otherItems = ((ArrayDeque<T>) o)._items;
+//            Deque<T> other = new LinkedListDeque<>();
+//
+//
+//
+//            // convert the items element-wise from AD into a newly instantiated LLD
+//            return true;
+//        } else {
+//            LinkedListDeque<T> otherLLD = (LinkedListDeque<T>) o;
+//
+//            if (this._size != otherLLD.size()) {
+//                return false;
+//            }
+//
+//            Node<T> thisHead = this.getHead();
+//            Node<T> otherHead = otherLLD.getHead();
+//
+//
+//            boolean res = true;
+//
+//            // All nodes in this
+//            // All nodes in other
+//            while (thisHead.hasNext() && otherHead.hasNext()) {
+//                res = res && thisHead.equals(otherHead);
+//                thisHead = thisHead.getNext();
+//                otherHead = otherHead.getNext();
+//            }
+//            return res;
+//        }
+        return true;
     }
 
 

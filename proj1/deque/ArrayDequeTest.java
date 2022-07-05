@@ -63,26 +63,26 @@ public class ArrayDequeTest {
         System.out.println("");
         System.out.println("The F pointer used to indicate where to insert elements using addFirst should be initialized to floor((capacity - 1) / 2)");
 
-        for (int i = 0; i < 69; i++) {
-            System.out.println("");
-            reset(new ArrayDeque<>(i));
-            double F = testArr.getF();
-            capacity = testArr.getCapacity();
-            System.out.println("The F pointer is at: " + F + " For an array with capacity: " + capacity);
-            assertTrue(F == Math.floor((capacity - 1) / 2));
-        }
+//        for (int i = 0; i < 69; i++) {
+//            System.out.println("");
+//            reset(new ArrayDeque<>(i));
+//            double F = testArr.getF();
+//            capacity = testArr.getCapacity();
+//            System.out.println("The F pointer is at: " + F + " For an array with capacity: " + capacity);
+//            assertTrue(F == Math.floor((capacity - 1) / 2));
+//        }
 
         System.out.println("");
         System.out.println("The L pointer used to indicate where to insert elements using addFirst should be initialized to floor((capacity + 1) / 2)");
 
-        for (int i = 0; i < 69; i++) {
-            System.out.println("");
-            reset(new ArrayDeque<>(i));
-            double L = testArr.getL();
-            capacity = testArr.getCapacity();
-            System.out.println("The L pointer is at: " + L + " For an array with capacity: " + capacity);
-            assertTrue(L == Math.floor((capacity + 1) / 2));
-        }
+//        for (int i = 0; i < 69; i++) {
+//            System.out.println("");
+//            reset(new ArrayDeque<>(i));
+//            double L = testArr.getL();
+//            capacity = testArr.getCapacity();
+//            System.out.println("The L pointer is at: " + L + " For an array with capacity: " + capacity);
+//            assertTrue(L == Math.floor((capacity + 1) / 2));
+//        }
 
     }
 
@@ -109,12 +109,12 @@ public class ArrayDequeTest {
         testArr.printArrayStats();
         assertTrue(Integer.compare((Integer) testArr.get(1), 3) == 0);
 
-        System.out.println("");
-        System.out.println("The F pointer should cycle back to the end of the array when we reach out of bounds");
-        testArr.addFirst(4);
-        testArr.addFirst(5);
-        testArr.printArrayStats();
-        assertTrue(testArr.getF() == 6); // Accounts for moving to the next position to write at.
+//        System.out.println("");
+//        System.out.println("The F pointer should cycle back to the end of the array when we reach out of bounds");
+//        testArr.addFirst(4);
+//        testArr.addFirst(5);
+//        testArr.printArrayStats();
+//        assertTrue(testArr.getF() == 6); // Accounts for moving to the next position to write at.
 
         System.out.println("");
         System.out.println("When capacity reaches 75%, the array should upsize.");
