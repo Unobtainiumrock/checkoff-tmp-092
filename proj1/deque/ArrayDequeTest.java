@@ -199,6 +199,102 @@ public class ArrayDequeTest {
     }
 
 
+    @Test
+    public void getTest() {
+        //test for getting an index from an empty list should return null
+        assertEquals(null, ad.get(5));
+        //F = index 5, L = index 1
+
+        //test for getting an index that is out of bounds of the list returns null
+        ad.addFirst(5);//lld = 5, F = index 4, L = index 1
+        ad.printArrayStats();
+        assertEquals(null, ad.get(10));
+
+        //test for getting the first index gets the first item, not sentinel
+        assertTrue(Integer.compare(5, ad.get(0)) == 0);
+        //also test that deque is not altered after using get()
+        assertTrue(Integer.compare(5, ad.removeFirst()) == 0); //lld = empty, F = index 5, L = index 1
+
+
+        //test for getting the last index gets the tail item, not sentinel
+        //also test that deque is not altered after using get()
+        ad.addFirst(5); //lld = 5, F = index 4, L = index 1
+        ad.printArrayStats();
+        ad.addFirst(13); //lld: 13, 5, F = index 3, L = index 1
+        ad.printArrayStats();
+        ad.addLast(20); // lld: 13, 5, 20
+        ad.printArrayStats();
+        assertTrue(Integer.compare(20, ad.get(2)) == 0);
+
+        assertTrue(Integer.compare(20, ad.removeLast()) == 0); //lld = 13, 5
+
+        //test getting an index somewhere within the list
+        //also test that deque is not altered after using get()
+        ad.addLast(3); // lld: 13, 5, 3
+        ad.printArrayStats();
+        ad.addFirst(9); // lld: 9, 13, 5, 3
+        ad.printArrayStats();
+        ad.addFirst(8); //ad: 8, 9, 13, 5, 3
+        ad.printArrayStats();
+        ad.addLast(2); //ad: 8, 9, 13, 5, 3, 2
+        ad.printArrayStats();
+        ad.addLast(1); //ad: 8, 9, 13, 5, 3, 2, 1
+        ad.printArrayStats();
+        ad.addLast(1); //ad: 8, 9, 13, 5, 3, 2, 1, 1
+        ad.printArrayStats();
+        assertTrue(Integer.compare(9, ad.get(1)) == 0);
+        assertTrue(Integer.compare(5, ad.get(3)) == 0);
+        assertTrue(Integer.compare(8, ad.get(0)) == 0);
+        assertNull(ad.get(10));
+
+        ad.removeLast(); // ad: 8, 9, 13, 5, 3, 2, 1
+        ad.printArrayStats();
+        assertTrue(Integer.compare(9, ad.get(1)) == 0);
+        assertTrue(Integer.compare(1, ad.get(6)) == 0);
+        assertTrue(Integer.compare(2, ad.get(5)) == 0);
+        assertEquals(null, ad.get(7));
+        ad.printArrayStats();
+        ad.removeFirst(); // ad: 9, 13, 5, 3, 2, 1
+        assertTrue(Integer.compare(2, ad.get(4)) == 0);
+        assertTrue(Integer.compare(9, ad.get(0)) == 0);
+        ad.printArrayStats();
+        ad.removeFirst(); // ad: 13, 5, 3, 2, 1
+        assertTrue(Integer.compare(13, ad.get(0)) == 0);
+        assertNull(ad.get(5));
+        ad.printArrayStats();
+        ad.removeLast(); // ad: 13, 5, 3, 2
+        ad.printArrayStats();
+        assertNull(ad.get(4));
+        assertTrue(Integer.compare(2, ad.get(3)) == 0);
+        ad.removeLast(); // ad: 13, 5, 3
+        ad.removeLast(); // ad: 13, 5
+        ad.removeLast(); // ad: 13
+        ad.removeLast(); // ad:
+        assertNull(ad.get(0));
+        ad.addLast(7); // ad: 7
+        assertTrue(Integer.compare(7, ad.get(0)) == 0);
+        assertNull(ad.get(1));
+        ad.addLast(14); // ad: 7, 14
+        ad.addFirst(0); // ad: 0, 7, 14
+        assertTrue(Integer.compare(0, ad.get(0)) == 0);
+        assertTrue(Integer.compare(14, ad.get(2)) == 0);
+    }
+
+
+
+    @Test
+    public void printDequeTest() {
+        ad.addFirst(5);
+        ad.addFirst(10);
+        ad.addFirst(3);
+        ad.addLast(14);
+        ad.addLast(20); // lld = 3, 10, 5, 14, 20
+        ad.printDeque();
+    }
+
+
+
+}
 
 
     // To do:
@@ -218,4 +314,4 @@ public class ArrayDequeTest {
     // Positive corresponds to shifting cyclically left
     // Negative corresponds to shifting cyclically right
     //
-}
+

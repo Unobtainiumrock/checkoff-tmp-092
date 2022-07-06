@@ -222,8 +222,14 @@ public class ArrayDeque<T> implements Deque<T> {
     }
 
     @Override
-    public T get(int k) {
-        return (T) this._items[k];
+    public T get(int index) {
+        if (index > this._capacity - 1 || this._size == 0) {
+            return null;
+        }
+        int process = (int) this._F + 1 + index;
+        int passInIndex = process % this._capacity;
+        return (T) this._items[passInIndex];
+//                (T) this._items[k];
 //        if (k > this._capacity - 1 || this._size == 0) {
 //            return null;
 //        }
