@@ -201,23 +201,58 @@ public class ArrayDequeTest {
 
     @Test
     public void getTest() {
-        //test for getting an index from an empty list should return null
+//        ad.addLast(0);
+//        ad.addLast(1);
+//        ad.addLast(2);
+//        ad.addLast(3);
+//        ad.addLast(4);
+//        ad.printArrayStats();
+//        ad.addLast(5);
+//        ad.printArrayStats();
+//        ad.addLast(6);
+//        ad.addLast(7);
+//        ad.addLast(8);
+//        ad.addLast(9);
+//        ad.addLast(10);
+//        ad.printArrayStats();
+//        ad.addLast(11);
+//        ad.printArrayStats();
+//        ad.addLast(12);
+//        ad.printArrayStats();
+//        ad.addLast(13);
+//        ad.addLast(14);
+//        ad.addLast(15);
+//        ad.addLast(16);
+//        ad.addLast(17);
+//        ad.addLast(18);
+//        ad.addLast(19);
+//        ad.addLast(20);
+//        ad.addLast(21);
+//        ad.addLast(22);
+//        ad.addLast(23);
+//        ad.addLast(24);
+//        ad.printArrayStats();
+//
+//        assertTrue(Integer.compare(2, ad.get(2)) == 0);
+//        assertTrue(Integer.compare(12, ad.get(12)) == 0);
+//        assertTrue(Integer.compare(21, ad.get(21)) == 0);
+//        //test for getting an index from an empty list should return null
         assertEquals(null, ad.get(5));
-        //F = index 5, L = index 1
-
-        //test for getting an index that is out of bounds of the list returns null
+//        //F = index 5, L = index 1
+//
+//        //test for getting an index that is out of bounds of the list returns null
         ad.addFirst(5);//lld = 5, F = index 4, L = index 1
         ad.printArrayStats();
         assertEquals(null, ad.get(10));
-
-        //test for getting the first index gets the first item, not sentinel
+//
+//        //test for getting the first index gets the first item, not sentinel
         assertTrue(Integer.compare(5, ad.get(0)) == 0);
-        //also test that deque is not altered after using get()
+//        //also test that deque is not altered after using get()
         assertTrue(Integer.compare(5, ad.removeFirst()) == 0); //lld = empty, F = index 5, L = index 1
-
-
-        //test for getting the last index gets the tail item, not sentinel
-        //also test that deque is not altered after using get()
+//
+//
+//        //test for getting the last index gets the tail item, not sentinel
+//        //also test that deque is not altered after using get()
         ad.addFirst(5); //lld = 5, F = index 4, L = index 1
         ad.printArrayStats();
         ad.addFirst(13); //lld: 13, 5, F = index 3, L = index 1
@@ -225,11 +260,11 @@ public class ArrayDequeTest {
         ad.addLast(20); // lld: 13, 5, 20
         ad.printArrayStats();
         assertTrue(Integer.compare(20, ad.get(2)) == 0);
-
+//
         assertTrue(Integer.compare(20, ad.removeLast()) == 0); //lld = 13, 5
-
-        //test getting an index somewhere within the list
-        //also test that deque is not altered after using get()
+//
+//        //test getting an index somewhere within the list
+//        //also test that deque is not altered after using get()
         ad.addLast(3); // lld: 13, 5, 3
         ad.printArrayStats();
         ad.addFirst(9); // lld: 9, 13, 5, 3
@@ -246,7 +281,7 @@ public class ArrayDequeTest {
         assertTrue(Integer.compare(5, ad.get(3)) == 0);
         assertTrue(Integer.compare(8, ad.get(0)) == 0);
         assertNull(ad.get(10));
-
+//
         ad.removeLast(); // ad: 8, 9, 13, 5, 3, 2, 1
         ad.printArrayStats();
         assertTrue(Integer.compare(9, ad.get(1)) == 0);
