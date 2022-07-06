@@ -8,6 +8,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private int _size;
     private int _capacity;
     private Object[] _items;
+    private int p = 1;
 
     public ArrayDeque() {
         this._items = createArr(8);
@@ -18,13 +19,13 @@ public class ArrayDeque<T> implements Deque<T> {
         this._L = pointers[1];
     }
 
-    public ArrayDeque(int size) {
-        this._items = createArr(size);
-        this._capacity = this._items.length;
-        double[] pointers = setFandL(this._items);
-        this._F = pointers[0];
-        this._L = pointers[1];
-    }
+//    public ArrayDeque(int size) {
+//        this._items = createArr(size);
+//        this._capacity = this._items.length;
+//        double[] pointers = setFandL(this._items);
+//        this._F = pointers[0];
+//        this._L = pointers[1];
+//    }
 
     /**
      * Used by createArr to initialize "weird" numbered arrays to
@@ -86,13 +87,14 @@ public class ArrayDeque<T> implements Deque<T> {
     public void addFirst(T val) {
         System.out.println("Adding value: " + val + " to the front");
         this._items[(int) this._F] = val;
-        double nextF = this.mod((int) (this._F - 1), this._capacity);
+        double nextF = Math.floorMod((int) (this._F - 1), this._capacity);
         System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._size++;
         this._F = nextF;
         if (((double) (this._size) / this._capacity) >= 0.75) {
             System.out.println("Array is growing. F and L positions will change");
             this.grow();
+
         }
     }
 
@@ -100,7 +102,7 @@ public class ArrayDeque<T> implements Deque<T> {
     public void addLast(T val) {
         System.out.println("Adding value: " + val + " to the back");
         this._items[(int) this._L] = val;
-        double nextL = this.mod((int) (this._L + 1), this._capacity);
+        double nextL = Math.floorMod((int) (this._L + 1), this._capacity);
         System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._size++;
         this._L = nextL;
@@ -117,7 +119,7 @@ public class ArrayDeque<T> implements Deque<T> {
         T thing = (T) this._items[(int) this._F + 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._F + 1] = null;
-        double nextF = this.mod((int) (this._F + 1), this._capacity);
+        double nextF = Math.floorMod((int) (this._F + 1), this._capacity);
         System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._F = nextF;
 
@@ -139,7 +141,7 @@ public class ArrayDeque<T> implements Deque<T> {
         T thing = (T) this._items[(int) this._L - 1];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._L - 1] = null;
-        double nextL = this.mod((int) (this._L - 1), this._capacity);
+        double nextL = Math.floorMod((int) (this._L - 1), this._capacity);
         System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._L = nextL;
 
@@ -153,10 +155,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return thing;
     }
 
-    @Override
-    public boolean isEmpty() {
-        return this._size == 0;
-    }
 
     /**
      * Doubles the size of the array and evenly distributes half of the upsize padding
@@ -169,6 +167,7 @@ public class ArrayDeque<T> implements Deque<T> {
         double A = this._capacity / 2;
         int k = 1;
 
+
         for (int i = (int) A + 1; i < doubled.length - (A + 1); i++) {
             doubled[i] = this._items[mod((int) this._F + k, this._capacity)];
             k++;
@@ -177,7 +176,7 @@ public class ArrayDeque<T> implements Deque<T> {
         this._items = doubled;
         this._capacity = doubled.length;
         this._F = A;
-        this._L = doubled.length - (A + 1);
+        this._L = A + this._size + 1;
     }
 
     private void shrink() {
@@ -227,7 +226,7 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
         int process = (int) this._F + 1 + index;
-        int passInIndex = process % this._capacity;
+        int passInIndex = Math.floorMod(process, this._capacity);
         return (T) this._items[passInIndex];
 //                (T) this._items[k];
 //        if (k > this._capacity - 1 || this._size == 0) {
@@ -269,12 +268,12 @@ public class ArrayDeque<T> implements Deque<T> {
      * @return the total capacity of the _items
      */
     //used to be public int... changed to satisfy AG API
-    int getCapacity() {
+    private int getCapacity() {
         return this._capacity;
     }
 
     //used to be public double...changed to satisfy AG API
-    double getPercentageFull() {
+    private double getPercentageFull() {
         return ((double) this._size / (double) this._capacity);
     }
 
@@ -283,11 +282,11 @@ public class ArrayDeque<T> implements Deque<T> {
         return this._size;
     }
 
-    private int mod(int a, int b) {
-        return ((a % b + b) % b);
-    }
+//    private int mod(int a, int b) {
+//        return ((a % b + b) % b);
+//    }
 
-    void printArrayStats() {
+    private void printArrayStats() {
         System.out.println("Values (including 'gaps'): ");
         for (int i = 0; i < this._capacity; i++) {
             System.out.print(this._items[i] + " ");
