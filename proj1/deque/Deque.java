@@ -48,11 +48,9 @@ public interface Deque<T> {
      */
     T removeLast() throws NoSuchElementException;
 
-//    default boolean isEmpty() {
-//        return this.size() == 0;
-//    }
-
-    boolean isEmpty();
+    default boolean isEmpty() {
+        return this.size() == 0;
+    }
 
     int size();
 

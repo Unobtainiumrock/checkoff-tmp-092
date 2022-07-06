@@ -9,16 +9,16 @@ public class LinkedListDeque<T> implements Deque<T> {
         this._sentinel = (SentinelNode<T>) n;
     }
 
-    public LinkedListDeque(T t) {
-        Node<T> n = new Node<>(t);
-        this._sentinel = new SentinelNode<>(null);
-
-        this._sentinel.setNext(n);
-        this._sentinel.setPrev(n);
-        n.setPrev(this._sentinel);
-        n.setNext(this._sentinel);
-        this._size++;
-    }
+//    public LinkedListDeque(T t) {
+//        Node<T> n = new Node<>(t);
+//        this._sentinel = new SentinelNode<>(null);
+//
+//        this._sentinel.setNext(n);
+//        this._sentinel.setPrev(n);
+//        n.setPrev(this._sentinel);
+//        n.setNext(this._sentinel);
+//        this._size++;
+//    }
 
     // ArrayList is used to ease iteration of my
     // helper constructor. Stupid AG..
@@ -97,11 +97,6 @@ public class LinkedListDeque<T> implements Deque<T> {
         return oldTailVal;
     }
 
-
-    @Override
-    public boolean isEmpty() {
-        return this._size == 0;
-    }
 
     @Override
     public void addFirst(T val) {
