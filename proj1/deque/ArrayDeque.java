@@ -56,33 +56,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return new Object[capacity];
     }
 
-    ;
-
-//    public void addFirst(int val) {
-//        System.out.println("Adding value: " + val + " to the front");
-//        this._items[(int) this._F] = val;
-//        double nextF = this.mod((int) (this._F - 1), this._capacity);
-//        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
-//        this._size++;
-//        this._F = nextF;
-//        if (((double) (this._size) / this._capacity) >= 0.75) {
-//            System.out.println("Array is growing. F and L positions will change");
-//            this.grow();
-//        }
-//    }
-
-//    public void addLast(int val) {
-//        System.out.println("Adding value: " + val + " to the back");
-//        this._items[(int) this._L] = val;
-//        double nextL = this.mod((int) (this._L + 1), this._capacity);
-//        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
-//        this._size++;
-//        this._L = nextL;
-//        if (((double) (this._size) / this._capacity) >= 0.75) {
-//            this.grow();
-//        }
-//    }
-
     @Override
     public void addFirst(T val) {
         System.out.println("Adding value: " + val + " to the front");
@@ -155,7 +128,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return thing;
     }
 
-
     /**
      * Doubles the size of the array and evenly distributes half of the upsize padding
      * before F, and the other half of the upsize padding for after L.
@@ -169,7 +141,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
 
         for (int i = (int) A + 1; i < doubled.length - (A + 1); i++) {
-            doubled[i] = this._items[mod((int) this._F + k, this._capacity)];
+            doubled[i] = this._items[Math.floorMod((int) this._F + k, this._capacity)];
             k++;
         }
 
@@ -220,6 +192,32 @@ public class ArrayDeque<T> implements Deque<T> {
         return pointers;
     }
 
+    public boolean equals(Object o) {
+        if (Deque.class.isAssignableFrom((Class<?>) o)) {
+            Deque<T> other = null;
+            if (o instanceof LinkedListDeque) {
+                other = (LinkedListDeque<T>) o;
+            }
+
+            if (o instanceof  ArrayDeque) {
+                other = (ArrayDeque<T>) o;
+            }
+
+            if (other.size() != this._size) {
+                return false;
+            }
+
+            for (int i = 0; i < other.size(); i++) {
+                if (!(other.get(i).equals(this.get(i)))) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public T get(int index) {
         if (index > this._capacity - 1 || this._size == 0) {
@@ -228,18 +226,6 @@ public class ArrayDeque<T> implements Deque<T> {
         int process = (int) this._F + 1 + index;
         int passInIndex = Math.floorMod(process, this._capacity);
         return (T) this._items[passInIndex];
-//                (T) this._items[k];
-//        if (k > this._capacity - 1 || this._size == 0) {
-//            return null;
-//        }
-//        double L = this._L;
-//        double F = this._F;
-//        if (F < L) {
-//            return (T) this._items[cyclicShift(( F + k + 1), this._capacity)];
-////
-//        }
-//        return (T) this._items[cyclicShift((L + k + 1), this._capacity)];
-
     }
 
 
@@ -282,10 +268,9 @@ public class ArrayDeque<T> implements Deque<T> {
         return this._size;
     }
 
-//    private int mod(int a, int b) {
-//        return ((a % b + b) % b);
-//    }
-
+    /**
+     * Superior to printDeque ;)
+     */
     private void printArrayStats() {
         System.out.println("Values (including 'gaps'): ");
         for (int i = 0; i < this._capacity; i++) {

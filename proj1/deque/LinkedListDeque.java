@@ -44,12 +44,12 @@ public class LinkedListDeque<T> implements Deque<T> {
         return this._sentinel.getNext();
     }
 
-    private Node<T> getTail() {
-        return this._sentinel.getPrev();
-    }
-
     private void setHead(Node<T> n) {
         this._sentinel.setPrev(n);
+    }
+
+    private Node<T> getTail() {
+        return this._sentinel.getPrev();
     }
 
     private void setTail(Node<T> n) {
@@ -187,49 +187,14 @@ public class LinkedListDeque<T> implements Deque<T> {
         return res;
     }
 
-//        if (!(o instanceof LinkedListDeque)) {
-//            return false;
-//        }
 
-//        if (o instanceof ArrayDeque) {
-//            // get AD as a regular collapsed array
-//            Object[] otherItems = ((ArrayDeque<T>) o)._items;
-//            Deque<T> other = new LinkedListDeque<>();
-//
-//
-//
-//            // convert the items element-wise from AD into a newly instantiated LLD
-//            return true;
-//        } else {
-//            LinkedListDeque<T> otherLLD = (LinkedListDeque<T>) o;
-//
-//            if (this._size != otherLLD.size()) {
-//                return false;
-//            }
-//
-//            Node<T> thisHead = this.getHead();
-//            Node<T> otherHead = otherLLD.getHead();
-//
-//
-//            boolean res = true;
-//
-//            // All nodes in this
-//            // All nodes in other
-//            while (thisHead.hasNext() && otherHead.hasNext()) {
-//                res = res && thisHead.equals(otherHead);
-//                thisHead = thisHead.getNext();
-//                otherHead = otherHead.getNext();
-//            }
-//            return res;
-//        }
-
-
+//    @Override
 //    public String toString() {
 //        Node<T> curr = this.getHead();
 //        String out = "";
 //
 //        while (curr.hasNext()) {
-//                out += "(";
+//            out += "(";
 //            out += curr.getVal();
 //            out += ") -> ";
 //            curr = curr.getNext();
