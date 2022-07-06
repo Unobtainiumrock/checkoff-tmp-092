@@ -90,7 +90,7 @@ public class ArrayDeque<T> implements Deque<T> {
         }
         T thing = (T) this._items[Math.floorMod(((int) this._F + 1), this._capacity)];
 //        System.out.println("Removing value: " + thing);
-        this._items[Math.floorMod((int) this._F + 1, this._capacity)] = null;
+        this._items[Math.floorMod(((int) this._F + 1), this._capacity)] = null;
         double nextF = Math.floorMod((int) (this._F + 1), this._capacity);
 //        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._F = nextF;
@@ -112,7 +112,7 @@ public class ArrayDeque<T> implements Deque<T> {
         }
         T thing = (T) this._items[Math.floorMod(((int) this._L - 1), this._capacity)];
 //        System.out.println("Removing value: " + thing);
-        this._items[Math.floorMod((int) this._L - 1, this._capacity)] = null;
+        this._items[Math.floorMod(((int) this._L - 1), this._capacity)] = null;
         double nextL = Math.floorMod((int) (this._L - 1), this._capacity);
 //        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._L = nextL;
@@ -152,7 +152,7 @@ public class ArrayDeque<T> implements Deque<T> {
 
     private void shrink() {
         Object[] halved = new Object[this._capacity / 2];
-        double A = this._capacity / 4;
+        double A = (this._capacity / 4) + 1;
 
         // grab elements from A to capacity - (A + 1)
         for (int i = 0; i < halved.length; i++) {
@@ -160,7 +160,6 @@ public class ArrayDeque<T> implements Deque<T> {
         }
         // Cycle back by A - 1
         halved = cyclicShift(halved, (int) A - 1);
-        this._items = halved;
 
         this._items = halved;
         this._capacity = halved.length;
@@ -191,6 +190,7 @@ public class ArrayDeque<T> implements Deque<T> {
         return pointers;
     }
 
+    @Override
     public boolean equals(Object o) {
 //        if (Deque.class.isAssignableFrom((Class<?>) o)) {
         Deque<T> other = null;

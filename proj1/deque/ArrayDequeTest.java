@@ -1,15 +1,14 @@
 package deque;
 
-import jh61b.junit.In;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+
 public class ArrayDequeTest {
 
-
     public static Deque<Integer> ad = new ArrayDeque<>();
-
+    //public static Deque<Integer> ad = new ArrayDeque<Integer>();
 
     public static void reset(ArrayDeque<Integer> arr) {
         ad = arr;
@@ -209,6 +208,34 @@ public class ArrayDequeTest {
 
 
     @Test
+    public void AGGetTest() {
+        ad.addFirst(0);
+        ad.addLast(1);
+        ad.addFirst(2);
+        ad.removeFirst();
+        ad.addFirst(4);
+        ad.addFirst(5);
+        ad.removeFirst();
+        ad.addFirst(7);
+        ad.addLast(8);
+        System.out.println(ad.get(3));
+        ad.addFirst(10);
+        ad.addLast(11);
+        ad.removeFirst();
+        ad.addLast(13);
+        ad.removeFirst();
+        System.out.println(ad.get(0));
+        ad.removeFirst();
+        ad.removeFirst();
+        ad.addLast(18);
+        System.out.println(ad.get(4));
+        ad.removeFirst();
+        ad.removeLast();
+        System.out.println(ad.get(2));
+
+    }
+
+    @Test
     public void getTest() {
         ad.addLast(0);
         ad.addLast(1);
@@ -323,9 +350,22 @@ public class ArrayDequeTest {
         ad.addFirst(0); // ad: 0, 7, 14
         assertTrue(Integer.compare(0, ad.get(0)) == 0);
         assertTrue(Integer.compare(14, ad.get(2)) == 0);
+
     }
 
 
+    @Test
+    public void equalsTest() {
+        assertTrue(ad.equals(ad));
+        assertTrue(ad.equals(ad));
+    }
+
+    @Test
+    public void sizeTest() {
+        assertTrue(ad.size() == ad.size());
+        assertTrue(ad.size() == ad.size());
+        assertTrue(ad.size() == ad.size());
+    }
 
     @Test
     public void printDequeTest() {
