@@ -58,25 +58,24 @@ public class ArrayDeque<T> implements Deque<T> {
 
     @Override
     public void addFirst(T val) {
-        System.out.println("Adding value: " + val + " to the front");
+//        System.out.println("Adding value: " + val + " to the front");
         this._items[(int) this._F] = val;
         double nextF = Math.floorMod((int) (this._F - 1), this._capacity);
-        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
+//        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._size++;
         this._F = nextF;
         if (((double) (this._size) / this._capacity) >= 0.75) {
-            System.out.println("Array is growing. F and L positions will change");
+//            System.out.println("Array is growing. F and L positions will change");
             this.grow();
-
         }
     }
 
     @Override
     public void addLast(T val) {
-        System.out.println("Adding value: " + val + " to the back");
+//        System.out.println("Adding value: " + val + " to the back");
         this._items[(int) this._L] = val;
         double nextL = Math.floorMod((int) (this._L + 1), this._capacity);
-        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
+//        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._size++;
         this._L = nextL;
         if (((double) (this._size) / this._capacity) >= 0.75) {
@@ -90,14 +89,14 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
         T thing = (T) this._items[Math.floorMod(((int) this._F + 1), this._capacity)];
-        System.out.println("Removing value: " + thing);
-        this._items[(int) this._F + 1] = null;
+//        System.out.println("Removing value: " + thing);
+        this._items[Math.floorMod((int) this._F + 1, this._capacity)] = null;
         double nextF = Math.floorMod((int) (this._F + 1), this._capacity);
-        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
+//        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._F = nextF;
 
         if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
-            System.out.println("Array is shrinking. F and L positions will change");
+//            System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
         if (this.size() > 0) {
@@ -112,14 +111,14 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
         T thing = (T) this._items[Math.floorMod(((int) this._L - 1), this._capacity)];
-        System.out.println("Removing value: " + thing);
-        this._items[(int) this._L - 1] = null;
+//        System.out.println("Removing value: " + thing);
+        this._items[Math.floorMod((int) this._L - 1, this._capacity)] = null;
         double nextL = Math.floorMod((int) (this._L - 1), this._capacity);
-        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
+//        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._L = nextL;
 
         if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
-            System.out.println("Array is shrinking. F and L positions will change");
+//            System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
         if (this.size() > 0) {
