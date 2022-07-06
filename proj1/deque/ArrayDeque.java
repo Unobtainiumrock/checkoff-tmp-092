@@ -89,7 +89,7 @@ public class ArrayDeque<T> implements Deque<T> {
         if (this.isEmpty()) {
             return null;
         }
-        T thing = (T) this._items[(int) this._F + 1];
+        T thing = (T) this._items[Math.floorMod(((int) this._F + 1), this._capacity)];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._F + 1] = null;
         double nextF = Math.floorMod((int) (this._F + 1), this._capacity);
@@ -111,7 +111,7 @@ public class ArrayDeque<T> implements Deque<T> {
         if (this.isEmpty()) {
             return null;
         }
-        T thing = (T) this._items[(int) this._L - 1];
+        T thing = (T) this._items[Math.floorMod(((int) this._L - 1), this._capacity)];
         System.out.println("Removing value: " + thing);
         this._items[(int) this._L - 1] = null;
         double nextL = Math.floorMod((int) (this._L - 1), this._capacity);
