@@ -2,6 +2,8 @@ package deque;
 
 import org.junit.Test;
 
+import java.util.Objects;
+
 import static org.junit.Assert.*;
 
 
@@ -207,33 +209,69 @@ public class ArrayDequeTest {
     }
 
 
-    @Test
-    public void AGGetTest() {
-        ad.addFirst(0);
-        ad.addLast(1);
-        ad.addFirst(2);
-        ad.removeFirst();
-        ad.addFirst(4);
-        ad.addFirst(5);
-        ad.removeFirst();
-        ad.addFirst(7);
-        ad.addLast(8);
-        System.out.println(ad.get(3));
-        ad.addFirst(10);
-        ad.addLast(11);
-        ad.removeFirst();
-        ad.addLast(13);
-        ad.removeFirst();
-        System.out.println(ad.get(0));
-        ad.removeFirst();
-        ad.removeFirst();
-        ad.addLast(18);
-        System.out.println(ad.get(4));
-        ad.removeFirst();
-        ad.removeLast();
-        System.out.println(ad.get(2));
+//    @Test
+//    public void moreAGTest() {
+//        ad.addFirst(0);
+//        ad.get(0);
+//        ad.addFirst(2);
+//        ad.removeFirst();
+//        ad.addFirst(4);
+//        ad.get(0);
+//        ad.addFirst(6);
+//        ad.addLast(7);
+//        ad.printArrayStats();
+//        ad.addFirst(8);
+//        ad.printArrayStats();
+//        ad.addLast(9);
+//        ad.printArrayStats();
+//        ad.addFirst(10);
+//        ad.printArrayStats();
+//        ad.addLast(11);
+//        ad.printArrayStats();
+//        ad.removeLast();
+//        ad.printArrayStats();
+//        ad.removeLast();
+//        ad.printArrayStats();
+//        ad.removeLast();
+//        ad.printArrayStats();
+//        ad.get(3);
+//        ad.removeLast();
+//        ad.printArrayStats();
+//        System.out.println(ad.removeFirst());
+//        ad.printArrayStats();
+//    }
 
-    }
+//    @Test
+//    public void AGGetTest() {
+//        ad.addFirst(0);
+//        ad.addLast(1);
+//        ad.addFirst(2);
+//        ad.removeFirst();
+//        ad.addFirst(4);
+//        ad.addFirst(5);
+//        ad.removeFirst();
+//        ad.addFirst(7);
+//        ad.addLast(8);
+//        System.out.println(ad.get(3));
+//        ad.addFirst(10);
+//        ad.addLast(11);
+//        ad.removeFirst();
+//        ad.addLast(13);
+//        ad.removeFirst();
+//        ad.printArrayStats();
+//        System.out.println(ad.get(0));
+//        ad.removeFirst();
+//        ad.printArrayStats();
+//        ad.removeFirst();
+//        ad.printArrayStats();
+//        ad.addLast(18);
+//        ad.printArrayStats();
+//        System.out.println(ad.get(4));
+//        ad.removeFirst();
+//        ad.removeLast();
+//        ad.printArrayStats();
+//        System.out.println(ad.get(2));
+//    }
 
     @Test
     public void getTest() {

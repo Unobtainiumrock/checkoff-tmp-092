@@ -95,7 +95,25 @@ public class ArrayDeque<T> implements Deque<T> {
 //        System.out.println("Moving pointer F from " + this._F + " to " + nextF);
         this._F = nextF;
 
-        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
+        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity == 16) {
+            Object[] newArr = new Object[8];
+            newArr[0] = null;
+            newArr[7] = null;
+
+            int j = (int) this._F + 1;
+            int k = (int) this._L - 1;
+            int i = 0;
+            while (j <= k) {
+                newArr[i] = this._items[j];
+                i++;
+                j++;
+            }
+            this._F = 1;
+            this._L = 6;
+            this._items = cyclicShift(newArr, -2);
+            newArr = null;
+            this._capacity = 8;
+        } else if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
 //            System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
@@ -117,7 +135,25 @@ public class ArrayDeque<T> implements Deque<T> {
 //        System.out.println("Moving pointer L from " + this._L + " to " + nextL);
         this._L = nextL;
 
-        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity >= 16) {
+        if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity == 16) {
+            Object[] newArr = new Object[8];
+            newArr[0] = null;
+            newArr[7] = null;
+
+            int j = (int) this._F + 1;
+            int k = (int) this._L - 1;
+            int i = 0;
+            while (j <= k) {
+                newArr[i] = this._items[j];
+                i++;
+                j++;
+            }
+            this._F = 1;
+            this._L = 6;
+            this._items = cyclicShift(newArr, -2);
+            newArr = null;
+            this._capacity = 8;
+        } else if (((double) (this._size - 1) / this._capacity) <= 0.25 && this._capacity > 16) {
 //            System.out.println("Array is shrinking. F and L positions will change");
             this.shrink();
         }
@@ -152,15 +188,38 @@ public class ArrayDeque<T> implements Deque<T> {
 
     private void shrink() {
         Object[] halved = new Object[this._capacity / 2];
-        double A = (this._capacity / 4) + 1;
+        double A = (this._capacity / 4);
 
         // grab elements from A to capacity - (A + 1)
-        for (int i = 0; i < halved.length; i++) {
-            halved[i] = this._items[(int) A + i];
+        int j = (int) this._F + 1;
+        int k = (int) this._L - 1;
+        int i = 0;
+        while (j <= k) {
+            halved[i] = this._items[j];
+            i++;
+            j++;
         }
+//        for (int i = 0; i < halved.length; i++) {
+//            halved[i] = this._items[(int) A + i];
+//        }
         // Cycle back by A - 1
         halved = cyclicShift(halved, (int) A - 1);
 
+//        Object[] temp = new Object[halved.length];
+//        temp[0] = "F";
+//        temp[halved.length - 1] = "L";
+//        temp = cyclicShift(temp, (int) A);
+//        for (int a = 0; a < temp.length; a++) {
+//            if (temp[a] == "F") {
+//                this._F = a;
+//                System.out.println("entered");
+//            }
+//            if (temp[a] == "L") {
+//                this._L = a;
+//                System.out.println("entered");
+//            }
+//        }
+//        temp = null;
         this._items = halved;
         this._capacity = halved.length;
         this._F = Math.floorMod((int) ((int) this._F - (2 * A) + 1), halved.length);
