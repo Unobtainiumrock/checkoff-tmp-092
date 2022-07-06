@@ -8,6 +8,7 @@ public class ArrayDeque<T> implements Deque<T> {
     private int _size;
     private int _capacity;
     private Object[] _items;
+    private int p = 1;
 
     public ArrayDeque() {
         this._items = createArr(8);
@@ -93,6 +94,7 @@ public class ArrayDeque<T> implements Deque<T> {
         if (((double) (this._size) / this._capacity) >= 0.75) {
             System.out.println("Array is growing. F and L positions will change");
             this.grow();
+
         }
     }
 
@@ -169,6 +171,7 @@ public class ArrayDeque<T> implements Deque<T> {
         double A = this._capacity / 2;
         int k = 1;
 
+
         for (int i = (int) A + 1; i < doubled.length - (A + 1); i++) {
             doubled[i] = this._items[mod((int) this._F + k, this._capacity)];
             k++;
@@ -177,7 +180,7 @@ public class ArrayDeque<T> implements Deque<T> {
         this._items = doubled;
         this._capacity = doubled.length;
         this._F = A;
-        this._L = doubled.length - (A + 1);
+        this._L = A + this._size + 1;
     }
 
     private void shrink() {
