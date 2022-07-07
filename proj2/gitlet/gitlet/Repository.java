@@ -34,7 +34,18 @@ public class Repository {
     }
 
     public static void add(String file) {
-        // Performs git add logic.
+        // `git add`
+            // "Nothing specified, nothing added.\n"
+            // "Maybe you wanted to say 'git add .'?"
+
+        // `git add .`
+            // nothing happens
+
+        // `git add <incorrect path or file>`
+            // "fatal: pathspec '<incorrect path here>' did not match any files"
+
+        // 'git add <correct path>'
+            // No feedback given, perform logic to stage stuff.
     }
 
     public static void commit(String commitMsg) {
