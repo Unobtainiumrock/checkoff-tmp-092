@@ -25,5 +25,15 @@ public class Repository {
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
-    /* TODO: fill in the rest of this class. */
+    public static void init() {
+        // Initializes repo.
+    }
+
+    public static void exists() {
+        // Checks if a repository is initialized already.
+    }
+
+    public static void add() {
+        // Performs git add logic.
+    }
 }
