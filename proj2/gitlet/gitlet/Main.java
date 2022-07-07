@@ -26,6 +26,10 @@ public class Main {
             case "commit":
                 Repository.exists(); // ditto for DNE edge case
                 Repository.commit(args[1]);
+            case "rm" :
+                Repository.exists(); // ditto. Maybe refactor this later? Look into class-level decorators for Repository.java's methods.s
+
+                break;
                 // This "test" case will be used for development purposes. I'm going to see if not closing the program
                 // and iteracting with it as a true CLI app using a while loop will let us handle reading/writing to
                 // files prior to closing. Similar to what I've done in previous Java courses.
