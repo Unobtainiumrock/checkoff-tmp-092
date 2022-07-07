@@ -6,10 +6,10 @@ package gitlet;
 public class Main {
 
     /** Usage: java gitlet.Main ARGS, where ARGS contains
-     *  <COMMAND> <OPERAND1> <OPERAND2> ... 
+     *  <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) {
-        if (args[0].length == 0) {
+        if (args.length == 0) {
             System.out.println("No command provided, please provide a command,");
             System.exit(0);
         }
