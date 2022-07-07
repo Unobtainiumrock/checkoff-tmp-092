@@ -1,5 +1,8 @@
 package gitlet;
 
+// Stretch goal. See if any pipelines of functions are performed in the
+// project and play with streams.
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author TODO
  */
@@ -28,11 +31,38 @@ public class Main {
                 Repository.commit(args[1]);
             case "rm" :
                 Repository.exists(); // ditto. Maybe refactor this later? Look into class-level decorators for Repository.java's methods.s
-
                 break;
+            case "log":
+                Repository.exists();
+                Repository.log();
                 // This "test" case will be used for development purposes. I'm going to see if not closing the program
-                // and iteracting with it as a true CLI app using a while loop will let us handle reading/writing to
-                // files prior to closing. Similar to what I've done in previous Java courses.
+                // and interacting with it as a true CLI app using a while loop will let us handle reading/writing to
+                // files, prior to closing. Similar to what I've done in previous Java courses.
+            case "global-log":
+                Repository.exists();
+                Repository.globalLog();
+            case "find":
+                Repository.exists();
+                Repository.find();
+                break;
+            case "status":
+                Repository.exists();
+                Repository.status();
+            case "checkout":
+                Repository.exists(); // Soo repetitive. Look for decorators..
+                Repository.checkout();
+            case "branch":
+                Repository.exists();
+                Repository.branch();
+            case "rm-branch":
+                Repository.exists();
+                Repository.rmBranch();
+            case "reset":
+                Repository.exists();
+                Repository.reset();
+            case "merge":
+                Repository.exists();
+                Repository.merge();
             case "test":
                 break;
             // TODO: FILL THE REST IN
