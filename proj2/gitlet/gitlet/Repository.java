@@ -33,6 +33,24 @@ public class Repository {
         // Checks if a repository is initialized already.
     }
 
+    /**
+     * Usage: java gitlet.Main add [filename]
+     *
+     * Description: Adds a copy of the file as it currently exists to the staging area (see the description of the commit command).
+     *              For this reason, adding a file is also called staging the file for addition. Staging an already-staged file overwrites the
+     *              previous entry in the staging area with the new contents. The staging area should be somewhere in .gitlet. If the current
+     *              working version of the file is identical to the version in the current commit, do not stage it to be added, and remove it
+     *              from the staging area if it is already there (as can happen when a file is changed, added, and then changed back to it’s
+     *              original version). The file will no longer be staged for removal (see gitlet rm), if it was at the time of the command.
+     *
+     * Runtime: In the worst case, should run in linear time relative to the size of the file being added and O(log(N)), for N
+     *          the number of files in the commit.
+     *
+     * Failure Cases: If the file does not exist, print the error message File does not exist. and exit without changing anything
+     *
+     * @param file A string representing the file we with to commit. If "." is provided, then it will iterate over all untracked files and add them.
+     *             to the staging area.
+     */
     public static void add(String file) {
         // `git add`
             // "Nothing specified, nothing added.\n"
