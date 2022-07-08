@@ -28,6 +28,11 @@ public class Repository {
      * The .gitlet directory.
      */
     public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
+    public static final File STAGE_DIR = Utils.join(GITLET_DIR, "staging");
+    public static final File COMMIT_DIR = Utils.join(GITLET_DIR, "commits");
+    public static final File BRANCH_DIR = Utils.join(COMMIT_DIR, "branches");
+    public static final File BLOB_DIR = Utils.join(GITLET_DIR, "blobs");
+
 
     /**
      * Usage: java gitlet.Main init
