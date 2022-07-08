@@ -127,16 +127,18 @@ public class Repository {
 
         // Files staged
         // Commit message not provided
-        // Exit and give an error saying that a commit msg needs to be provided
+            // Exit and give an error saying that a commit msg needs to be provided
+
         // Commit message provided
         // First commit in a fresh repo
-        // "[<branch name> (root-commit) <hash>] <commit message>\n"
-        // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
-        // "create mode <100644 (*)> <filename here>"
+            // "[<branch name> (root-commit) <hash>] <commit message>\n"
+            // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
+            // "create mode <100644 (*)> <filename here>"
+
         // Commits beyond the first commit
-        // "[branch name <hash>] <commit message> "
-        // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
-        // "create mode <100644 (*)> <filename here>"
+            // "[branch name <hash>] <commit message> "
+            // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
+            // "create mode <100644 (*)> <filename here>"
 
         // (*) Something specific to file systems. This code appears to be associated with text files and creation. Try to Google file codes later.
     }
