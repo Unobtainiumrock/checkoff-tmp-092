@@ -1,15 +1,16 @@
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.lang.Iterable;
 
 /**
  * A AList is a list of integers. Like SLList, it also hides the terrible
  * truth of the nakedness within, but uses an array as it's base.
  */
-public class AList<Item> {
+public class AList<Item> implements Iterator<Item>, Iterable<Item> {
 
     private Item[] items;
     private int size;
+    private Iterator iter;
 
     /** Creates an empty AList. */
     public AList() {
@@ -21,7 +22,11 @@ public class AList<Item> {
     public static <Item> AList<Item> of(Item... values) {
         AList<Item> list = new AList<>();
         for (Item value : values) {
-            list.addLast(value);
+            if (value != null) {
+                list.addLast(value);
+            } else {
+                break;
+            }
         }
         return list;
     }
@@ -75,4 +80,20 @@ public class AList<Item> {
         return items;
     }
 
+    @Override
+    public Iterator<Item> iterator() {
+//        System.out.println(Arrays.asList(items));
+        this.iter = this.of(items).iterator();
+        return this.iter;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return this.iter.hasNext();
+    }
+
+    @Override
+    public Item next() {
+        return (Item) this.iter.next();
+    }
 }

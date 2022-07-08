@@ -1,7 +1,10 @@
 package gitlet;
 
 // Stretch goal. See if any pipelines of functions are performed in the
-// project and play with streams.
+// project and play with streams. update: Maybe not, it appears java.nio and java.io
+// might not play well together. nio is a buffer oriented pkg and io is a stream oriented package.
+// I think I'll prefer working with java.nio b/c apparently its non-blocking!
+// https://www.geeksforgeeks.org/difference-between-java-io-and-java-nio/
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author TODO

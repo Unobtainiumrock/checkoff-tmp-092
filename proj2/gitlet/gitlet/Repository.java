@@ -29,8 +29,29 @@ public class Repository {
      */
     public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
 
+    /**
+     * Usage: java gitlet.Main init
+     *
+     * Description: Creates a new Gitlet version-control system in the current directory.
+     *              This system will automatically start with one commit: a commit that contains no files
+     *              and has the commit message initial commit (just like that, with no punctuation). It will have a
+     *              single branch: main, which initially points to this initial commit, and main will be the current branch.
+     *              The timestamp for this initial commit will be 00:00:00 UTC, Thursday, 1 January 1970 in whatever format
+     *              you choose for dates (this is called “The (Unix) Epoch”, represented internally by the time 0.)
+     *              Since the initial commit in all repositories created by Gitlet will have exactly the same content,
+     *              it follows that all repositories will automatically share this commit (they will all have the same UID)
+     *              and all commits in all repositories will trace back to it.
+     *
+     * Runtime: O(1)
+     *
+     */
     public static void init() {
-        // Initializes repo.
+        // There should be an original commit.
+        Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
+
+        // Account for if an initial commit already exists. Do this by comparing the serialized
+
+
     }
 
     /**
@@ -66,6 +87,24 @@ public class Repository {
         // No feedback given, perform logic to stage stuff.
     }
 
+    /**
+     * Usage: java gitlet.Main commit [message]
+     *
+     * Description: Saves a snapshot of tracked files in the current commit and staging area so they can be restored at
+     *              a later time, creating a new commit. The commit is said to be tracking the saved files. By default,
+     *              each commit’s snapshot of files will be exactly the same as its parent commit’s snapshot of files;
+     *              it will keep versions of files exactly as they are, and not update them. A commit will only update
+     *              the contents of files it is tracking that have been staged for addition at the time of commit, in
+     *              which case the commit will now include the version of the file that was staged instead of the version
+     *              it got from its parent. A commit will save and start tracking any files that were staged for addition
+     *              but were not tracked by its parent. Finally, files tracked in the current commit may be untracked in the
+     *              new commit as a result being staged for removal by the rm command (below).
+     *
+     *
+     *
+     *
+     * @param commitMsg A string representing the commit message.
+     */
     public static void commit(String commitMsg) {
         // Fresh repo, nothing to commit
         // "On branch <branch name>\n"
@@ -97,9 +136,21 @@ public class Repository {
         // (*) Something specific to file systems. This code appears to be associated with text files and creation. Try to Google file codes later.
     }
 
+    /**
+     * Usage: java gitlet.Main rm [file name]
+     *
+     * Description: Unstage the file if it is currently staged for addition. If the file is tracked in the current commit,
+     *              stage it for removal and remove the file from the working directory if the user has not already done so
+     *              (do not remove it unless it is tracked in the current commit).
+     *
+     * Runtime: O(1)
+     *
+     * @param file
+     */
     public static void rm(String file) {
 
     }
+
 
     public static void log() {
 
