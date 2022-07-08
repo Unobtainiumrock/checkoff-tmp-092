@@ -1,7 +1,7 @@
 import java.util.Arrays;
 import java.util.Objects;
 
-public class User {
+public class User implements Comparable<User> {
 
     private static int nextId = 1;
 
@@ -87,5 +87,10 @@ public class User {
         for (User user : users) {
             System.out.println(user);
         }
+    }
+
+    @Override
+    public int compareTo(User user) {
+        return this.id == user.id ? (this.name.compareTo(user.name)) : Integer.compare(this.id, user.id);
     }
 }
