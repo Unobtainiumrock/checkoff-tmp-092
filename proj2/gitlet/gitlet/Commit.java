@@ -19,7 +19,7 @@ import static gitlet.Utils.*;
 public class Commit implements Serializable {
     private String message;
     private String timestamp;
-    private String parentHash;
+    private byte[] parentHash;
     private Map<String, byte[]> blobMap; //typed to the interface, map, instead of hashmap, in case we need to change later
     /**
      * TODO: add instance variables here.
@@ -29,13 +29,13 @@ public class Commit implements Serializable {
      * variable is used. We've provided one example for `message`.
      */
 
-    public Commit (String message, String timestamp, String parentHash, List<File> files) {
+    public Commit (String message, String timestamp, byte[] parentHash,
+                   Map<String, byte[]> parentMap, List<File> files) {
         this.message = message;
         this.timestamp = timestamp;
         this.parentHash = parentHash;
-//        this.blobMap = readObject().getBlobMap();
-//        this.populateBlobMap(files);
-
+        this.blobMap = parentMap;
+//        this.blobMap = this.populateBlobMap(files);
     }
 
     public Commit() {
@@ -45,19 +45,18 @@ public class Commit implements Serializable {
         this.blobMap = new HashMap<>();
     }
 
-    private Map<String, byte[]> populateBlobMap(List<File> files) {
-        Map<String, byte[]> blobMap = new HashMap<>();
-
+    private void populateBlobMap(List<File> files) {
+//        Map<String, byte[]> blobMap = this.blobMap;
         files.forEach((file) -> {
             String key = sha1(serialize(file));
             byte[] val = serialize(file);
 
-            if (!(blobMap.containsKey(key))) {
-                blobMap.put(sha1(serialize(file)), serialize(file));
+            if (!(this.blobMap.containsKey(key))) {
+                this.blobMap.put(key, val);
             }
 
         });
-        return blobMap;
+//        return blobMap;
     }
 
     public String getMessage() {
@@ -76,15 +75,15 @@ public class Commit implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public String getparentHash() {
+    public byte[] getparentHash() {
         return this.parentHash;
     }
 
-    public void setParentHash(String parentHash) {
+    public void setParentHash(byte[] parentHash) {
         this.parentHash = parentHash;
     }
 
-    public Map<String, byte[]> getBlobHash() {
+    public Map<String, byte[]> getBlobMap() {
         return this.blobMap;
     }
 

@@ -2,10 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -42,13 +39,12 @@ public class Repository {
     public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
 
-    public void playGround() {
+    public static void playGround() {
         CommitsMap commitMap = new CommitsMap();
         Commit testCommit = new Commit();
         // Add the testCommit to the commitMap
         commitMap.getCommitsMap().put(sha1(serialize(testCommit)), serialize(testCommit));
 
-        Map<String, byte[]> commitsMap = commitMap.getCommitsMap();
 
         List<File> files = new ArrayList<>();
 
@@ -56,11 +52,41 @@ public class Repository {
             files.add(new File("" + i));
         }
 
-        files.forEach(System.out::println);
+//        files.forEach(System.out::println);
+        Collection<byte[]> parentValue = commitMap.getCommitsMap().values();
+        byte[] parentHash = parentValue.iterator().next();
+
+        Commit secondCommit = new Commit("I am a second commit", "69", parentHash,
+                commitMap.getCommitsMap(), files);
+
+        System.out.println("Test Commit Metadata");
+        System.out.println(testCommit.getMessage());
+        System.out.println(testCommit.getBlobMap());
+        System.out.println(testCommit.getparentHash());
+        System.out.println(testCommit.getTimestamp());
 
 
-//        Commit secondCommit = new Commit();
+        System.out.println("Second Commit Metadata");
+        System.out.println(secondCommit.getMessage());
+        System.out.println(secondCommit.getBlobMap());
+        System.out.println(secondCommit.getparentHash());
+        System.out.println(secondCommit.getTimestamp());
+
+        Map<String, byte[]> testCommitsMap = testCommit.getBlobMap();
+        Map<String, byte[]> secondCommitsMap = secondCommit.getBlobMap();
+
+
+        System.out.println("Check if each commit share the same centralized blob map");
+        System.out.println(testCommit.getBlobMap().equals(secondCommit.getBlobMap()));
+
+        System.out.println("Test commit's blobMap is equal to itself");
+        System.out.println(testCommit.getBlobMap().equals(testCommit.getBlobMap()));
+
+        System.out.println("Second commit's blobMap is equal to itself");
+        System.out.println(secondCommit.getBlobMap().equals(secondCommit.getBlobMap()));
+
     }
+
 
     /**
      * Usage: java gitlet.Main init
