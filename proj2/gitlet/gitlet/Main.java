@@ -6,6 +6,8 @@ package gitlet;
 // I think I'll prefer working with java.nio b/c apparently its non-blocking!
 // https://www.geeksforgeeks.org/difference-between-java-io-and-java-nio/
 
+import java.io.IOException;
+
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author TODO
  */
@@ -14,7 +16,7 @@ public class Main {
     /** Usage: java gitlet.Main ARGS, where ARGS contains
      *  <COMMAND> <OPERAND1> <OPERAND2> ...
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if (args.length == 0) {
             System.out.println("No command provided, please provide a command,");
             System.exit(0);
@@ -23,6 +25,7 @@ public class Main {
         switch(firstArg) {
             case "init":
                 Repository.init();
+
                 break;
 //            case "add":
 //                // If not already initialized, then git add should fail. Check for git init.

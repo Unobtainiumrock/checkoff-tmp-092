@@ -38,7 +38,7 @@ public class Sandbox {
             System.out.println(file + " " + file.exists());
         });
 
-        //        GITLET_DIR.mkdir();
+                GITLET_DIR.mkdir();
 
         // Attempt to serialize all of them. (Do later)
         //        Thing a = new Thing(2);

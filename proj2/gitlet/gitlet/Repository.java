@@ -1,6 +1,7 @@
 package gitlet;
 
 import java.io.File;
+import java.io.IOException;
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -52,24 +53,34 @@ public class Repository {
      * Runtime: O(1)
      *
      */
-    public static void init() {
-        if (exists(COMMIT_DIR)) {
-            // initializing, so make all the directories specified above with mkdir() maybe?
-            // Check if an initial commit already exists by checking if any commits exist already.
-            // If one already exists, print message "A Gitlet version-control system already exists in the current directory", exit(0)
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
-            System.exit(0);
-        } else {
+    public static void init() throws IOException {
+//        if (exists(COMMIT_DIR)) {
+//            // initializing, so make all the directories specified above with mkdir() maybe?
+//            // Check if an initial commit already exists by checking if any commits exist already.
+//            // If one already exists, print message "A Gitlet version-control system already exists in the current directory", exit(0)
+//            System.out.println("A Gitlet version-control system already exists in the current directory.");
+//            System.exit(0);
+//        } else {
             //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
             //to file to make sure it persists, so serialize init
             makeDirectories();
             Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
+            File la = Utils.join(COMMIT_DIR, "text.txt");
+            new File(la.getPath()).createNewFile();
+            File f = new File(la.getPath()).getAbsoluteFile();
+            Utils.writeObject(f, init);
+            Commit deserialized = Utils.readObject(f, Commit.class);
+            System.out.println(deserialized.getMessage());
+//            System.out.println(Utils.join(COMMIT_DIR, new File("test.dir").g).isFile());
 
-
-        }
-
+//        }
 
     }
+
+    public static void testInit() {
+
+    }
+
 
     public static void makeDirectories() {
         GITLET_DIR.mkdir();
