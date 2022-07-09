@@ -53,18 +53,33 @@ public class Repository {
      *
      */
     public static void init() {
-
-        // initializing, so make all the directories specified above with mkdir() maybe?
-        // Check if an initial commit already exists by checking if any commits exist already.
+        if (COMMIT_DIR.exists()) {
+            // initializing, so make all the directories specified above with mkdir() maybe?
+            // Check if an initial commit already exists by checking if any commits exist already.
             // If one already exists, print message "A Gitlet version-control system already exists in the current directory", exit(0)
-            //If not:
-        Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
-            // give the initial commit a sha1ID
-            // join the initial commit to the main branch and the current branch
-            // make sure the init persists by writing the init commit to file. so need to serialize init first
+            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.exit(0);
+        } else {
+            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
+            //to file to make sure it persists, so serialize init
+            makeDirectories();
+            Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
+
+
+        }
+
 
     }
 
+    public static void makeDirectories() {
+        GITLET_DIR.mkdir();
+        STAGE_DIR.mkdir();
+        BLOB_DIR.mkdir();
+        COMMIT_DIR.mkdir();
+        BRANCH_DIR.mkdir();
+        MAIN_BRANCH.mkdir();
+        CURR_BRANCH.mkdir();
+    }
 
     /**
      * Usage: java gitlet.Main add [filename]
