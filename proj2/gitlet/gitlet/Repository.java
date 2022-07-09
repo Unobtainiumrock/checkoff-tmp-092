@@ -3,6 +3,9 @@ package gitlet;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import static gitlet.Utils.*;
 
@@ -39,6 +42,26 @@ public class Repository {
     public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
 
+    public void playGround() {
+        CommitsMap commitMap = new CommitsMap();
+        Commit testCommit = new Commit();
+        // Add the testCommit to the commitMap
+        commitMap.getCommitsMap().put(sha1(serialize(testCommit)), serialize(testCommit));
+
+        Map<String, byte[]> commitsMap = commitMap.getCommitsMap();
+
+        List<File> files = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            files.add(new File("" + i));
+        }
+
+        files.forEach(System.out::println);
+
+
+//        Commit secondCommit = new Commit();
+    }
+
     /**
      * Usage: java gitlet.Main init
      *
@@ -55,7 +78,7 @@ public class Repository {
      * Runtime: O(1)
      *
      */
-    public static void init() throws IOException {
+    public static void init() {
 //        if (exists(COMMIT_DIR)) {
 //            // initializing, so make all the directories specified above with mkdir() maybe?
 //            // Check if an initial commit already exists by checking if any commits exist already.
@@ -65,11 +88,11 @@ public class Repository {
 //        } else {
             //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
             //to file to make sure it persists, so serialize init
-            makeDirectories();
-            Commit init = new Commit();
-            Commit other = new Commit("blah", "eh", "ugh", "yeet", new HashMap<>());
-            System.out.println(sha1(serialize(init)));
-            System.out.println(sha1(serialize(other)));
+//            makeDirectories();
+//            Commit init = new Commit();
+//            Commit other = new Commit("blah", "eh", "ugh", "yeet", new HashMap<>());
+//            System.out.println(sha1(serialize(init)));
+//            System.out.println(sha1(serialize(other)));
 //            serialize(sha1(serialize(init)));
 //        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
 //        new File(laother.getPath()).createNewFile();

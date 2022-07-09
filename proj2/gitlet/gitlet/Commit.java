@@ -2,12 +2,13 @@ package gitlet;
 
 // TODO: any imports you need here
 
-import jdk.jshell.execution.Util;
-
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date; // TODO: You'll likely use this in this class
+import java.util.Date;
+import java.util.List;
+import static gitlet.Utils.*;
 
 /** Represents a gitlet commit object.
  *  TODO: It's a good idea to give a description here of what else this Class
@@ -19,8 +20,7 @@ public class Commit implements Serializable {
     private String message;
     private String timestamp;
     private String parentHash;
-    private transient String myHash;
-    private Map<String, String> blobHash; //typed to the interface, map, instead of hashmap, in case we need to change later
+    private Map<String, byte[]> blobMap; //typed to the interface, map, instead of hashmap, in case we need to change later
     /**
      * TODO: add instance variables here.
      *
@@ -29,12 +29,12 @@ public class Commit implements Serializable {
      * variable is used. We've provided one example for `message`.
      */
 
-    public Commit (String message, String timestamp, String parentHash, String myHash, Map<String, String> blobHash) {
+    public Commit (String message, String timestamp, String parentHash, List<File> files) {
         this.message = message;
         this.timestamp = timestamp;
         this.parentHash = parentHash;
-        this.blobHash = blobHash;
-        this.myHash = myHash;
+//        this.blobMap = readObject().getBlobMap();
+//        this.populateBlobMap(files);
 
     }
 
@@ -42,8 +42,22 @@ public class Commit implements Serializable {
         this.message = "initial commit";
         this.timestamp = "00:00:00 UTC, Thursday, 1 January 1970";
         this.parentHash = null;
-        this.blobHash = new HashMap<>();
-        this.myHash = Utils.sha1(Utils.serialize(this));
+        this.blobMap = new HashMap<>();
+    }
+
+    private Map<String, byte[]> populateBlobMap(List<File> files) {
+        Map<String, byte[]> blobMap = new HashMap<>();
+
+        files.forEach((file) -> {
+            String key = sha1(serialize(file));
+            byte[] val = serialize(file);
+
+            if (!(blobMap.containsKey(key))) {
+                blobMap.put(sha1(serialize(file)), serialize(file));
+            }
+
+        });
+        return blobMap;
     }
 
     public String getMessage() {
@@ -58,14 +72,6 @@ public class Commit implements Serializable {
         return this.timestamp;
     }
 
-    public String getMyHash() {
-        return this.myHash;
-    }
-
-    public void setMyHash(String myHash) {
-        this.myHash = myHash;
-    }
-
     public void setTimeStamp(String timeStamp) {
         this.timestamp = timestamp;
     }
@@ -78,12 +84,12 @@ public class Commit implements Serializable {
         this.parentHash = parentHash;
     }
 
-    public Map<String, String> getBlobHash() {
-        return this.blobHash;
+    public Map<String, byte[]> getBlobHash() {
+        return this.blobMap;
     }
 
-    public void setBlobHash(Map<String, String> blobHash) {
-        this.blobHash = blobHash;
+    public void setBlobHash(Map<String, byte[]> blobMap) {
+        this.blobMap = blobMap;
     }
 
     /* TODO: fill in the rest of this class. */
