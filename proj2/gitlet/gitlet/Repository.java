@@ -28,10 +28,12 @@ public class Repository {
      * The .gitlet directory.
      */
     public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
-    public static final File STAGE_DIR = Utils.join(GITLET_DIR, "staging");
-    public static final File COMMIT_DIR = Utils.join(GITLET_DIR, "commits");
-    public static final File BRANCH_DIR = Utils.join(COMMIT_DIR, "branches");
-    public static final File BLOB_DIR = Utils.join(GITLET_DIR, "blobs");
+    public static final File STAGE_DIR = Utils.join(GITLET_DIR, ".staging");
+    public static final File BLOB_DIR = Utils.join(GITLET_DIR, ".blobs");
+    public static final File COMMIT_DIR = Utils.join(GITLET_DIR, ".commits");
+    public static final File BRANCH_DIR = Utils.join(COMMIT_DIR, ".branches");
+    public static final File MAIN_BRANCH = Utils.join(BRANCH_DIR, ".main"); //rethink if we need this
+    public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
 
     /**
@@ -51,13 +53,18 @@ public class Repository {
      *
      */
     public static void init() {
-        // There should be an original commit.
+
+        // initializing, so make all the directories specified above with mkdir() maybe?
+        // Check if an initial commit already exists by checking if any commits exist already.
+            // If one already exists, print message "A Gitlet version-control system already exists in the current directory", exit(0)
+            //If not:
         Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
-
-        // Account for if an initial commit already exists. Do this by comparing the serialized
-
+            // give the initial commit a sha1ID
+            // join the initial commit to the main branch and the current branch
+            // make sure the init persists by writing the init commit to file. so need to serialize init first
 
     }
+
 
     /**
      * Usage: java gitlet.Main add [filename]
@@ -80,13 +87,17 @@ public class Repository {
     public static void add(String file) {
         // `git add`
         // "Nothing specified, nothing added.\n"
-        // "Maybe you wanted to say 'git add .'?"
 
-        // `git add .`
-        // nothing happens
-
-        // `git add <incorrect path or file>`
+        // `git add <incorrect path or file>` //or nonexistent file
         // "fatal: pathspec '<incorrect path here>' did not match any files"
+        //Pseudocode:
+        //check if a file exists in the CWD
+            //if not: System.out.println("File does not exist."), exit(0)
+            //if yes:
+                //read content of this.file to serialize it, so can assign it a SHA1 ID
+                //Check if this.file's SHA1 = SHA1 of head.file's SHA1
+                    //If not: put this.file onto the stage
+                    //If yes: remove file on stage
 
         // 'git add <correct path>'
         // No feedback given, perform logic to stage stuff.
@@ -111,6 +122,14 @@ public class Repository {
      * @param commitMsg A string representing the commit message.
      */
     public static void commit(String commitMsg) {
+        //Check if there are things on the add stage or the remove stage
+            //If not: System.out.println("No changes added to the commit."), exit(0)
+            //If yes:
+                //Make a new commit with the commit constructor
+                //Create a SHA1 ID for the new commit made
+                //Copy over the contents in parent commit
+                // Update any necessary
+
         // Fresh repo, nothing to commit
         // "On branch <branch name>\n"
         // "Initial commit\n"
@@ -127,7 +146,7 @@ public class Repository {
 
         // Files staged
         // Commit message not provided
-            // Exit and give an error saying that a commit msg needs to be provided
+            // System.out.println("Please enter a commit message."), exit(0)
 
         // Commit message provided
         // First commit in a fresh repo
