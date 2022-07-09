@@ -38,11 +38,11 @@ public class Commit implements Serializable {
 //        this.blobMap = this.populateBlobMap(files);
     }
 
-    public Commit() {
+    public Commit(Map<String, byte[]> blobMap) {
         this.message = "initial commit";
         this.timestamp = "00:00:00 UTC, Thursday, 1 January 1970";
         this.parentHash = null;
-        this.blobMap = new HashMap<>();
+        this.blobMap = blobMap;
     }
 
     private void populateBlobMap(List<File> files) {

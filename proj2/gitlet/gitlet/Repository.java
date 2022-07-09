@@ -40,30 +40,36 @@ public class Repository {
 
 
     public static void playGround() {
-        CommitsMap commitMap = new CommitsMap();
-        Commit testCommit = new Commit();
-        // Add the testCommit to the commitMap
-        commitMap.getCommitsMap().put(sha1(serialize(testCommit)), serialize(testCommit));
+        // Create our centralized blobMap that uses a LinkedHashMap.
+        // We can think of this as how Redux has a store.
+        Store commitMap = new Store();
 
+        // Create our initial commit and make its blobMap point to the store
+        Commit initialCommit = new Commit(commitMap.getCommitsMap());
 
+        // Add the initial commit to the store
+        commitMap.init(initialCommit);
+
+        // Set up some mock files to test what happens when subsequent commits
+        // add multiple files to the same shared store.
         List<File> files = new ArrayList<>();
 
         for (int i = 0; i < 5; i++) {
             files.add(new File("" + i));
         }
 
-//        files.forEach(System.out::println);
-        Collection<byte[]> parentValue = commitMap.getCommitsMap().values();
-        byte[] parentHash = parentValue.iterator().next();
+        files.forEach(System.out::println);
+
+        byte[] parentHash = serialize(commitMap.getFirstCommit());
 
         Commit secondCommit = new Commit("I am a second commit", "69", parentHash,
                 commitMap.getCommitsMap(), files);
 
         System.out.println("Test Commit Metadata");
-        System.out.println(testCommit.getMessage());
-        System.out.println(testCommit.getBlobMap());
-        System.out.println(testCommit.getparentHash());
-        System.out.println(testCommit.getTimestamp());
+        System.out.println(initialCommit.getMessage());
+        System.out.println(initialCommit.getBlobMap());
+        System.out.println(initialCommit.getparentHash());
+        System.out.println(initialCommit.getTimestamp());
 
 
         System.out.println("Second Commit Metadata");
@@ -72,15 +78,15 @@ public class Repository {
         System.out.println(secondCommit.getparentHash());
         System.out.println(secondCommit.getTimestamp());
 
-        Map<String, byte[]> testCommitsMap = testCommit.getBlobMap();
+        Map<String, byte[]> testCommitsMap = initialCommit.getBlobMap();
         Map<String, byte[]> secondCommitsMap = secondCommit.getBlobMap();
 
 
         System.out.println("Check if each commit share the same centralized blob map");
-        System.out.println(testCommit.getBlobMap().equals(secondCommit.getBlobMap()));
+        System.out.println(initialCommit.getBlobMap().equals(secondCommit.getBlobMap()));
 
         System.out.println("Test commit's blobMap is equal to itself");
-        System.out.println(testCommit.getBlobMap().equals(testCommit.getBlobMap()));
+        System.out.println(initialCommit.getBlobMap().equals(initialCommit.getBlobMap()));
 
         System.out.println("Second commit's blobMap is equal to itself");
         System.out.println(secondCommit.getBlobMap().equals(secondCommit.getBlobMap()));
