@@ -24,50 +24,40 @@ public class Main {
             case "init":
                 Repository.init();
                 break;
-            case "add":
-                // If not already initialized, then git add should fail. Check for git init.
-                Repository.exists(); // Error out the application, if repo D.N.E.
-                Repository.add(args[1]);
-                break;
-            case "commit":
-                Repository.exists(); // ditto for DNE edge case
-                Repository.commit(args[1]);
-            case "rm" :
-                Repository.exists(); // ditto. Maybe refactor this later? Look into class-level decorators for Repository.java's methods.s
-                break;
-            case "log":
-                Repository.exists();
-                Repository.log();
-                // This "test" case will be used for development purposes. I'm going to see if not closing the program
-                // and interacting with it as a true CLI app using a while loop will let us handle reading/writing to
-                // files, prior to closing. Similar to what I've done in previous Java courses.
-            case "global-log":
-                Repository.exists();
-                Repository.globalLog();
-            case "find":
-                Repository.exists();
-                Repository.find();
-                break;
-            case "status":
-                Repository.exists();
-                Repository.status();
-            case "checkout":
-                Repository.exists(); // Soo repetitive. Look for decorators..
-                Repository.checkout();
-            case "branch":
-                Repository.exists();
-                Repository.branch();
-            case "rm-branch":
-                Repository.exists();
-                Repository.rmBranch();
-            case "reset":
-                Repository.exists();
-                Repository.reset();
-            case "merge":
-                Repository.exists();
-                Repository.merge();
-            case "test":
-                break;
+//            case "add":
+//                // If not already initialized, then git add should fail. Check for git init.
+//                Repository.add(args[1]);
+//                break;
+//            case "commit":
+//                Repository.commit(args[1]);
+//            case "rm" :
+//                Repository.rm(args[1]);
+//                break;
+//            case "log":
+//                Repository.log();
+//            case "global-log":
+//                Repository.globalLog();
+//            case "find":
+//                Repository.find();
+//                break;
+//            case "status":
+//                Repository.status();
+//            case "checkout":
+//                Repository.checkout();
+//            case "branch":
+//                Repository.branch();
+//            case "rm-branch":
+//                Repository.rmBranch();
+//            case "reset":
+//                Repository.reset();
+//            case "merge":
+//                Repository.merge();
+
+            // This "test" case will be used for development purposes. I'm going to see if not closing the program
+            // and interacting with it as a true CLI app using a while loop will let us handle reading/writing to
+            // files, prior to closing. Similar to what I've done in previous Java courses.
+//            case "test":
+//                break;
             // TODO: FILL THE REST IN
         }
     }

@@ -53,7 +53,7 @@ public class Repository {
      *
      */
     public static void init() {
-        if (COMMIT_DIR.exists()) {
+        if (exists(COMMIT_DIR)) {
             // initializing, so make all the directories specified above with mkdir() maybe?
             // Check if an initial commit already exists by checking if any commits exist already.
             // If one already exists, print message "A Gitlet version-control system already exists in the current directory", exit(0)
@@ -227,8 +227,8 @@ public class Repository {
     public static void merge() {
 
     }
-    public static void exists() {
-        // Checks if a repository is initialized already.
+    public static boolean exists(File directory) {
+        return directory.exists();
     }
 
 }
