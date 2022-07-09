@@ -2,6 +2,8 @@ package gitlet;
 
 // TODO: any imports you need here
 
+import jdk.jshell.execution.Util;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ public class Commit implements Serializable {
     private String message;
     private String timestamp;
     private String parentHash;
+    private transient String myHash;
     private Map<String, String> blobHash; //typed to the interface, map, instead of hashmap, in case we need to change later
     /**
      * TODO: add instance variables here.
@@ -26,11 +29,12 @@ public class Commit implements Serializable {
      * variable is used. We've provided one example for `message`.
      */
 
-    public Commit (String message, String timestamp, String parentHash, Map<String, String> blobHash) {
+    public Commit (String message, String timestamp, String parentHash, String myHash, Map<String, String> blobHash) {
         this.message = message;
         this.timestamp = timestamp;
         this.parentHash = parentHash;
         this.blobHash = blobHash;
+        this.myHash = myHash;
 
     }
 
@@ -39,6 +43,7 @@ public class Commit implements Serializable {
         this.timestamp = "00:00:00 UTC, Thursday, 1 January 1970";
         this.parentHash = null;
         this.blobHash = new HashMap<>();
+        this.myHash = Utils.sha1(Utils.serialize(this));
     }
 
     public String getMessage() {
@@ -51,6 +56,14 @@ public class Commit implements Serializable {
 
     public String getTimestamp() {
         return this.timestamp;
+    }
+
+    public String getMyHash() {
+        return this.myHash;
+    }
+
+    public void setMyHash(String myHash) {
+        this.myHash = myHash;
     }
 
     public void setTimeStamp(String timeStamp) {

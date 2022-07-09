@@ -2,6 +2,8 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+
 import static gitlet.Utils.*;
 
 // TODO: any imports you need here
@@ -64,13 +66,23 @@ public class Repository {
             //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
             //to file to make sure it persists, so serialize init
             makeDirectories();
-            Commit init = new Commit(); // Add  the constructor stuff later. This will have original time mentioned in the project spec.
-            File la = Utils.join(COMMIT_DIR, "text.txt");
-            new File(la.getPath()).createNewFile();
-            File f = new File(la.getPath()).getAbsoluteFile();
-            Utils.writeObject(f, init);
-            Commit deserialized = Utils.readObject(f, Commit.class);
-            System.out.println(deserialized.getMessage());
+            Commit init = new Commit();
+            Commit other = new Commit("blah", "eh", "ugh", "yeet", new HashMap<>());
+            System.out.println(sha1(serialize(init)));
+            System.out.println(sha1(serialize(other)));
+//            serialize(sha1(serialize(init)));
+//        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
+//        new File(laother.getPath()).createNewFile();
+//        File an = new File(laother.getPath()).getAbsoluteFile();
+//        Utils.writeObject(an, other);
+//        Commit del = Utils.readObject(an, Commit.class);
+//        System.out.println(del);
+//            File la = Utils.join(COMMIT_DIR, "text.txt");
+//            new File(la.getPath()).createNewFile();
+//            File f = new File(la.getPath()).getAbsoluteFile();
+//            Utils.writeObject(f, init);
+//            Commit deserialized = Utils.readObject(f, Commit.class);
+//            System.out.println(deserialized);
 //            System.out.println(Utils.join(COMMIT_DIR, new File("test.dir").g).isFile());
 
 //        }
