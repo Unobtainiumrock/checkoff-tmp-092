@@ -67,9 +67,12 @@ public class Repository {
             //to file to make sure it persists, so serialize init
             makeDirectories();
             Commit init = new Commit();
-            Commit other = new Commit("blah", "eh", "ugh", "yeet", new HashMap<>());
+            //Need to write to file init, so need to create a file in .commit to write init into
+            //How to create these files? Where to put these files? A copy in curr and main, and then replace it when updated?
+//            Commit other = new Commit("blah", "eh", "ugh", new HashMap<>());
             System.out.println(sha1(serialize(init)));
-            System.out.println(sha1(serialize(other)));
+//            System.out.println(sha1(serialize(other)));
+
 //            serialize(sha1(serialize(init)));
 //        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
 //        new File(laother.getPath()).createNewFile();
