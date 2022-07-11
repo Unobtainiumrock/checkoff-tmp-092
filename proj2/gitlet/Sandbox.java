@@ -6,11 +6,11 @@ import java.util.*;
 
 public class Sandbox {
     public static final File CWD = new File(System.getProperty("user.dir"));
-    public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
-    public static final File STAGING_DIR = Utils.join(GITLET_DIR, ".staging");
-    public static final File COMMITS_DIR = Utils.join(GITLET_DIR, ".");
-    public static final File BRANCH_DIR = Utils.join(COMMITS_DIR, "branches");
-    public static final File BLOB_DIR = Utils.join(GITLET_DIR, "blobs");
+    public static final File GITLET_DIR = gitlet.Utils.join(CWD, ".gitlet");
+    public static final File STAGING_DIR = gitlet.Utils.join(GITLET_DIR, ".staging");
+    public static final File COMMITS_DIR = gitlet.Utils.join(GITLET_DIR, ".");
+    public static final File BRANCH_DIR = gitlet.Utils.join(COMMITS_DIR, "branches");
+    public static final File BLOB_DIR = gitlet.Utils.join(GITLET_DIR, "blobs");
     public static Object obj = new Object();
 
     public static void main(String[] args) throws IOException, ClassNotFoundException {
@@ -24,7 +24,7 @@ public class Sandbox {
         System.out.println("\n\n");
 
         // Grab the project directory.
-        File projectDir = Utils.join(CWD, "gitlet");
+        File projectDir = gitlet.Utils.join(CWD, "gitlet");
 
         // Grab the package
         File pkg = projectDir.listFiles()[0];

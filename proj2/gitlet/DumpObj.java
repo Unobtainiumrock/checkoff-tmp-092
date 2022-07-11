@@ -33,8 +33,8 @@ public class DumpObj {
      *  in FILES. */
     public static void main(String... files) {
         for (String fileName : files) {
-            Dumpable obj = Utils.readObject(new File(fileName),
-                                            Dumpable.class);
+            gitlet.Dumpable obj = gitlet.Utils.readObject(new File(fileName),
+                                            gitlet.Dumpable.class);
             obj.dump();
             System.out.println("---");
         }

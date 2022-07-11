@@ -20,7 +20,7 @@ public class Commit implements Serializable {
 //    private transient String myHash;
     private byte[] parentHash;
     private Map<String, byte[]> blobMap; //typed to the interface, map, instead of hashmap, in case we need to change later
-    private List<String> fileSHAs;
+    private List<File> files;
     /**
      * TODO: add instance variables here.
      *
@@ -31,12 +31,12 @@ public class Commit implements Serializable {
 
 
     public Commit (String message, String timestamp, byte[] parentHash,
-                   Map<String, byte[]> store, List<String> fileSHAs) {
+                   Map<String, byte[]> store, List<File> files) {
         this.message = message;
         this.timestamp = timestamp;
         this.parentHash = parentHash;
         this.blobMap = store;
-        this.fileSHAs = fileSHAs;
+        this.files = files;
 //        this.blobMap = this.populateBlobMap(files);
     }
 

@@ -91,6 +91,8 @@ public class Repository {
         System.out.println("Second commit's blobMap is equal to itself");
         System.out.println(secondCommit.getBlobMap().equals(secondCommit.getBlobMap()));
 
+        System.out.println(initialCommit.getparentHash().equals(secondCommit.getparentHash()));
+
     }
 
 

@@ -5,7 +5,7 @@ import static gitlet.Utils.*;
 
 public class Store {
     boolean initialized = false;
-    Commit firstCommit;
+    gitlet.Commit firstCommit;
     private Map<String, byte[]> commitsMap;
 
     public Store() {
@@ -25,11 +25,11 @@ public class Store {
         this.commitsMap.remove(sha);
     }
 
-    public Commit getFirstCommit() {
+    public gitlet.Commit getFirstCommit() {
         return this.initialized ? this.firstCommit : null;
     }
 
-    public void init(Commit firstCommit) {
+    public void init(gitlet.Commit firstCommit) {
         String sha = sha1(serialize(firstCommit));
         byte[] serializedObj = serialize(firstCommit);
 
