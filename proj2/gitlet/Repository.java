@@ -1,8 +1,8 @@
 package gitlet;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static gitlet.Utils.*;
 
@@ -40,56 +40,57 @@ public class Repository {
 
 
     public static void playGround() {
-        // Create our centralized blobMap that uses a LinkedHashMap.
-        // We can think of this as how Redux has a store.
-        Store commitMap = new Store();
+        // Create a blobMap and commitMap
+        BlobStore blobMap = new BlobStore();
+        CommitStore commitMap = new CommitStore();
 
-        // Create our initial commit and make its blobMap point to the store
-        Commit initialCommit = new Commit(commitMap.getCommitsMap());
+        // Create our initial commit
+        Commit initialCommit = new Commit();
 
-        // Add the initial commit to the store
-        commitMap.init(initialCommit);
-
-        // Set up some mock files to test what happens when subsequent commits
-        // add multiple files to the same shared store.
+        // Set up some mock files
         List<File> files = new ArrayList<>();
-
         for (int i = 0; i < 5; i++) {
             files.add(new File("" + i));
         }
 
+        // Verify
         files.forEach(System.out::println);
+        // hash the files
+        List<Map<String, byte[]>> hashedFiles = files.stream().map((file) -> {
+            Map<String, byte[]> m  = new HashMap<>();
+            byte[] v = serialize(file);
+            String k = sha1(v);
+            m.put(k, v);
+            return m;
 
-        byte[] parentHash = serialize(commitMap.getFirstCommit());
+        }).collect(Collectors.toList());
+        //
+        String initialCommitHash = initialCommit.getHashID(); // Also can access first commit from commit store.
 
-        Commit secondCommit = new Commit("I am a second commit", "69", parentHash,
-                commitMap.getCommitsMap(), files);
+        Commit secondCommit = new Commit("I am a second commit", "69", initialCommitHash, hashedFiles);
 
         System.out.println("Test Commit Metadata");
-        System.out.println(initialCommit.getMessage());
-        System.out.println(initialCommit.getBlobMap());
-        System.out.println(initialCommit.getparentHash());
-        System.out.println(initialCommit.getTimestamp());
+        System.out.println(initialCommit);
 
 
         System.out.println("Second Commit Metadata");
-        System.out.println(secondCommit.getMessage());
-        System.out.println(secondCommit.getBlobMap());
-        System.out.println(secondCommit.getparentHash());
-        System.out.println(secondCommit.getTimestamp());
+        System.out.println(secondCommit);
 
-        Map<String, byte[]> testCommitsMap = initialCommit.getBlobMap();
-        Map<String, byte[]> secondCommitsMap = secondCommit.getBlobMap();
+        List<Map<String, byte[]>> fileHashes = secondCommit.getFileHashes();
+//        fileHashes.forEach((file) -> {
+//            String k = file.keySet().iterator().next();
+//            byte[] v = file.values().iterator().next();
+//            try {
+//                byte[] = new ByteArrayInputStream(v);
+//                ObjectInputStream = new ObjectInputStream(fis);
+//                System.out.println(Utils);
+//            } catch (FileNotFoundException e) {
+//            }
+//
+//        });
 
+//        Commit thirdCommit = new Commit("I am a third commit", "72", secondCommit.getHashID(), )
 
-        System.out.println("Check if each commit share the same centralized blob map");
-        System.out.println(initialCommit.getBlobMap().equals(secondCommit.getBlobMap()));
-
-        System.out.println("Test commit's blobMap is equal to itself");
-        System.out.println(initialCommit.getBlobMap().equals(initialCommit.getBlobMap()));
-
-        System.out.println("Second commit's blobMap is equal to itself");
-        System.out.println(secondCommit.getBlobMap().equals(secondCommit.getBlobMap()));
 
     }
 
@@ -110,7 +111,7 @@ public class Repository {
      * Runtime: O(1)
      *
      */
-    public static void init() {
+    public static void init() throws IOException {
 //        if (exists(COMMIT_DIR)) {
 //            // initializing, so make all the directories specified above with mkdir() maybe?
 //            // Check if an initial commit already exists by checking if any commits exist already.
@@ -134,19 +135,20 @@ public class Repository {
 //            System.out.println(sha1(serialize(init)));
 //            System.out.println(sha1(serialize(other)));
 //            serialize(sha1(serialize(init)));
-//        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
-//        new File(laother.getPath()).createNewFile();
-//        File an = new File(laother.getPath()).getAbsoluteFile();
-//        Utils.writeObject(an, other);
-//        Commit del = Utils.readObject(an, Commit.class);
-//        System.out.println(del);
-//            File la = Utils.join(COMMIT_DIR, "text.txt");
-//            new File(la.getPath()).createNewFile();
-//            File f = new File(la.getPath()).getAbsoluteFile();
-//            Utils.writeObject(f, init);
-//            Commit deserialized = Utils.readObject(f, Commit.class);
-//            System.out.println(deserialized);
-//            System.out.println(Utils.join(COMMIT_DIR, new File("test.dir").g).isFile());
+    //        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
+    //        new File(laother.getPath()).createNewFile();
+    //        File an = new File(laother.getPath()).getAbsoluteFile();
+    //        Utils.writeObject(an, other);
+    //        Commit del = Utils.readObject(an, Commit.class);
+    //        System.out.println(del);
+            Commit init = new Commit();
+            File la = Utils.join(COMMIT_DIR, "text.txt");
+            new File(la.getPath()).createNewFile();
+            File f = new File(la.getPath()).getAbsoluteFile();
+            Utils.writeObject(f, init);
+            Commit deserialized = Utils.readObject(f, Commit.class);
+            System.out.println(deserialized);
+//            System.out.println(Utils.join(COMMIT_DIR, String.valueOf(new File("test.dir"))).isFile());
 
 //        }
 
