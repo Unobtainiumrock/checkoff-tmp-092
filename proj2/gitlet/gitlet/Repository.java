@@ -2,7 +2,7 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.*;
 
 import static gitlet.Utils.*;
 
@@ -39,6 +39,61 @@ public class Repository {
     public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
 
+    public static void playGround() {
+        // Create our centralized blobMap that uses a LinkedHashMap.
+        // We can think of this as how Redux has a store.
+        Store commitMap = new Store();
+
+        // Create our initial commit and make its blobMap point to the store
+        Commit initialCommit = new Commit(commitMap.getCommitsMap());
+
+        // Add the initial commit to the store
+        commitMap.init(initialCommit);
+
+        // Set up some mock files to test what happens when subsequent commits
+        // add multiple files to the same shared store.
+        List<File> files = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+            files.add(new File("" + i));
+        }
+
+        files.forEach(System.out::println);
+
+        byte[] parentHash = serialize(commitMap.getFirstCommit());
+
+        Commit secondCommit = new Commit("I am a second commit", "69", parentHash,
+                commitMap.getCommitsMap(), files);
+
+        System.out.println("Test Commit Metadata");
+        System.out.println(initialCommit.getMessage());
+        System.out.println(initialCommit.getBlobMap());
+        System.out.println(initialCommit.getparentHash());
+        System.out.println(initialCommit.getTimestamp());
+
+
+        System.out.println("Second Commit Metadata");
+        System.out.println(secondCommit.getMessage());
+        System.out.println(secondCommit.getBlobMap());
+        System.out.println(secondCommit.getparentHash());
+        System.out.println(secondCommit.getTimestamp());
+
+        Map<String, byte[]> testCommitsMap = initialCommit.getBlobMap();
+        Map<String, byte[]> secondCommitsMap = secondCommit.getBlobMap();
+
+
+        System.out.println("Check if each commit share the same centralized blob map");
+        System.out.println(initialCommit.getBlobMap().equals(secondCommit.getBlobMap()));
+
+        System.out.println("Test commit's blobMap is equal to itself");
+        System.out.println(initialCommit.getBlobMap().equals(initialCommit.getBlobMap()));
+
+        System.out.println("Second commit's blobMap is equal to itself");
+        System.out.println(secondCommit.getBlobMap().equals(secondCommit.getBlobMap()));
+
+    }
+
+
     /**
      * Usage: java gitlet.Main init
      *
@@ -55,7 +110,7 @@ public class Repository {
      * Runtime: O(1)
      *
      */
-    public static void init() throws IOException {
+    public static void init() {
 //        if (exists(COMMIT_DIR)) {
 //            // initializing, so make all the directories specified above with mkdir() maybe?
 //            // Check if an initial commit already exists by checking if any commits exist already.
@@ -66,13 +121,18 @@ public class Repository {
             //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
             //to file to make sure it persists, so serialize init
             makeDirectories();
-            Commit init = new Commit();
+//            Commit init = new Commit();
             //Need to write to file init, so need to create a file in .commit to write init into
             //How to create these files? Where to put these files? A copy in curr and main, and then replace it when updated?
 //            Commit other = new Commit("blah", "eh", "ugh", new HashMap<>());
-            System.out.println(sha1(serialize(init)));
+//            System.out.println(sha1(serialize(init)));
 //            System.out.println(sha1(serialize(other)));
 
+//            makeDirectories();
+//            Commit init = new Commit();
+//            Commit other = new Commit("blah", "eh", "ugh", "yeet", new HashMap<>());
+//            System.out.println(sha1(serialize(init)));
+//            System.out.println(sha1(serialize(other)));
 //            serialize(sha1(serialize(init)));
 //        File laother = Utils.join(COMMIT_DIR, "stuff.txt");
 //        new File(laother.getPath()).createNewFile();

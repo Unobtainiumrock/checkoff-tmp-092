@@ -17,6 +17,8 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ...
      */
     public static void main(String[] args) throws IOException {
+        Repository.playGround();
+
         if (args.length == 0) {
             System.out.println("No command provided, please provide a command,");
             System.exit(0);
@@ -24,8 +26,7 @@ public class Main {
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
-                Repository.init();
-
+//                Repository.init();
                 break;
 //            case "add":
 //                // If not already initialized, then git add should fail. Check for git init.
