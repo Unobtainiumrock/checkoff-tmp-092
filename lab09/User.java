@@ -93,4 +93,5 @@ public class User implements Comparable<User> {
     public int compareTo(User user) {
         return this.id == user.id ? (this.name.compareTo(user.name)) : Integer.compare(this.id, user.id);
     }
+
 }

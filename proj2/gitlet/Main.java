@@ -20,12 +20,16 @@ public class Main {
 //        Repository.playGround();
 
         if (args.length == 0) {
-            System.out.println("No command provided, please provide a command,");
-            System.exit(0);
+           throw new GitletException("Incorrect operands.");
         }
+
+
         String firstArg = args[0];
         switch(firstArg) {
             case "init":
+                if (args.length > 1) {
+                    throw new GitletException("Incorrect operands.");
+                }
                 Repository.init();
                 break;
 //            case "add":
