@@ -32,10 +32,10 @@ public class Main {
                 }
                 Repository.init();
                 break;
-//            case "add":
-//                // If not already initialized, then git add should fail. Check for git init.
-//                Repository.add(args[1]);
-//                break;
+            case "add":
+                // If not already initialized, then git add should fail. Check for git init.
+                Repository.add(args[1]);
+                break;
 //            case "commit":
 //                Repository.commit(args[1]);
 //            case "rm" :

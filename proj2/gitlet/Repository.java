@@ -35,7 +35,7 @@ public class Repository {
     public static final File STAGE_DIR = Utils.join(GITLET_DIR, ".staging");
     public static final File BLOB_DIR = Utils.join(GITLET_DIR, ".blobs");
     public static final File COMMIT_DIR = Utils.join(GITLET_DIR, ".commits");
-    public static final File BRANCH_DIR = Utils.join(COMMIT_DIR, ".branches");
+    public static final File BRANCH_DIR = Utils.join(GITLET_DIR, ".branches");
     public static final File MAIN_BRANCH = Utils.join(BRANCH_DIR, ".main"); //rethink if we need this
     public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
@@ -90,7 +90,7 @@ public class Repository {
 //
 //        });
 
-        Commit thirdCommit = new Commit("I am a third commit", "72", secondCommit.getHashID(), )
+//        Commit thirdCommit = new Commit("I am a third commit", "72", secondCommit.getHashID(), )
 
 
     }
@@ -118,18 +118,15 @@ public class Repository {
         }
 
         Commit initialCommit = new Commit();
+        makeDirectories();
 
-//        } else {
-            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
-            //to file to make sure it persists, so serialize init
-            makeDirectories();
-            Commit init = new Commit();
+//
+////        } else {
+//            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
+//            //to file to make sure it persists, so serialize init
             //Need to write to file init, so need to create a file in .commit to write init into
             //How to create these files? Where to put these files? A copy in curr and main, and then replace it when updated?
-
-
 //        }
-
     }
 
     public static void testInit() {
@@ -162,10 +159,21 @@ public class Repository {
      * <p>
      * Failure Cases: If the file does not exist, print the error message File does not exist. and exit without changing anything
      *
-     * @param file A string representing the file we with to commit. If "." is provided, then it will iterate over all untracked files and add them.
-     *             to the staging area.
+     * @param file A string representing the file we wish to commit.
      */
     public static void add(String file) {
+        File tobeAdded = Utils.join(CWD, file);
+        if (!tobeAdded.exists()) {
+            System.out.println("File does not exist.");
+            System.exit(0);
+        }
+        System.out.println(tobeAdded.isFile());
+        Stage stage = new Stage();
+        if (stage.canAdd(tobeAdded)) {
+            Stage.add(tobeAdded);
+        }
+
+
 //         `git add`
 //         "Nothing specified, nothing added.\n"
 //
@@ -295,16 +303,16 @@ public class Repository {
 //        return directory.exists();
 //    }
 
-    public static void testingAreaTwo() {
-        Commit init = new Commit();
-        File la = Utils.join(COMMIT_DIR, "text.txt");
-        new File(la.getPath()).createNewFile();
-        File f = new File(la.getPath()).getAbsoluteFile();
-        Utils.writeObject(f, init);
-        Commit deserialized = Utils.readObject(f, Commit.class);
-        System.out.println(deserialized);
-        System.out.println(Utils.join(COMMIT_DIR, String.valueOf(new File("test.dir"))).isFile());
-    }
+//    public static void testingAreaTwo() {
+//        Commit init = new Commit();
+//        File la = Utils.join(COMMIT_DIR, "text.txt");
+//        new File(la.getPath()).createNewFile();
+//        File f = new File(la.getPath()).getAbsoluteFile();
+//        Utils.writeObject(f, init);
+//        Commit deserialized = Utils.readObject(f, Commit.class);
+//        System.out.println(deserialized);
+//        System.out.println(Utils.join(COMMIT_DIR, String.valueOf(new File("test.dir"))).isFile());
+//    }
 
 }
 

@@ -356,6 +356,8 @@ public class GitletTests {
     public static void checkOutput(String expected) {
         expected = normalizeStdOut(expected).stripTrailing();
         String actual = normalizeStdOut(getOutput()).stripTrailing();
+        System.out.println(expected + "haha");
+        System.out.println(actual + "lala");
         assertEquals("ERROR (incorrect output)", expected, actual);
     }
 
