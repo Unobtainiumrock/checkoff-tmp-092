@@ -3,6 +3,7 @@ package gitlet;
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.nio.file.Paths;
 
 import static gitlet.Utils.*;
 
@@ -161,16 +162,18 @@ public class Repository {
      *
      * @param file A string representing the file we wish to commit.
      */
-    public static void add(String file) {
+    public static void add(String file) throws IOException {
         File tobeAdded = Utils.join(CWD, file);
         if (!tobeAdded.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
-        System.out.println(tobeAdded.isFile());
+
+
         Stage stage = new Stage();
+
         if (stage.canAdd(tobeAdded)) {
-            Stage.add(tobeAdded);
+            stage.add(tobeAdded);
         }
 
 

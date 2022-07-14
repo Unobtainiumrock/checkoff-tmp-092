@@ -2,8 +2,12 @@ package gitlet;
 
 import jdk.jshell.execution.Util;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
+import java.nio.file.Paths;
 
 import static gitlet.Utils.*;
 
@@ -30,23 +34,54 @@ public class Stage {
         byte[] v = serialize(file);
         String fileID = sha1(v);
         boolean existsinBlob = Utils.join(BLOB_DIR, fileID).exists();
-        return this.onStage.containsKey(fileID) && existsinBlob;
-
+        return !(this.onStage.containsKey(fileID) || existsinBlob);
     }
 
-    public void add(File file) {
+    public void add(File file) throws IOException {
         byte[] v = serialize(file);
         String k = sha1(v);
-        this.onStage.put(k, v);
-        File f = Utils.join(STAGE_DIR, k);
-        Utils.writeObject(f, file);
+        this.onStage.put(k, v); // A
+        File f = Utils.join(STAGE_DIR, file.getName()); // directory/filename/
+        f.mkdir();
+
+        File f2 = Utils.join(f, k);
+        Utils.writeObject(f2, k);
+
+//        System.out.println(f.isDirectory());
+
+//        System.out.println(f);
+//        if (f.exists()) {
+//            Utils.writeObject(f2, file);
+//            return;
+//        }
+
+        // get path to directory
+        // write file to directory path
+
+//        System.out.println("f2: " + f2);
+//        System.out.println("file:" + file);
+//        System.out.println(file.isFile());
+//        System.out.println(file.isDirectory());
+//
+//        System.out.println("f is a?" + f);
+//        System.out.println("f file?: " + f.isFile());
+//        System.out.println("f directory?: " + f.isDirectory());
+//
+//        System.out.println("f2 file?: " + f2.isFile());
+//        System.out.println("f2 directory?: " + f2.isDirectory());
+//        Utils.writeObject(f2, file);
+        readWrite();
     }
 
-//    byte[] v = serialize(file);
-//    String k = sha1(v);
-//    File fileID = Utils.join(BLOB_DIR, k);
-//        if (!fileID.exists()) {
-//        Stage.add(file);
-//    }
+    public void readWrite() throws IOException {
+        Path path = Files.createFile(Path.of(CWD.getPath(), "tmp.txt"));
+        Files.createFile(path);
+
+//        BufferedInputStream tst = new BufferedInputStream(Files.newInputStream(thing.toAbsolutePath()));
+//        String result = new String(tst.readAllBytes(), StandardCharsets.UTF_8);
+//        tst.close();
+
+//        System.out.println(result);
+    }
 
 }
