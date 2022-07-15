@@ -2,10 +2,6 @@ package gitlet;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.nio.file.Paths;
-
-import static gitlet.Utils.*;
 
 // TODO: any imports you need here
 
@@ -41,43 +37,43 @@ public class Repository {
     public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
 
 
-    public static void playGround() {
-        // Create a blobMap and commitMap
-        BlobStore blobMap = new BlobStore();
-        CommitStore commitMap = new CommitStore();
-
-        // Create our initial commit
-        Commit initialCommit = new Commit();
-
-        // Set up some mock files
-        List<File> files = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            files.add(new File("" + i));
-        }
-
-        // Verify
-        files.forEach(System.out::println);
-        // hash the files
-        List<Map<String, byte[]>> hashedFiles = files.stream().map((file) -> {
-            Map<String, byte[]> m = new HashMap<>();
-            byte[] v = serialize(file);
-            String k = sha1(v);
-            m.put(k, v);
-            return m;
-
-        }).collect(Collectors.toList());
-        //
-        String initialCommitHash = initialCommit.getHashID(); // Also can access first commit from commit store.
-
-        Commit secondCommit = new Commit("I am a second commit", "69", initialCommitHash, hashedFiles);
-
-        System.out.println("Test Commit Metadata");
-        System.out.println(initialCommit);
-
-
-        System.out.println("Second Commit Metadata");
-        System.out.println(secondCommit);
-
+//    public static void playGround() {
+//        // Create a blobMap and commitMap
+//        BlobStore blobMap = new BlobStore();
+//        CommitStore commitMap = new CommitStore();
+//
+//        // Create our initial commit
+//        Commit initialCommit = new Commit();
+//
+//        // Set up some mock files
+//        List<File> files = new ArrayList<>();
+//        for (int i = 0; i < 5; i++) {
+//            files.add(new File("" + i));
+//        }
+//
+//        // Verify
+//        files.forEach(System.out::println);
+//        // hash the files
+//        List<Map<String, byte[]>> hashedFiles = files.stream().map((file) -> {
+//            Map<String, byte[]> m = new HashMap<>();
+//            byte[] v = serialize(file);
+//            String k = sha1(v);
+//            m.put(k, v);
+//            return m;
+//
+//        }).collect(Collectors.toList());
+//        //
+//        String initialCommitHash = initialCommit.getHashID(); // Also can access first commit from commit store.
+//
+//        Commit secondCommit = new Commit("I am a second commit", initialCommitHash, hashedFiles);
+//
+//        System.out.println("Test Commit Metadata");
+//        System.out.println(initialCommit);
+//
+//
+//        System.out.println("Second Commit Metadata");
+//        System.out.println(secondCommit);
+//
 //        List<Map<String, byte[]>> fileHashes = secondCommit.getFileHashes();
 //        fileHashes.forEach((file) -> {
 //            String k = file.keySet().iterator().next();
@@ -90,11 +86,10 @@ public class Repository {
 //            }
 //
 //        });
-
+//
 //        Commit thirdCommit = new Commit("I am a third commit", "72", secondCommit.getHashID(), )
-
-
-    }
+//
+//    }
 
 
     /**
@@ -120,9 +115,10 @@ public class Repository {
 
         Commit initialCommit = new Commit();
         makeDirectories();
+        String initSha1 = initialCommit.getHashID();
+        initialCommit.save();
+        //Left To do: connecting the branches, make the stage area
 
-//
-////        } else {
 //            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
 //            //to file to make sure it persists, so serialize init
             //Need to write to file init, so need to create a file in .commit to write init into
@@ -130,19 +126,15 @@ public class Repository {
 //        }
     }
 
-    public static void testInit() {
-
-    }
-
 
     public static void makeDirectories() {
         GITLET_DIR.mkdir();
-        STAGE_DIR.mkdir();
         BLOB_DIR.mkdir();
         COMMIT_DIR.mkdir();
         BRANCH_DIR.mkdir();
         MAIN_BRANCH.mkdir();
         CURR_BRANCH.mkdir();
+        //STAGE_DIR.mkdir();
     }
 
     /**
@@ -169,13 +161,11 @@ public class Repository {
             System.exit(0);
         }
 
-
         Stage stage = new Stage();
 
         if (stage.canAdd(tobeAdded)) {
             stage.add(tobeAdded);
         }
-
 
 //         `git add`
 //         "Nothing specified, nothing added.\n"
@@ -211,11 +201,19 @@ public class Repository {
      * @param commitMsg A string representing the commit message.
      */
     public static void commit(String commitMsg) {
-        //Check if there are things on the add stage or the remove stage
-        //If not: System.out.println("No changes added to the commit."), exit(0)
-        //If yes:
+        Stage stage = new Stage(); //TODO: we're making a new stage in every method, this seems wrong?
+        //TODO: Think about how to fix the above
+        if (stage.stageEmpty()) {
+            System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
+        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
+        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
+        Map<String, String> fileHashes = stage.allPrevMap;
+        Commit commit = new Commit(commitMsg, parentHash, fileHashes);
+        commit.save();
+
         //Make a new commit with the commit constructor
-        //Create a SHA1 ID for the new commit made
         //Copy over the contents in parent commit
         // Update any necessary
 
