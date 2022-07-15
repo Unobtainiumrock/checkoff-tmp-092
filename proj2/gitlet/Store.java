@@ -8,6 +8,14 @@ public abstract class Store<K, V> implements Storable<K, V> {
         this.map = map;
     }
 
+    public Map<K, V> getMap() {
+        return this.map;
+    }
+
+    public boolean containsKey(K key) {
+        return this.map.containsKey(key);
+    };
+
     @Override
     public boolean add(K key, V value) {
         if (!this.map.containsKey(key)) {
