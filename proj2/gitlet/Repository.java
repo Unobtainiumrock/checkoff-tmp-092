@@ -161,7 +161,7 @@ public class Repository {
             System.exit(0);
         }
 
-        Stage stage = new Stage();
+        StageStore stage = new StageStore();
 
         if (stage.canAdd(tobeAdded)) {
             stage.add(tobeAdded);
@@ -201,17 +201,17 @@ public class Repository {
      * @param commitMsg A string representing the commit message.
      */
     public static void commit(String commitMsg) {
-        Stage stage = new Stage(); //TODO: we're making a new stage in every method, this seems wrong?
-        //TODO: Think about how to fix the above
-        if (stage.stageEmpty()) {
-            System.out.println("No changes added to the commit.");
-            System.exit(0);
-        }
-        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
-        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
-        Map<String, String> fileHashes = stage.allPrevMap;
-        Commit commit = new Commit(commitMsg, parentHash, fileHashes);
-        commit.save();
+//        StageStore stage = new StageStore(); //TODO: we're making a new stage in every method, this seems wrong?
+//        //TODO: Think about how to fix the above
+//        if (stage.stageEmpty()) {
+//            System.out.println("No changes added to the commit.");
+//            System.exit(0);
+//        }
+//        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
+//        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
+//        Map<String, String> fileHashes = stage.allPrevMap;
+//        Commit commit = new Commit(commitMsg, parentHash, fileHashes);
+//        commit.save();
 
         //Make a new commit with the commit constructor
         //Copy over the contents in parent commit
