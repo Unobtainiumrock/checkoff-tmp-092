@@ -73,6 +73,12 @@ public class Sandbox {
         // Map<String, byte[]>
         // writeObject
 
+        Map<Integer, String> mTest = new M<>();
+
+        mTest.put(1, "Hello World!");
+
+        System.out.println(mTest.get(1));
+
     }
 
     private static class Thing implements Serializable {
@@ -81,5 +87,8 @@ public class Sandbox {
         public Thing(int i) {
             this.i = i;
         }
+    }
+
+    private static class M<K, V> extends HashMap<K, V> {
     }
 }

@@ -1,41 +1,21 @@
 package gitlet;
 
 import java.io.*;
-import java.util.*;
 
-// TODO: any imports you need here
+import static gitlet.Utils.*;
 
-/**
- * Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
- *
- * @author TODO
- */
-public class Repository {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
+public class Repository implements Save {
 
-    /**
-     * The current working directory.
-     */
-    public static final File CWD = new File(System.getProperty("user.dir"));
-    /**
-     * The .gitlet directory.
-     */
-    public static final File GITLET_DIR = Utils.join(CWD, ".gitlet");
-    public static final File STAGE_DIR = Utils.join(GITLET_DIR, ".staging");
-    public static final File BLOB_DIR = Utils.join(GITLET_DIR, ".blobs");
-    public static final File COMMIT_DIR = Utils.join(GITLET_DIR, ".commits");
-    public static final File BRANCH_DIR = Utils.join(GITLET_DIR, ".branches");
-    public static final File MAIN_BRANCH = Utils.join(BRANCH_DIR, ".main"); //rethink if we need this
-    public static final File CURR_BRANCH = Utils.join(BRANCH_DIR, ".curr"); //rethink if we need this
+    // TODO Move the description of the runtime objects out the a javadoc on the Repository class.
+    // Holds the runtime Objects.
+    // each time we run a git command, we will deserialize the serialized
+    // runtime objects from the previous time the program ran.
+    // The runtime objects will then be re-serialized using save() right before the program ends.
+    public static CommitStore commitStore;
+    public static StageStore stageStore;
+    public static BlobStore blobStore;
 
+// TODO remove the playground after testing persistence of data upon deserialization.
 
 //    public static void playGround() {
 //        // Create a blobMap and commitMap
@@ -91,7 +71,6 @@ public class Repository {
 //
 //    }
 
-
     /**
      * Usage: java gitlet.Main init
      * <p>
@@ -113,10 +92,16 @@ public class Repository {
             System.exit(0);
         }
 
+        GITLET_DIR.mkdir();
         Commit initialCommit = new Commit();
-        makeDirectories();
+
         String initSha1 = initialCommit.getHashID();
-        initialCommit.save();
+        commitStore.put(initSha1, serialize(initialCommit));
+
+//        // TODO: remove initialCommit.save(), the initial commit will exist within the CommitStore with all other commits
+          // TODO: when we serialize the commit store, it will be serialized with those as well.
+//        initialCommit.save();
+
         //Left To do: connecting the branches, make the stage area
 
 //            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
@@ -127,14 +112,16 @@ public class Repository {
     }
 
 
-    public static void makeDirectories() {
-        GITLET_DIR.mkdir();
-        BLOB_DIR.mkdir();
-        COMMIT_DIR.mkdir();
-        BRANCH_DIR.mkdir();
-        MAIN_BRANCH.mkdir();
-        CURR_BRANCH.mkdir();
-        //STAGE_DIR.mkdir();
+    public static void createRuntimeObjects() {
+        commitStore = readObject(COMMIT_DIR, CommitStore.class);
+        stageStore = readObject(STAGE_DIR, StageStore.class);
+        blobStore = readObject(BLOB_DIR, BlobStore.class);
+    }
+
+    public static void saveRuntimeObjects() {
+        writeObject(COMMIT_DIR, commitStore.firstCommit);
+        writeObject(STAGE_DIR, stageStore);
+        writeObject(BLOB_DIR, blobStore);
     }
 
     /**
@@ -155,7 +142,7 @@ public class Repository {
      * @param file A string representing the file we wish to commit.
      */
     public static void add(String file) throws IOException {
-        File tobeAdded = Utils.join(CWD, file);
+        File tobeAdded = join(CWD, file);
         if (!tobeAdded.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
@@ -163,9 +150,9 @@ public class Repository {
 
         StageStore stage = new StageStore();
 
-        if (stage.canAdd(tobeAdded)) {
-            stage.add(tobeAdded);
-        }
+//        if (stage.canAdd(tobeAdded)) {
+//            stage.add(tobeAdded);
+//        }
 
 //         `git add`
 //         "Nothing specified, nothing added.\n"
@@ -300,20 +287,10 @@ public class Repository {
 
     }
 
-//    public static boolean exists(File directory) {
-//        return directory.exists();
-//    }
-
-//    public static void testingAreaTwo() {
-//        Commit init = new Commit();
-//        File la = Utils.join(COMMIT_DIR, "text.txt");
-//        new File(la.getPath()).createNewFile();
-//        File f = new File(la.getPath()).getAbsoluteFile();
-//        Utils.writeObject(f, init);
-//        Commit deserialized = Utils.readObject(f, Commit.class);
-//        System.out.println(deserialized);
-//        System.out.println(Utils.join(COMMIT_DIR, String.valueOf(new File("test.dir"))).isFile());
-//    }
+    @Override
+    public void save(File f) {
+        return;
+    }
 
 }
 

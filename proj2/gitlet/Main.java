@@ -1,21 +1,8 @@
 package gitlet;
-
-// Stretch goal. See if any pipelines of functions are performed in the
-// project and play with streams. update: Maybe not, it appears java.nio and java.io
-// might not play well together. nio is a buffer oriented pkg and io is a stream oriented package.
-// I think I'll prefer working with java.nio b/c apparently its non-blocking!
-// https://www.geeksforgeeks.org/difference-between-java-io-and-java-nio/
-
 import java.io.IOException;
+import static gitlet.Repository.*;
 
-/** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
- */
 public class Main {
-
-    /** Usage: java gitlet.Main ARGS, where ARGS contains
-     *  <COMMAND> <OPERAND1> <OPERAND2> ...
-     */
     public static void main(String[] args) throws IOException {
 //        Repository.playGround();
 
@@ -23,6 +10,7 @@ public class Main {
            throw new GitletException("Incorrect operands.");
         }
 
+        createRuntimeObjects();
 
         String firstArg = args[0];
         switch(firstArg) {
@@ -66,7 +54,7 @@ public class Main {
             // files, prior to closing. Similar to what I've done in previous Java courses.
 //            case "test":
 //                break;
-            // TODO: FILL THE REST IN
         }
+        saveRuntimeObjects();
     }
 }

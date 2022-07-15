@@ -1,9 +1,9 @@
 package gitlet;
+import java.io.File;
 import java.util.LinkedHashMap;
+import static gitlet.Utils.*;
 
-import static gitlet.Utils.serialize;
-
-public class CommitStore extends Store<String, byte[]> {
+public class CommitStore extends LinkedHashMap<String, byte[]> implements Save {
     boolean initialized = false;
     Commit firstCommit;
 
@@ -20,7 +20,7 @@ public class CommitStore extends Store<String, byte[]> {
         if (!this.initialized) {
             String sha = firstCommit.getHashID();
             byte[] serializedObj = serialize(firstCommit);
-            super.add(sha, serializedObj);
+            super.put(sha, serializedObj);
             this.firstCommit = firstCommit;
             this.initialized = true;
         } else {
