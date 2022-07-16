@@ -4,9 +4,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import static gitlet.Utils.*;
 
@@ -160,61 +160,58 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-//        Set<String> fileHashKeys = new HashSet<>();
-//        Iterator<String> iter = this.stageStore.iterator();
-//
-//        while (iter.hasNext()) {
-//
-//        }
+        Commit parent = this.commitStore.getHead();
+        String parentHash = parent.getHashID();
+        Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
-        // go thru parent file hashes comparing if their keys are same as key on stage and keep only keys that differ
-        // store in an object and combine with obj on stage.
+        parentFileHashes.iterator().forEachRemaining((fileHash) -> {
+            this.stageStore.add(fileHash);
+        });
 
-        String parentHash = this.commitStore.getHead().getHashID();
+        Commit commit = new Commit(commitMsg, parentHash, this.stageStore);
 
-//        Commit commit = new Commit(commitMsg, parentHash, this.stageStore));
-
-//        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
-//        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
-//        Map<String, String> fileHashes = stage.allPrevMap;
-//        Commit commit = new Commit(commitMsg, parentHash, fileHashes);
-//        commit.save();
-
-        //Make a new commit with the commit constructor
-        //Copy over the contents in parent commit
-        // Update any necessary
-
-        // Fresh repo, nothing to commit
-        // "On branch <branch name>\n"
-        // "Initial commit\n"
-        // "nothing to commit"
-        // exit
-
-        // Non-fresh repo, things to commit, but not staged
-        // "On branch <branch name>\n"
-        // "Untracked files:\n"
-        // "        file1\n"
-        // "        file2\n"
-        // "        ...\n"
-        // "nothing added to commit but untracked files present"
-
-        // Files staged
-        // Commit message not provided
-        // System.out.println("Please enter a commit message."), exit(0)
-
-        // Commit message provided
-        // First commit in a fresh repo
-        // "[<branch name> (root-commit) <hash>] <commit message>\n"
-        // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
-        // "create mode <100644 (*)> <filename here>"
-
-        // Commits beyond the first commit
-        // "[branch name <hash>] <commit message> "
-        // "<number of files changed> changed, <number of insertions> insertions(+), <number of deletions> deletions (-)\n"
-        // "create mode <100644 (*)> <filename here>"
-
-        // (*) Something specific to file systems. This code appears to be associated with text files and creation. Try to Google file codes later.
+        commitStore.put(commit.getHashID(), commit);
+        stageStore.clear();
     }
+
+    public void checkout(String branchName) {
+        return;
+    }
+
+    public void checkout(String separator, String fileName) {
+        checkoutHelper(commitStore.getHead().getHashID(), fileName);
+    }
+
+    public void checkout(String commitID, String separator, String fileName) {
+        checkoutHelper(commitID, fileName);
+    }
+
+    private void checkoutHelper(String commitID, String fileName) {
+        if (!commitStore.containsKey(commitID)) {
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
+        Commit commit = commitStore.get(commitID);
+        Set<Map<String, String>> fileHashes = commit.getFileHashes();
+        Iterator<Map<String, String>> iter = fileHashes.iterator();
+
+        while (iter.hasNext()) {
+            Map<String, String> curr = iter.next();
+            String currFileName = curr.keySet().iterator().next();
+
+            if (currFileName.equals(fileName)) {
+                byte[] serializedFile = blobStore.get(curr);
+                File f = join(CWD, currFileName);
+                writeContents(f, serializedFile);
+                break;
+            }
+
+        }
+        System.out.println("File does not exist in that commit.");
+        System.exit(0);
+    }
+
+//    private void checkoutHelper() {}
 
     /**
      * Usage: java gitlet.Main rm [file name]
@@ -245,10 +242,6 @@ public class Repository implements Save {
     }
 
     public static void status() {
-    }
-
-    public static void checkout() {
-
     }
 
     public static void branch() {

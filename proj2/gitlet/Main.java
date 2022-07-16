@@ -7,15 +7,16 @@ public class Main {
         Repository repo = null;
 
         if (args.length == 0) {
-           throw new GitletException("Incorrect operands.");
+            System.out.println("Incorrect operands.");
+//           throw new GitletException("Incorrect operands.");
+            System.exit(0);
         }
 
         String firstArg = args[0];
+
         switch(firstArg) {
             case "init":
-                if (args.length > 1) {
-                    throw new GitletException("Incorrect operands.");
-                }
+                SatanizeInputs.cleanse(args, 0, 0, (restArgs) -> true);
                 repo = new Repository();
                 repo.init();
                 break;
@@ -26,8 +27,9 @@ public class Main {
                     System.exit(0);
                 }
                 break;
-//            case "commit":
-//                Repository.commit(args[1]);
+            case "commit":
+                SatanizeInputs.cleanse(args, 1, 1, (restArgs) -> true);
+                repo.commit(args[1]);
 //            case "rm" :
 //                Repository.rm(args[1]);
 //                break;
@@ -40,8 +42,9 @@ public class Main {
 //                break;
 //            case "status":
 //                Repository.status();
-//            case "checkout":
-//                Repository.checkout();
+            case "checkout":
+                SatanizeInputs.cleanse(args, 1, 3, SatanizeInputs::checkoutCleanse);
+                repo.checkout(args[1], args[2], args[3]);
 //            case "branch":
 //                Repository.branch();
 //            case "rm-branch":
