@@ -10,7 +10,9 @@ public class Main {
            throw new GitletException("Incorrect operands.");
         }
 
-        createRuntimeObjects();
+        if (COMMIT_DIR.exists()) {
+            createRuntimeObjects();
+        }
 
         String firstArg = args[0];
         switch(firstArg) {

@@ -126,7 +126,6 @@ class Utils {
             for (Object obj : contents) {
                 if (obj instanceof byte[]) {
                     str.write((byte[]) obj);
-//                    System.out.println(str);
                 } else {
                     str.write(((String) obj).getBytes(StandardCharsets.UTF_8));
                 }

@@ -1,11 +1,14 @@
 package gitlet;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Iterator;
 
 import static gitlet.Utils.*;
 
 public class Repository implements Save {
-
     // TODO Move the description of the runtime objects out the a javadoc on the Repository class.
     // Holds the runtime Objects.
     // each time we run a git command, we will deserialize the serialized
@@ -14,6 +17,7 @@ public class Repository implements Save {
     public static CommitStore commitStore;
     public static StageStore stageStore;
     public static BlobStore blobStore;
+    public static boolean initialized = false;
 
 // TODO remove the playground after testing persistence of data upon deserialization.
 
@@ -93,35 +97,22 @@ public class Repository implements Save {
         }
 
         GITLET_DIR.mkdir();
+        commitStore = new CommitStore();
+        stageStore = new StageStore();
+        blobStore = new BlobStore();
+
         Commit initialCommit = new Commit();
-
         String initSha1 = initialCommit.getHashID();
-        commitStore.put(initSha1, serialize(initialCommit));
+        commitStore.put(initSha1, initialCommit);
+        initialized = true;
+        //Verify that data persisted properly
 
-//        // TODO: remove initialCommit.save(), the initial commit will exist within the CommitStore with all other commits
-          // TODO: when we serialize the commit store, it will be serialized with those as well.
-//        initialCommit.save();
-
-        //Left To do: connecting the branches, make the stage area
-
-//            //If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
-//            //to file to make sure it persists, so serialize init
-            //Need to write to file init, so need to create a file in .commit to write init into
-            //How to create these files? Where to put these files? A copy in curr and main, and then replace it when updated?
-//        }
-    }
+//        CommitStore tmp = readObject(COMMIT_DIR, CommitStore.class);
+//        Commit first = tmp.getFirstCommit();
+//        System.out.println(first);
 
 
-    public static void createRuntimeObjects() {
-        commitStore = readObject(COMMIT_DIR, CommitStore.class);
-        stageStore = readObject(STAGE_DIR, StageStore.class);
-        blobStore = readObject(BLOB_DIR, BlobStore.class);
-    }
-
-    public static void saveRuntimeObjects() {
-        writeObject(COMMIT_DIR, commitStore.firstCommit);
-        writeObject(STAGE_DIR, stageStore);
-        writeObject(BLOB_DIR, blobStore);
+//        If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
     }
 
     /**
@@ -141,35 +132,32 @@ public class Repository implements Save {
      *
      * @param file A string representing the file we wish to commit.
      */
-    public static void add(String file) throws IOException {
+    public static void add(String file) {
         File tobeAdded = join(CWD, file);
+
         if (!tobeAdded.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
 
-        StageStore stage = new StageStore();
+        String k = stageStore.stage(tobeAdded);
+        writeObject(BLOB_DIR, blobStore);
 
-//        if (stage.canAdd(tobeAdded)) {
-//            stage.add(tobeAdded);
-//        }
+        StageStore tmp = readObject(STAGE_DIR, StageStore.class);
+        BlobStore b = readObject(BLOB_DIR, BlobStore.class);
+        System.out.println(tmp.contains(k));
+        Iterator iter = tmp.iterator();
 
-//         `git add`
-//         "Nothing specified, nothing added.\n"
-//
-//         `git add <incorrect path or file>` //or nonexistent file
-//         "fatal: pathspec '<incorrect path here>' did not match any files"
-//        Pseudocode:
-//        check if a file exists in the CWD
-//            if not: System.out.println("File does not exist."), exit(0)
-//            if yes:
-//                read content of this.file to serialize it, so can assign it a SHA1 ID
-//                Check if this.file's SHA1 = SHA1 of head.file's SHA1
-//                    If not: put this.file onto the stage
-//                    If yes: remove file on stage
-//
-//         'git add <correct path>'
-//         No feedback given, perform logic to stage stuff.
+        System.out.println(k);
+        while (iter.hasNext())  {
+            System.out.println(iter.next());
+        }
+
+        byte[] serializedFile = b.get(k);
+//        File f = b.get(k);
+        writeContents(join(CWD, "out.txt"), serializedFile);
+
+
     }
 
     /**
@@ -285,6 +273,18 @@ public class Repository implements Save {
 
     public static void merge() {
 
+    }
+
+    public static void createRuntimeObjects() {
+        commitStore = readObject(COMMIT_DIR, CommitStore.class);
+        stageStore = readObject(STAGE_DIR, StageStore.class);
+        blobStore = readObject(BLOB_DIR, BlobStore.class);
+    }
+
+    public static void saveRuntimeObjects() {
+        writeObject(COMMIT_DIR, commitStore);
+        writeObject(STAGE_DIR, stageStore);
+        writeObject(BLOB_DIR, blobStore);
     }
 
     @Override
