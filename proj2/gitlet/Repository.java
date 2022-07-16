@@ -1,12 +1,8 @@
 package gitlet;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+
 
 import static gitlet.Utils.*;
 
@@ -15,10 +11,6 @@ public class Repository implements Save {
     private StageStore stageStore;
     private BlobStore blobStore;
     private boolean initialized = false;
-
-    public Repository() {
-        this.createRuntimeObjects();
-    }
 
 // TODO remove the playground after testing persistence of data upon deserialization.
 
@@ -91,7 +83,7 @@ public class Repository implements Save {
      * <p>
      * Runtime: O(1)
      */
-    public void init() throws IOException {
+    public void init() {
         if (COMMIT_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
@@ -101,12 +93,8 @@ public class Repository implements Save {
         this.commitStore = new CommitStore(this);
         this.stageStore = new StageStore(this);
         this.blobStore = new BlobStore(this);
-
-        Commit initialCommit = new Commit();
-        String initSha1 = initialCommit.getHashID();
-        commitStore.put(initSha1, initialCommit);
-        initialized = true;
-
+        this.saveRuntimeObjects();
+        this.initialized = true;
         // join the init to the main branch and the current branch, write the init
     }
 
@@ -135,7 +123,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        this.stageStore.stage(tobeAdded);
+        this.stageStore.stage(tobeAdded, this.blobStore);
     }
 
     /**
@@ -165,13 +153,13 @@ public class Repository implements Save {
         Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
         parentFileHashes.iterator().forEachRemaining((fileHash) -> {
-            this.stageStore.add(fileHash);
+           this.stageStore.add(fileHash);
         });
 
-        Commit commit = new Commit(commitMsg, parentHash, this.stageStore);
+        Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone());
 
-        commitStore.put(commit.getHashID(), commit);
-        stageStore.clear();
+        this.commitStore.add(commit.getHashID(), commit);
+        this.stageStore.clear();
     }
 
     public void checkout(String branchName) {
@@ -179,7 +167,7 @@ public class Repository implements Save {
     }
 
     public void checkout(String separator, String fileName) {
-        checkoutHelper(commitStore.getHead().getHashID(), fileName);
+        checkoutHelper(this.commitStore.getHead().getHashID(), fileName);
     }
 
     public void checkout(String commitID, String separator, String fileName) {
@@ -187,11 +175,11 @@ public class Repository implements Save {
     }
 
     private void checkoutHelper(String commitID, String fileName) {
-        if (!commitStore.containsKey(commitID)) {
+        if (!this.commitStore.containsKey(commitID)) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-        Commit commit = commitStore.get(commitID);
+        Commit commit = this.commitStore.get(commitID);
         Set<Map<String, String>> fileHashes = commit.getFileHashes();
         Iterator<Map<String, String>> iter = fileHashes.iterator();
 
@@ -200,10 +188,10 @@ public class Repository implements Save {
             String currFileName = curr.keySet().iterator().next();
 
             if (currFileName.equals(fileName)) {
-                byte[] serializedFile = blobStore.get(curr);
+                byte[] serializedFile = this.blobStore.get(curr);
                 File f = join(CWD, currFileName);
                 writeContents(f, serializedFile);
-                break;
+                return;
             }
 
         }

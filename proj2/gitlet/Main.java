@@ -4,7 +4,7 @@ import static gitlet.Repository.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        Repository repo = null;
+        Repository repo = new Repository();
 
         if (args.length == 0) {
             System.out.println("Incorrect operands.");
@@ -16,11 +16,11 @@ public class Main {
 
         switch(firstArg) {
             case "init":
-                SatanizeInputs.cleanse(args, 0, 0, (restArgs) -> true);
-                repo = new Repository();
+//                SatanizeInputs.cleanse(args, 0, 0, (restArgs) -> true);
                 repo.init();
                 break;
             case "add":
+                repo.createRuntimeObjects();
                 if (COMMIT_DIR.exists()) {
                     repo.add(args[1]);
                 } else {
@@ -28,8 +28,10 @@ public class Main {
                 }
                 break;
             case "commit":
-                SatanizeInputs.cleanse(args, 1, 1, (restArgs) -> true);
+                repo.createRuntimeObjects();
+//                SatanizeInputs.cleanse(args, 1, 1, (restArgs) -> true);
                 repo.commit(args[1]);
+                break;
 //            case "rm" :
 //                Repository.rm(args[1]);
 //                break;
@@ -43,8 +45,13 @@ public class Main {
 //            case "status":
 //                Repository.status();
             case "checkout":
+                repo.createRuntimeObjects();
                 SatanizeInputs.cleanse(args, 1, 3, SatanizeInputs::checkoutCleanse);
-                repo.checkout(args[1], args[2], args[3]);
+                if (args.length == 3) {
+                    repo.checkout(args[1], args[2]);
+                } else if (args.length == 4) {
+                    repo.checkout(args[1], args[2], args[3]);
+                }
 //            case "branch":
 //                Repository.branch();
 //            case "rm-branch":

@@ -100,7 +100,7 @@ class Utils {
         try {
             return Files.readAllBytes(file.toPath());
         } catch (IOException excp) {
-            throw new IllegalArgumentException(excp.getMessage());
+            throw new IllegalArgumentException(excp);
         }
     }
 
@@ -132,7 +132,7 @@ class Utils {
             }
             str.close();
         } catch (IOException | ClassCastException excp) {
-            throw new IllegalArgumentException(excp.getMessage());
+            throw new IllegalArgumentException(excp);
         }
     }
 
@@ -148,7 +148,7 @@ class Utils {
             return result;
         } catch (IOException | ClassCastException
                  | ClassNotFoundException excp) {
-            throw new IllegalArgumentException(excp.getMessage());
+            throw new IllegalArgumentException(excp);
         }
     }
 
@@ -197,6 +197,7 @@ class Utils {
         return Paths.get(first, others).toFile();
     }
 
+
 //    /** Return the concatentation of FIRST and OTHERS into a File designator,
 //     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
 //     *  method. */
@@ -219,8 +220,6 @@ class Utils {
             throw error("Internal error serializing commit.");
         }
     }
-
-
 
     /* MESSAGES AND ERROR REPORTING */
 

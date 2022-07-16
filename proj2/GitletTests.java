@@ -356,8 +356,6 @@ public class GitletTests {
     public static void checkOutput(String expected) {
         expected = normalizeStdOut(expected).stripTrailing();
         String actual = normalizeStdOut(getOutput()).stripTrailing();
-        System.out.println(expected + "haha");
-        System.out.println(actual + "lala");
         assertEquals("ERROR (incorrect output)", expected, actual);
     }
 
@@ -389,6 +387,10 @@ public class GitletTests {
      */
     public static void runGitletCommand(String[] args) {
         try {
+            // Catch string ==
+            for (int i = 0; i < args.length; i ++) {
+                args[i] = new String(args[i]);
+            }
             OG_OUT.println(COMMAND_BASE + createCommand(args));
             gitlet.Main.main(args);
         } catch (SecurityException ignored) {
@@ -705,6 +707,7 @@ public class GitletTests {
     @Test
     public void test22_removeDeletedFile() {
         i_setup2();
+        deleteFile("f.txt");
         gitletCommand(new String[]{"rm", "f.txt"}, "");
         gitletCommand(new String[]{"status"}, """
                 === Branches ===

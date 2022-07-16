@@ -2,8 +2,8 @@ package gitlet;
 import java.util.LinkedHashMap;
 
 public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
-    Repository repo;
-    Commit head;
+    private Repository repo;
+    private Commit head;
 
     public CommitStore(Repository repo) {
         this.repo = repo;
@@ -29,5 +29,9 @@ public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
             System.out.println("The commit store has already been initialized\nif you wish to add " +
                     "a commit to the store, use add() instead.");
         }
+    }
+
+    public Repository getRepo() {
+        return this.repo;
     }
 }

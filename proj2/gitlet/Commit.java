@@ -32,7 +32,8 @@ public class Commit implements Save {
     }
 
     private String generateHashID() {
-        return sha1(this.message, parentHashID, this.fileHashes);
+//        return sha1(this.message, parentHashID, this.fileHashes);
+        return sha1(serialize(this), this.message);
     }
 
     public Set<Map<String, String>> getFileHashes() {

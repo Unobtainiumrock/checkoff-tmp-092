@@ -23,7 +23,7 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
         return !isOldVersion;
     }
 
-    public boolean stage(File file) {
+    public boolean stage(File file, BlobStore blobStore) {
         String fileName = file.getName();
         String version = sha1(fileName, readContents(file));
         Map<String, String> dualKey = new HashMap<>();
@@ -31,7 +31,7 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
 
         if (canAdd(dualKey)) {
             this.add(dualKey); // Add a dual key of <fileName, version> to the StageStore's Set
-            this.repo.getBlobStore().put(dualKey, readContents(file)); // Map the dualKey to the current file version.
+            blobStore.put(dualKey, readContents(file)); // Map the dualKey to the current file version.
             return true;
         }
         return false;
