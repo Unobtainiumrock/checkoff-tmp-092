@@ -4,14 +4,10 @@ import static gitlet.Repository.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-//        Repository.playGround();
+        Repository repo = null;
 
         if (args.length == 0) {
            throw new GitletException("Incorrect operands.");
-        }
-
-        if (COMMIT_DIR.exists()) {
-            createRuntimeObjects();
         }
 
         String firstArg = args[0];
@@ -20,11 +16,15 @@ public class Main {
                 if (args.length > 1) {
                     throw new GitletException("Incorrect operands.");
                 }
-                Repository.init();
+                repo = new Repository();
+                repo.init();
                 break;
             case "add":
-                // If not already initialized, then git add should fail. Check for git init.
-                Repository.add(args[1]);
+                if (COMMIT_DIR.exists()) {
+                    repo.add(args[1]);
+                } else {
+                    System.exit(0);
+                }
                 break;
 //            case "commit":
 //                Repository.commit(args[1]);
@@ -57,6 +57,6 @@ public class Main {
 //            case "test":
 //                break;
         }
-        saveRuntimeObjects();
+        repo.saveRuntimeObjects();
     }
 }

@@ -9,15 +9,14 @@ import java.util.Iterator;
 import static gitlet.Utils.*;
 
 public class Repository implements Save {
-    // TODO Move the description of the runtime objects out the a javadoc on the Repository class.
-    // Holds the runtime Objects.
-    // each time we run a git command, we will deserialize the serialized
-    // runtime objects from the previous time the program ran.
-    // The runtime objects will then be re-serialized using save() right before the program ends.
-    public static CommitStore commitStore;
-    public static StageStore stageStore;
-    public static BlobStore blobStore;
-    public static boolean initialized = false;
+    private CommitStore commitStore;
+    private StageStore stageStore;
+    private BlobStore blobStore;
+    private boolean initialized = false;
+
+    public Repository() {
+        this.createRuntimeObjects();
+    }
 
 // TODO remove the playground after testing persistence of data upon deserialization.
 
@@ -90,16 +89,16 @@ public class Repository implements Save {
      * <p>
      * Runtime: O(1)
      */
-    public static void init() throws IOException {
+    public void init() throws IOException {
         if (COMMIT_DIR.exists()) {
             System.out.println("A Gitlet version-control system already exists in the current directory.");
             System.exit(0);
         }
 
         GITLET_DIR.mkdir();
-        commitStore = new CommitStore();
-        stageStore = new StageStore();
-        blobStore = new BlobStore();
+        this.commitStore = new CommitStore(this);
+        this.stageStore = new StageStore(this);
+        this.blobStore = new BlobStore(this);
 
         Commit initialCommit = new Commit();
         String initSha1 = initialCommit.getHashID();
@@ -132,7 +131,7 @@ public class Repository implements Save {
      *
      * @param file A string representing the file we wish to commit.
      */
-    public static void add(String file) {
+    public void add(String file) {
         File tobeAdded = join(CWD, file);
 
         if (!tobeAdded.exists()) {
@@ -140,24 +139,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        String k = stageStore.stage(tobeAdded);
-        writeObject(BLOB_DIR, blobStore);
-
-        StageStore tmp = readObject(STAGE_DIR, StageStore.class);
-        BlobStore b = readObject(BLOB_DIR, BlobStore.class);
-        System.out.println(tmp.contains(k));
-        Iterator iter = tmp.iterator();
-
-        System.out.println(k);
-        while (iter.hasNext())  {
-            System.out.println(iter.next());
-        }
-
-        byte[] serializedFile = b.get(k);
-//        File f = b.get(k);
-        writeContents(join(CWD, "out.txt"), serializedFile);
-
-
+        this.stageStore.stage(tobeAdded);
     }
 
     /**
@@ -175,13 +157,12 @@ public class Repository implements Save {
      *
      * @param commitMsg A string representing the commit message.
      */
-    public static void commit(String commitMsg) {
-//        StageStore stage = new StageStore(); //TODO: we're making a new stage in every method, this seems wrong?
-//        //TODO: Think about how to fix the above
-//        if (stage.stageEmpty()) {
-//            System.out.println("No changes added to the commit.");
-//            System.exit(0);
-//        }
+    public void commit(String commitMsg) {
+
+        if (this.stageStore.isEmpty()) {
+            System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
 //        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
 //        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
 //        Map<String, String> fileHashes = stage.allPrevMap;
@@ -275,16 +256,36 @@ public class Repository implements Save {
 
     }
 
-    public static void createRuntimeObjects() {
-        commitStore = readObject(COMMIT_DIR, CommitStore.class);
-        stageStore = readObject(STAGE_DIR, StageStore.class);
-        blobStore = readObject(BLOB_DIR, BlobStore.class);
+    public boolean getInitialized() {
+        return this.initialized;
     }
 
-    public static void saveRuntimeObjects() {
-        writeObject(COMMIT_DIR, commitStore);
-        writeObject(STAGE_DIR, stageStore);
-        writeObject(BLOB_DIR, blobStore);
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    public CommitStore getCommitStore() {
+        return this.commitStore;
+    }
+
+    public StageStore getStageStore() {
+        return this.stageStore;
+    }
+
+    public BlobStore getBlobStore() {
+        return this.blobStore;
+    }
+
+    public void createRuntimeObjects() {
+        this.commitStore = readObject(COMMIT_DIR, CommitStore.class);
+        this.stageStore = readObject(STAGE_DIR, StageStore.class);
+        this.blobStore = readObject(BLOB_DIR, BlobStore.class);
+    }
+
+    public void saveRuntimeObjects() {
+        writeObject(COMMIT_DIR, this.commitStore);
+        writeObject(STAGE_DIR, this.stageStore);
+        writeObject(BLOB_DIR, this.blobStore);
     }
 
     @Override

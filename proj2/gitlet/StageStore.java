@@ -2,7 +2,6 @@ package gitlet;
 
 import java.io.*;
 import java.util.*;
-import static gitlet.Repository.*;
 import static gitlet.Utils.*;
 
 /**
@@ -11,16 +10,17 @@ import static gitlet.Utils.*;
  * and then populate the commits with the files staged.
  */
 public class StageStore extends HashSet<String> implements Save {
+    private Repository repo;
     private Set<String> removeStage;
 
-    public StageStore() {
-        super(); // The addStage is implicit. It is a HashSet that can be accessed using "this"
+    public StageStore(Repository repo) {
+        this.repo = repo;
         this.removeStage = new HashSet<>();
     }
 
     private boolean canAdd(File file) {
         String k = sha1(file.getPath(), serialize(file));
-        boolean existsInBlob = blobStore.containsKey(k);
+        boolean existsInBlob = this.repo.getBlobStore().containsKey(k);
         return !existsInBlob;
     }
 
@@ -28,7 +28,7 @@ public class StageStore extends HashSet<String> implements Save {
         String k = sha1(file.getPath(), readContents(file));
         if (canAdd(file)) {
             this.add(k);
-            blobStore.put(k, readContents(file));
+            this.repo.getBlobStore().put(k, readContents(file));
         }
         return k;
     }
