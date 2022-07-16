@@ -4,7 +4,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import static gitlet.Utils.*;
 
@@ -104,14 +106,8 @@ public class Repository implements Save {
         String initSha1 = initialCommit.getHashID();
         commitStore.put(initSha1, initialCommit);
         initialized = true;
-        //Verify that data persisted properly
 
-//        CommitStore tmp = readObject(COMMIT_DIR, CommitStore.class);
-//        Commit first = tmp.getFirstCommit();
-//        System.out.println(first);
-
-
-//        If not: make an init, give the init a SHA1 ID, join the init to the main branch and the current branch, write the init
+        // join the init to the main branch and the current branch, write the init
     }
 
     /**
@@ -163,6 +159,21 @@ public class Repository implements Save {
             System.out.println("No changes added to the commit.");
             System.exit(0);
         }
+
+//        Set<String> fileHashKeys = new HashSet<>();
+//        Iterator<String> iter = this.stageStore.iterator();
+//
+//        while (iter.hasNext()) {
+//
+//        }
+
+        // go thru parent file hashes comparing if their keys are same as key on stage and keep only keys that differ
+        // store in an object and combine with obj on stage.
+
+        String parentHash = this.commitStore.getHead().getHashID();
+
+//        Commit commit = new Commit(commitMsg, parentHash, this.stageStore));
+
 //        String parentHash = ""; //TODO: get the SHA1 ID of the commit that the head "pointer" is pointing to
 //        stage.allPrevMap.putAll(stage.addStage); //since we are committing, put all the stuff on stage into allPrevMap
 //        Map<String, String> fileHashes = stage.allPrevMap;

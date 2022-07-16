@@ -16,14 +16,15 @@ public class Commit implements Save {
     private Set<String> fileHashes;
     private String hashID;
 
+//  HashMap<String, HashMap<Sha1, serialized file>>
 
     public Commit (String message, String parentID, Set<String> fileHashes) {
+        String pattern = "HH:mm:ss Z, MM-dd-yyyy";
+        SimpleDateFormat metaTime = new SimpleDateFormat(pattern);
         this.message = message;
         this.parentHashID = parentID;
         this.fileHashes = fileHashes;
         this.hashID = this.generateHashID();
-        String pattern = "HH:mm:ss Z, MM-dd-yyyy";
-        SimpleDateFormat metaTime = new SimpleDateFormat(pattern);
         this.timestamp = metaTime.format(new Date());
     }
 
@@ -38,11 +39,6 @@ public class Commit implements Save {
     private String generateHashID() {
         return sha1(this.message, parentHashID, this.fileHashes);
     }
-
-//    public void save() {
-//        File file = join(COMMIT_DIR, this.hashID);
-//        writeObject(file,this);
-//    }
 
     public Set<String> getFileHashes() {
         return this.fileHashes;

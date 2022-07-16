@@ -9,7 +9,7 @@ import static gitlet.Utils.*;
  * It will instantiate new commits, link the new commits to their parent commits by hashID,
  * and then populate the commits with the files staged.
  */
-public class StageStore extends HashSet<String> implements Save {
+public class StageStore extends HashSet<Map<String, String>> implements Save {
     private Repository repo;
     private Set<String> removeStage;
 
@@ -18,19 +18,24 @@ public class StageStore extends HashSet<String> implements Save {
         this.removeStage = new HashSet<>();
     }
 
-    private boolean canAdd(File file) {
-        String k = sha1(file.getPath(), serialize(file));
-        boolean existsInBlob = this.repo.getBlobStore().containsKey(k);
-        return !existsInBlob;
+    private boolean canAdd(Map<String, String> dualKey) {
+
+        boolean isOldVersion = this.repo.getBlobStore().containsKey(dualKey);
+        return !isOldVersion;
     }
 
-    public String stage(File file) {
-        String k = sha1(file.getPath(), readContents(file));
-        if (canAdd(file)) {
-            this.add(k);
-            this.repo.getBlobStore().put(k, readContents(file));
+    public boolean stage(File file) {
+        String fileName = file.getPath();
+        String version = sha1(fileName, readContents(file));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
+
+        if (canAdd(dualKey)) {
+            this.add(dualKey); // Add a dual key of <fileName, version> to the StageStore's Set
+            this.repo.getBlobStore().put(dualKey, readContents(file)); // Map the dualKey to the current file version.
+            return true;
         }
-        return k;
+        return false;
     }
 
     public boolean canRemove(File file) {

@@ -79,6 +79,14 @@ public class Sandbox {
 
         System.out.println(mTest.get(1));
 
+
+        Map<Map<String, String>, Integer> test = new HashMap<>();
+        Map<String, String> tmp = new HashMap<>();
+        tmp.put("Key1", "Key2");
+        test.put(tmp, 69);
+
+        System.out.println(test.get(tmp));
+
     }
 
     private static class Thing implements Serializable {
