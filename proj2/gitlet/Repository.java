@@ -199,7 +199,20 @@ public class Repository implements Save {
         System.exit(0);
     }
 
-//    private void checkoutHelper() {}
+    public void log() {
+        //get current commit i.e. the head commit
+        //print out the info for this head commit
+        //iterate through to its parent commit, stop when commit becomes null (i.e. coz parentID = null)
+        Commit currentCommit = this.commitStore.getHead();
+        while (currentCommit != null) {
+            System.out.println("===");
+            System.out.println("commit " + currentCommit.getHashID());
+            System.out.println("Date: " + currentCommit.getTimestamp());
+            System.out.println(currentCommit.getMessage());
+            System.out.println();
+            currentCommit = this.commitStore.get(currentCommit.getParentID());
+        }
+    }
 
     /**
      * Usage: java gitlet.Main rm [file name]
@@ -216,10 +229,6 @@ public class Repository implements Save {
 
     }
 
-
-    public static void log() {
-
-    }
 
     public static void globalLog() {
 

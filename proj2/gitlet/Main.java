@@ -35,8 +35,8 @@ public class Main {
 //            case "rm" :
 //                Repository.rm(args[1]);
 //                break;
-//            case "log":
-//                Repository.log();
+            case "log":
+                repo.log();
 //            case "global-log":
 //                Repository.globalLog();
 //            case "find":

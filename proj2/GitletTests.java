@@ -527,12 +527,12 @@ public class GitletTests {
                 ${HEADER}
                 ${DATE}
                 added wug
-                                
+
                 ===
                 ${HEADER}
                 ${DATE}
                 initial commit
-                                
+
                 """
                 .replace("${HEADER}", "commit [a-f0-9]+")
                 .replace("${DATE}", DATE));
