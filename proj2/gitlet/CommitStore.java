@@ -17,7 +17,7 @@ public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
     }
 
     public Commit getHead() {
-        return this.repo.getInitialized() ? this.head : null;
+        return this.head;
     }
 
     private void init(Commit firstCommit) {

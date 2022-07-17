@@ -14,7 +14,7 @@ public class Commit implements Save {
     private String hashID;
 
     public Commit (String message, String parentID, Set<Map<String, String>> fileHashes) {
-        String pattern = "HH:mm:ss Z, MM-dd-yyyy";
+        String pattern = "EEE MMM dd HH:mm:ss yyyy Z";
         SimpleDateFormat metaTime = new SimpleDateFormat(pattern);
         this.message = message;
         this.parentHashID = parentID;
@@ -25,7 +25,9 @@ public class Commit implements Save {
 
     public Commit() {
         this.message = "initial commit";
-        this.timestamp = "00:00:00 UTC, Thursday, 1 January 1970";
+        String pattern = "EEE MMM dd HH:mm:ss yyyy Z";
+        SimpleDateFormat metaTime = new SimpleDateFormat(pattern);
+        this.timestamp = metaTime.format(new Date(0));
         this.parentHashID = null;
         this.fileHashes = new HashSet<>();
         this.hashID = sha1(serialize(this), this.message);

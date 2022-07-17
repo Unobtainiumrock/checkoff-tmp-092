@@ -36,6 +36,7 @@ public class Main {
 //                Repository.rm(args[1]);
 //                break;
             case "log":
+                repo.createRuntimeObjects();
                 repo.log();
 //            case "global-log":
 //                Repository.globalLog();
@@ -46,7 +47,7 @@ public class Main {
 //                Repository.status();
             case "checkout":
                 repo.createRuntimeObjects();
-                SatanizeInputs.cleanse(args, 1, 3, SatanizeInputs::checkoutCleanse);
+//                SatanizeInputs.cleanse(args, 1, 3, SatanizeInputs::checkoutCleanse);
                 if (args.length == 3) {
                     repo.checkout(args[1], args[2]);
                 } else if (args.length == 4) {
