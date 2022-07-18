@@ -6,8 +6,16 @@ public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
     private Commit head;
 
     public CommitStore(Repository repo) {
+        Commit initial = new Commit();
         this.repo = repo;
-        this.init(new Commit());
+        this.head = initial;
+        this.init(initial);
+    }
+
+    // Used for when we are making a new branch.
+    public CommitStore(Commit commit) {
+        this.head = commit;
+        this.add(commit.getHashID(), commit);
     }
 
     public Commit add(String sha1, Commit commit) {
@@ -20,6 +28,10 @@ public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
         return this.head;
     }
 
+    public void setHead(Commit head) {
+        this.head = head;
+    }
+
     private void init(Commit firstCommit) {
         if (!this.repo.getInitialized()) {
             String sha1 = firstCommit.getHashID();
@@ -29,9 +41,5 @@ public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
             System.out.println("The commit store has already been initialized\nif you wish to add " +
                     "a commit to the store, use add() instead.");
         }
-    }
-
-    public Repository getRepo() {
-        return this.repo;
     }
 }

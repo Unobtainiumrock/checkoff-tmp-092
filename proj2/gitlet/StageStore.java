@@ -5,13 +5,18 @@ import java.util.*;
 import static gitlet.Utils.*;
 
 /**
- * The stage is a focal point between staged files in the directory and commit objects.
- * It will instantiate new commits, link the new commits to their parent commits by hashID,
- * and then populate the commits with the files staged.
+ * The StageStore contains a HashSet of dual-keys which are used as a single lookup key for the BlobStore.
+ * Each key consists of a HashMap<file name, sha1(filename, file contents)>
+ *
+ * Example of grabbing something from the BlobStore:
+ *  Map<String, String> dualKey = new HashMap<>();
+ *  dualKey.put(filename, sha1(fileName, readContents(file)));
+ *
+ *  blobStore.get(dualKey);
  */
 public class StageStore extends HashSet<Map<String, String>> implements Save {
     private Repository repo;
-    private Set<String> removeStage;
+    private Set<Map<String, String>> removeStage;
 
     public StageStore(Repository repo) {
         this.repo = repo;
@@ -19,7 +24,7 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
     }
 
     private boolean canAdd(Map<String, String> dualKey) {
-        boolean isOldVersion = this.repo.getBlobStore().containsKey(dualKey);
+        boolean isOldVersion = this.repo.getBlobStore().containsKey(dualKey); // might bug out later.
         return !isOldVersion;
     }
 
@@ -35,6 +40,10 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
             return true;
         }
         return false;
+    }
+
+    public Set<Map<String, String>> getRemoveStage() {
+        return this.removeStage;
     }
 
     public boolean canRemove(File file) {

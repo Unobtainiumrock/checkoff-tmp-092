@@ -10,7 +10,9 @@ public class Repository implements Save {
     private CommitStore commitStore;
     private StageStore stageStore;
     private BlobStore blobStore;
+    private BranchStore branchStore;
     private boolean initialized = false;
+    private String currentBranch = "main";
 
 // TODO remove the playground after testing persistence of data upon deserialization.
 
@@ -93,9 +95,10 @@ public class Repository implements Save {
         this.commitStore = new CommitStore(this);
         this.stageStore = new StageStore(this);
         this.blobStore = new BlobStore(this);
-        this.saveRuntimeObjects();
+        this.branchStore = new BranchStore(this);
         this.initialized = true;
-        // join the init to the main branch and the current branch, write the init
+        this.branchStore.put(this.currentBranch, this.commitStore);
+        this.saveRuntimeObjects();
     }
 
     /**
@@ -148,26 +151,24 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        Commit parent = this.commitStore.getHead();
+        Commit parent = this.branchStore.get(this.currentBranch).getHead();
         String parentHash = parent.getHashID();
         Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
-        parentFileHashes.iterator().forEachRemaining((fileHash) -> {
-           this.stageStore.add(fileHash);
-        });
+        parentFileHashes.iterator().forEachRemaining((fileHash) -> this.stageStore.add(fileHash));
 
         Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone());
 
-        this.commitStore.add(commit.getHashID(), commit);
+        this.branchStore.get(this.currentBranch).add(commit.getHashID(), commit);
         this.stageStore.clear();
     }
 
     public void checkout(String branchName) {
-        return;
+        this.currentBranch = branchName;
     }
 
     public void checkout(String separator, String fileName) {
-        checkoutHelper(this.commitStore.getHead().getHashID(), fileName);
+        checkoutHelper(this.branchStore.get(this.currentBranch).getHead().getHashID(), fileName);
     }
 
     public void checkout(String commitID, String separator, String fileName) {
@@ -175,11 +176,11 @@ public class Repository implements Save {
     }
 
     private void checkoutHelper(String commitID, String fileName) {
-        if (!this.commitStore.containsKey(commitID)) {
+        if (!this.branchStore.get(this.currentBranch).containsKey(commitID)) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-        Commit commit = this.commitStore.get(commitID);
+        Commit commit = this.branchStore.get(this.currentBranch).get(commitID);
         Set<Map<String, String>> fileHashes = commit.getFileHashes();
         Iterator<Map<String, String>> iter = fileHashes.iterator();
 
@@ -193,24 +194,20 @@ public class Repository implements Save {
                 writeContents(f, serializedFile);
                 return;
             }
-
         }
         System.out.println("File does not exist in that commit.");
         System.exit(0);
     }
 
     public void log() {
-        //get current commit i.e. the head commit
-        //print out the info for this head commit
-        //iterate through to its parent commit, stop when commit becomes null (i.e. coz parentID = null)
-        Commit currentCommit = this.commitStore.getHead();
+        Commit currentCommit = this.branchStore.get(this.currentBranch).getHead();
         while (currentCommit != null) {
             System.out.println("===");
             System.out.println("commit " + currentCommit.getHashID());
             System.out.println("Date: " + currentCommit.getTimestamp());
             System.out.println(currentCommit.getMessage());
             System.out.println();
-            currentCommit = this.commitStore.get(currentCommit.getParentID());
+            currentCommit = this.branchStore.get(this.currentBranch).get(currentCommit.getParentID());
         }
     }
 
@@ -238,11 +235,47 @@ public class Repository implements Save {
 
     }
 
-    public static void status() {
+    public void status() {
+        System.out.println("=== Branches ===");
+        System.out.println("*" + this.currentBranch);
+        Iterator<String> iter = this.branchStore.keySet().iterator();
+
+        while (iter.hasNext()) {
+            System.out.println(iter.next());
+        }
+        System.out.println();
+        System.out.println("=== Staged Files===");
+
+        Iterator<Map<String, String>> iterTwo = this.stageStore.iterator();
+
+        while (iterTwo.hasNext()) {
+            Map<String, String> curr = iterTwo.next();
+            String currFileName = curr.keySet().iterator().next(); // Grabs first key on a single element HashMap. --The filename
+            System.out.println(currFileName);
+        }
+
+        System.out.println();
+        System.out.println("=== Removes Files ===");
+
+        Iterator<Map<String, String>> iterThree = this.stageStore.getRemoveStage().iterator();
+
+        while (iterThree.hasNext()) {
+            Map<String, String> curr = iterThree.next();
+            String currFileName = curr.keySet().iterator().next(); // Grabs first key on a single element HashMap. TODO Refactor later.
+            System.out.println(currFileName);
+        }
+
+        System.out.println("=== Modifications Not Staged For Commit ===");
+        
     }
 
-    public static void branch() {
-
+    public void branch(String branchName) {
+        if (this.branchStore.containsKey(branchName)) {
+            System.out.println("A branch with that name already exists.");
+            System.exit(0);
+        }
+        Commit previousBranchesCommit = this.branchStore.get(this.currentBranch).getHead();
+        this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
     }
 
     public static void rmBranch() {
@@ -281,12 +314,14 @@ public class Repository implements Save {
         this.commitStore = readObject(COMMIT_DIR, CommitStore.class);
         this.stageStore = readObject(STAGE_DIR, StageStore.class);
         this.blobStore = readObject(BLOB_DIR, BlobStore.class);
+        this.branchStore = readObject(BRANCH_DIR, BranchStore.class);
     }
 
     public void saveRuntimeObjects() {
         writeObject(COMMIT_DIR, this.commitStore);
         writeObject(STAGE_DIR, this.stageStore);
         writeObject(BLOB_DIR, this.blobStore);
+        writeObject(BRANCH_DIR, this.branchStore);
     }
 
     @Override
