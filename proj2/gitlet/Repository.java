@@ -14,61 +14,40 @@ public class Repository implements Save {
     private boolean initialized = false;
     private String currentBranch = "main";
 
-// TODO remove the playground after testing persistence of data upon deserialization.
+    /**
+     * Usage: java gitlet.Main rm [file name]
+     * <p>
+     * Description: Unstage the file if it is currently staged for addition. If the file is tracked in the current commit,
+     * stage it for removal and remove the file from the working directory if the user has not already done so
+     * (do not remove it unless it is tracked in the current commit).
+     * <p>
+     * Runtime: O(1)
+     *
+     * @param file
+     */
+    public static void rm(String file) {
 
-//    public static void playGround() {
-//        // Create a blobMap and commitMap
-//        BlobStore blobMap = new BlobStore();
-//        CommitStore commitMap = new CommitStore();
-//
-//        // Create our initial commit
-//        Commit initialCommit = new Commit();
-//
-//        // Set up some mock files
-//        List<File> files = new ArrayList<>();
-//        for (int i = 0; i < 5; i++) {
-//            files.add(new File("" + i));
-//        }
-//
-//        // Verify
-//        files.forEach(System.out::println);
-//        // hash the files
-//        List<Map<String, byte[]>> hashedFiles = files.stream().map((file) -> {
-//            Map<String, byte[]> m = new HashMap<>();
-//            byte[] v = serialize(file);
-//            String k = sha1(v);
-//            m.put(k, v);
-//            return m;
-//
-//        }).collect(Collectors.toList());
-//        //
-//        String initialCommitHash = initialCommit.getHashID(); // Also can access first commit from commit store.
-//
-//        Commit secondCommit = new Commit("I am a second commit", initialCommitHash, hashedFiles);
-//
-//        System.out.println("Test Commit Metadata");
-//        System.out.println(initialCommit);
-//
-//
-//        System.out.println("Second Commit Metadata");
-//        System.out.println(secondCommit);
-//
-//        List<Map<String, byte[]>> fileHashes = secondCommit.getFileHashes();
-//        fileHashes.forEach((file) -> {
-//            String k = file.keySet().iterator().next();
-//            byte[] v = file.values().iterator().next();
-//            try {
-//                byte[] = new ByteArrayInputStream(v);
-//                ObjectInputStream = new ObjectInputStream(fis);
-//                System.out.println(Utils);
-//            } catch (FileNotFoundException e) {
-//            }
-//
-//        });
-//
-//        Commit thirdCommit = new Commit("I am a third commit", "72", secondCommit.getHashID(), )
-//
-//    }
+    }
+
+    public static void globalLog() {
+
+    }
+
+    public static void find() {
+
+    }
+
+    public static void rmBranch() {
+
+    }
+
+    public static void reset() {
+
+    }
+
+    public static void merge() {
+
+    }
 
     /**
      * Usage: java gitlet.Main init
@@ -185,8 +164,8 @@ public class Repository implements Save {
         Iterator<Map<String, String>> iter = fileHashes.iterator();
 
         while (iter.hasNext()) {
-            Map<String, String> curr = iter.next();
-            String currFileName = curr.keySet().iterator().next();
+            Map<String, String> curr = iter.next(); // Dual key
+            String currFileName = curr.keySet().iterator().next(); // Grab file name from first part of key
 
             if (currFileName.equals(fileName)) {
                 byte[] serializedFile = this.blobStore.get(curr);
@@ -211,40 +190,19 @@ public class Repository implements Save {
         }
     }
 
-    /**
-     * Usage: java gitlet.Main rm [file name]
-     * <p>
-     * Description: Unstage the file if it is currently staged for addition. If the file is tracked in the current commit,
-     * stage it for removal and remove the file from the working directory if the user has not already done so
-     * (do not remove it unless it is tracked in the current commit).
-     * <p>
-     * Runtime: O(1)
-     *
-     * @param file
-     */
-    public static void rm(String file) {
-
-    }
-
-
-    public static void globalLog() {
-
-    }
-
-    public static void find() {
-
-    }
-
     public void status() {
         System.out.println("=== Branches ===");
         System.out.println("*" + this.currentBranch);
         Iterator<String> iter = this.branchStore.keySet().iterator();
 
         while (iter.hasNext()) {
-            System.out.println(iter.next());
+            String next = iter.next();
+            if (!(next.equals(this.currentBranch))) {
+                System.out.println(iter.next());
+            }
         }
         System.out.println();
-        System.out.println("=== Staged Files===");
+        System.out.println("=== Staged Files ===");
 
         Iterator<Map<String, String>> iterTwo = this.stageStore.iterator();
 
@@ -255,7 +213,7 @@ public class Repository implements Save {
         }
 
         System.out.println();
-        System.out.println("=== Removes Files ===");
+        System.out.println("=== Removed Files ===");
 
         Iterator<Map<String, String>> iterThree = this.stageStore.getRemoveStage().iterator();
 
@@ -265,8 +223,44 @@ public class Repository implements Save {
             System.out.println(currFileName);
         }
 
+        System.out.println();
         System.out.println("=== Modifications Not Staged For Commit ===");
-        
+//       A: Tracked in the current commit, changed in the working directory, but not staged; or
+//       B: Staged for addition, but with different contents than in the working directory; or
+//       C: Staged for addition, but deleted in the working directory; or
+//       D: Not staged for removal, but tracked in the current commit and deleted from the working directory.
+
+//        A || B || C || D
+
+//        A
+
+//        File[] directoryFiles = CWD.listFiles();
+
+        Commit currentCommit = this.branchStore.get(this.currentBranch).getHead();
+        StageStore stage = this.stageStore;
+        boolean inCurrentCommit = false;
+        boolean changedInWorkingDirectory = false;
+        boolean staged = false;
+        boolean removalStaged = false;
+        boolean differentContents = false;
+        boolean inCWD = false; // clarify if D.N.E in cwd is the same as deleted in cwd.
+
+
+        boolean A = inCurrentCommit && changedInWorkingDirectory && !staged;
+        boolean B = staged && differentContents;
+        boolean C = staged && !inCWD;
+        boolean D = !removalStaged && inCurrentCommit && !inCWD;
+
+        Arrays.stream(CWD.listFiles()).forEach((file) -> {
+            String fileName = file.getName();
+            if(currentCommit.getFileHashes().contains(fileName)) {
+
+            }
+//            System.out.println(file.getName());
+        });
+
+
+
     }
 
     public void branch(String branchName) {
@@ -276,18 +270,6 @@ public class Repository implements Save {
         }
         Commit previousBranchesCommit = this.branchStore.get(this.currentBranch).getHead();
         this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
-    }
-
-    public static void rmBranch() {
-
-    }
-
-    public static void reset() {
-
-    }
-
-    public static void merge() {
-
     }
 
     public boolean getInitialized() {
@@ -330,14 +312,3 @@ public class Repository implements Save {
     }
 
 }
-
-// Git status
-// git status message
-// "On branch <branch name>\n"
-// "No commits yet"
-// "Untracked files:\n"
-// "  (use \"git add <file>...\" to include in what will be committed)\n"
-// "        file1\n"
-// "        file2\n"
-// "        ...<additional files>\n"
-

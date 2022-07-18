@@ -1,6 +1,7 @@
 package gitlet;
 import java.util.LinkedHashMap;
 
+//TODO change this to a HashMap instead, since we preserve "order" in a different matter.
 public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
     private Repository repo;
     private Commit head;
