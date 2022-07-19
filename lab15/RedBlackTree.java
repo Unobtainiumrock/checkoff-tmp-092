@@ -1,5 +1,4 @@
-//import java.util.ArrayList;
-//import java.util.List;
+import java.util.function.Function;
 
 // Heavily referenced this to better understand with R/B trees are.
 // definitely harder than AVL!
@@ -51,7 +50,7 @@ public class RedBlackTree<T extends Comparable<T>> {
     RBTreeNode<T> rotateLeft(RBTreeNode node) {
         RBTreeNode<T> tmp = node.right;
         tmp.isBlack = node.isBlack;
-        node.isBlack = !node.isBlack;
+        node.isBlack = false;
         node.right = tmp.left;
         tmp.left = node;
         return tmp;
@@ -60,7 +59,7 @@ public class RedBlackTree<T extends Comparable<T>> {
     RBTreeNode<T> rotateRight(RBTreeNode node) {
         RBTreeNode<T> tmp = node.left;
         tmp.isBlack = node.isBlack;
-        node.isBlack = !node.isBlack;
+        node.isBlack = false;
         node.left = tmp.right;
         tmp.right = node;
         return tmp;
@@ -134,82 +133,9 @@ public class RedBlackTree<T extends Comparable<T>> {
 
     /* Inserts the given node into this Red Black Tree*/
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
-//        RBTreeNode<T> oneBefore = null;
-//        RBTreeNode<T> addLocation = this.root;
-//
-//        while(addLocation != null) {
-//            oneBefore = addLocation;
-//            int comp = node.item.compareTo(addLocation.item);
-//            if (comp < 0) {
-//                addLocation = addLocation.left;
-//            } else if (comp > 0) {
-//                addLocation = addLocation.right;
-//            }
-//        }
-//
-//        node.parent = oneBefore;
-//
-//        // Adds to correct location, account for case that it's the first node.
-//        if (oneBefore == null) {
-//            this.root = node;
-//        } else if(node.item.compareTo(oneBefore.item) < 0) {
-//            oneBefore.left = node;
-//        } else {
-//            oneBefore.right = node;
-//        }
-//
-//        // Handle the cases for balance violations.
-////        node
-//        RBTreeNode<T> tmp;
-//
-//        while (!(node.parent.isBlack)) {
-//            if (node.parent.parent.right != null && node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
-//                // parent's sibling
-//                tmp = node.parent.parent.left;
-//                if (!(tmp.isBlack)) {
-//                    tmp.isBlack = true;
-//                    node.parent.isBlack = true; // *
-//                    node.parent.parent.isBlack = false; // *
-//                    node = node.parent.parent;
-//                } else {
-//                    if (node.item.compareTo(node.parent.left.item) == 0) {
-//                        node = node.parent;
-//                         RR(node);
-//                    }
-//                    node.parent.isBlack = true; // *
-//                    node.parent.parent.isBlack = false; // *
-//                    RL(node.parent.parent);
-//
-//                    //* try to refactor later..
-//                }
-//            } else {
-//                tmp = node.parent.parent.right;
-//                if (tmp != null && !(tmp.isBlack)) {
-//                    tmp.isBlack = true;
-//                    node.parent.isBlack = true;
-//                    node.parent.parent.isBlack = false;
-//                    node = node.parent.parent;
-//                } else {
-//                    if (node.item.compareTo(node.parent.right.item) == 0) {
-//                        node = node.parent;
-//                         RL(node);
-//                    }
-//                    node.parent.isBlack = true;
-//                    node.parent.parent.isBlack =  false;
-//                     RR(node.parent.parent);
-//                }
-//            }
-//            if (node.equals(root)) {
-//                break;
-//            }
-//        }
-//        this.root.isBlack = true;
-//        return this.root;
-
         if (node == null) {
             return new RBTreeNode<>(false, item);
         }
-
         // Handle normal binary search tree insertion.
         int comp = item.compareTo(node.item);
         if (comp == 0) {
@@ -220,24 +146,25 @@ public class RedBlackTree<T extends Comparable<T>> {
             node.right = insert(node.right, item);
         }
 
-        if (isRed(node.right)) {
-            node = rotateLeft(node);
-        }
-
-        if (isRed(node.left) && isRed(node.left.left)) {
-            node = rotateRight(node);
-            flipColors(node);
-        }
-
-        if (isRed(node.left) && isRed(node.right)) {
-            flipColors(node);
-        }
-        return node;
+        return recursiveHelper(node, (n) -> {
+            if (isRed(n.right)) {
+                n = rotateLeft(n);
+            } else if (isRed(n.left) && isRed(n.left.left)) {
+                n = rotateRight(n);
+            } else if (isRed(n.left) && isRed(n.left.right)) { // change check maybe.
+                n = rotateLeft(n.left);
+                n = rotateRight(n);
+            }
+            flipColors(n);
+            return n;
+        });
     }
 
-//    private recursiveHelper() {
-//
-//    }
+    private RBTreeNode<T> recursiveHelper(RBTreeNode<T> node, Function<RBTreeNode<T>, RBTreeNode<T>> fn) {
+        RBTreeNode<T> left = recursiveHelper(fn.apply(node.left), fn);
+        RBTreeNode<T> right = recursiveHelper(fn.apply(node.right), fn);
+        return new RBTreeNode<T>(true, null, left, right);
+    }
 
     private boolean isRed(RBTreeNode<T> node) {
         return node != null && !node.isBlack;
