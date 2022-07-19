@@ -1,6 +1,9 @@
 //import java.util.ArrayList;
 //import java.util.List;
 
+// Heavily referenced this to better understand with R/B trees are.
+// definitely harder than AVL!
+//https://brilliant.org/wiki/red-black-tree/#operations
 public class RedBlackTree<T extends Comparable<T>> {
 
     /* Root of the tree. */
@@ -38,8 +41,6 @@ public class RedBlackTree<T extends Comparable<T>> {
         }
     }
 
-    /* Flips the color of NODE and its children. Assume that NODE has both left
-       and right children. */
     void flipColors(RBTreeNode<T> node) {
 
         node.isBlack = !node.isBlack;
@@ -119,32 +120,6 @@ public class RedBlackTree<T extends Comparable<T>> {
 
     /* Inserts the given node into this Red Black Tree*/
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
-//        // Insert (return) new red leaf node.
-//        if (node == null) {
-//            return new RBTreeNode<>(false, item);
-//        }
-//
-//        // Handle normal binary search tree insertion.
-//        int comp = item.compareTo(node.item);
-//        if (comp == 0) {
-//            return node; // do nothing.
-//        } else if (comp < 0) {
-//            node.left = insert(node.left, item);
-//        } else {
-//            node.right = insert(node.right, item);
-//        }
-//
-////        "right-leaning red" structures
-////         "Middle of three"
-//        // handle "smallest of three" structure
-//
-//        // handle "largest of three" structure
-//
-
-        // Ignore the node that they give us and make a copy of it's properties
-        // over to a new node for which we can establish a parent-child relationship.
-//        RBTreeNode<T> node;
-    
         RBTreeNode<T> oneBefore = null;
         RBTreeNode<T> addLocation = this.root;
 
@@ -174,7 +149,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         RBTreeNode<T> tmp;
 
         while (!(node.parent.isBlack)) {
-            if (node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
+            if (node.parent.item.compareTo(node.parent.parent.right.item) == 0 && node.parent.parent.right != null) {
                 // parent's sibling
                 tmp = node.parent.parent.left;
                 if (!(tmp.isBlack)) {
@@ -218,9 +193,6 @@ public class RedBlackTree<T extends Comparable<T>> {
         return this.root;
     }
 
-
-    /* Returns whether the given node NODE is red. Null nodes (children of leaf
-       nodes are automatically considered black. */
     private boolean isRed(RBTreeNode<T> node) {
         return node != null && !node.isBlack;
     }
@@ -233,18 +205,14 @@ public class RedBlackTree<T extends Comparable<T>> {
         RBTreeNode<T> right;
         RBTreeNode<T> parent;
 
-
         RBTreeNode(int stupid, T item) {
             this.item = item;
         }
-        /* Creates a RBTreeNode with item ITEM and color depending on ISBLACK
-           value. */
+
         RBTreeNode(boolean isBlack, T item) {
             this(isBlack, item, null, null);
         }
 
-        /* Creates a RBTreeNode with item ITEM, color depending on ISBLACK
-           value, left child LEFT, and right child RIGHT. */
         RBTreeNode(boolean isBlack, T item, RBTreeNode<T> left,
                    RBTreeNode<T> right) {
             this.isBlack = isBlack;
