@@ -12,6 +12,10 @@ public class BinaryTree<T> {
         root = t;
     }
 
+    public BinaryTree(ArrayList<T> pre, ArrayList<T> post) {
+        //TODO implement this later, meet deadline first.
+    }
+
     /* Print the values in the tree in preorder. */
     public void printPreorder() {
         if (root == null) {
@@ -24,7 +28,12 @@ public class BinaryTree<T> {
 
     /* Print the values in the tree in inorder. */
     public void printInorder() {
-        // TODO: YOUR CODE HERE
+        if (root == null) {
+            System.out.println("(empty tree)");
+        } else {
+            root.printInorder();
+            System.out.println();
+        }
     }
 
     /* Prints the BinaryTree in preorder or in inorder. Used for your testing. */
@@ -36,7 +45,7 @@ public class BinaryTree<T> {
         System.out.println();
     }
 
-    protected class TreeNode {
+    protected class TreeNode implements Comparable<T> {
 
         T item;
         TreeNode left;
@@ -66,7 +75,24 @@ public class BinaryTree<T> {
 
         /* Prints the nodes of the BinaryTree in inorder. Used for your testing. */
         private void printInorder() {
-            // TODO: YOUR CODE HERE
+            if (left != null) {
+                left.printInorder();
+            }
+            System.out.print(item + " ");
+            if (right != null) {
+                right.printInorder();
+            } 
+        }
+
+        @Override
+        public int compareTo(T o) { 
+            TreeNode other = (TreeNode) o;
+            T i = other.item;
+            if (this.item instanceof String) {
+                return ((String) this.item).compareTo((String) i);
+            } else {
+                return Integer.compare(((Integer) this.item).intValue(), ((Integer) i).intValue());
+            }
         }
     }
 }

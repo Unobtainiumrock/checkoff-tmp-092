@@ -1,3 +1,5 @@
+import java.util.function.Consumer;
+
 public class BinarySearchTree<T extends Comparable<T>> extends BinaryTree<T> {
 
     /* Creates an empty BST. Super() calls the constructor for BinaryTree (not in scope). */
@@ -12,13 +14,64 @@ public class BinarySearchTree<T extends Comparable<T>> extends BinaryTree<T> {
 
     /* Returns true if the BST contains the given KEY. */
     public boolean contains(T key) {
-        // TODO: YOUR CODE HERE
-        return false;
+        boolean[] out = { false };
+        DFSInOrder(root, (node) -> {
+            if (node.item.compareTo(key) == 0) {
+                out[0] = true;
+                return;
+            }
+        });
+        return out[0];
+    }
+
+    private void DFSInOrder(TreeNode node, Consumer<TreeNode> fn) {
+        fn.accept(node);
+        if (node.left != null) {
+            DFSInOrder(node.left, fn);
+        }
+        if (node.right != null) {
+            DFSInOrder(node.right, fn);
+        }
     }
 
     /* Adds a node for KEY iff KEY isn't in the BST already. */
     public void add(T key) {
-        // TODO: YOUR CODE HERE
+        // Naive approach: Check entire tree, then do insertion.
+        if(!contains(key)) {
+            TreeNode toAdd = new TreeNode(key);
+            // TreeNode parent;
+            // TreeNode curr;
+            boolean[] once = {false};
+
+            DFSInOrder(root, (node) -> {
+                // curr = new TreeNode(node.item);
+                // curr.left = node.left;
+                // curr.right = node.right;
+                int compareResult = toAdd.item.compareTo(node.item);
+                if (compareResult != 0) {
+                    if (compareResult > 0) {
+                        // Insert on the right side and handle re-linking
+                    } else {
+                        // Insert on the left side and handle re-linking
+                    }
+                }
+                // parent = curr;
+            });
+        }
+        // if (!contains(key)) {
+        //     TreeNode toAdd = new TreeNode(key);
+        //     TreeNode current = root;
+            
+        //     // Go left
+        //     if (toAdd.item.compareTo(current.item) < 0) {
+        //         if (current.left != null) {
+                    
+        //         }           
+        //     }
+
+        //     // Go right
+
+        // }
     }
 
     /* Deletes a node from the BST. 
