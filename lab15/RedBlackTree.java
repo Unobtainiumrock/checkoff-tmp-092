@@ -28,13 +28,14 @@ public class RedBlackTree<T extends Comparable<T>> {
             return null;
         }
 
-        RBTreeNode<T> left = buildRedBlackTree(r.getChildAt(0));
-        RBTreeNode<T> right = buildRedBlackTree(r.getChildAt(1));
-
         if (r.getItemCount() == 1) {
+            RBTreeNode<T> left = buildRedBlackTree(r.getChildAt(0));
+            RBTreeNode<T> right = buildRedBlackTree(r.getChildAt(1));
             return new RBTreeNode<>(true, r.getItemAt(0), left, right);
         } else {
-            RBTreeNode<T> middle = buildRedBlackTree(r.getChildAt(2));
+            RBTreeNode<T> left = buildRedBlackTree(r.getChildAt(0));
+            RBTreeNode<T> middle = buildRedBlackTree(r.getChildAt(1));
+            RBTreeNode<T> right = buildRedBlackTree(r.getChildAt(2));
             RBTreeNode<T> rootRed = new RBTreeNode<>(false, r.getItemAt(0), left, middle);
             RBTreeNode<T> rootBlack = new RBTreeNode<>(true, r.getItemAt(1), rootRed, right);
             return rootBlack;
@@ -223,8 +224,6 @@ public class RedBlackTree<T extends Comparable<T>> {
             node = rotateLeft(node);
         }
 
-
-
         if (isRed(node.left) && isRed(node.left.left)) {
             node = rotateRight(node);
         }
@@ -250,10 +249,6 @@ public class RedBlackTree<T extends Comparable<T>> {
         RBTreeNode<T> left;
         RBTreeNode<T> right;
         RBTreeNode<T> parent;
-
-        RBTreeNode(int stupid, T item) {
-            this.item = item;
-        }
 
         RBTreeNode(boolean isBlack, T item) {
             this(isBlack, item, null, null);
