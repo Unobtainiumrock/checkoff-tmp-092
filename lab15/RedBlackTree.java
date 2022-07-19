@@ -42,23 +42,32 @@ public class RedBlackTree<T extends Comparable<T>> {
     }
 
     void flipColors(RBTreeNode<T> node) {
-
         node.isBlack = !node.isBlack;
+        node.left.isBlack = !node.left.isBlack;
+        node.right.isBlack = !node.right.isBlack;
+    }
 
-        if (node.left != null) {
-            node.left.isBlack = !node.left.isBlack;
-            flipColors(node.left);
-        }
+    RBTreeNode<T> rotateLeft(RBTreeNode node) {
+        RBTreeNode<T> tmp = node.right;
+        tmp.isBlack = node.isBlack;
+        node.isBlack = !node.isBlack;
+        node.right = tmp.left;
+        tmp.left = node;
+        return node;
+    }
 
-        if (node.right != null) {
-            node.right.isBlack = !node.right.isBlack;
-            flipColors(node.right);
-        }
+    RBTreeNode<T> rotateRight(RBTreeNode node) {
+        RBTreeNode<T> tmp = node.left;
+        tmp.isBlack = node.isBlack;
+        node.isBlack = !node.isBlack;
+        node.left = tmp.right;
+        tmp.right = node;
+        return node;
     }
 
     /* Rotates the given node NODE to the right. Returns the new root node of
        this subtree. */
-    RBTreeNode<T> rotateRight(RBTreeNode<T> node) {
+    RBTreeNode<T> RR(RBTreeNode<T> node) {
         RBTreeNode<T> tmp = node.left;
         node.left = tmp.right;
         if (tmp.right != null) {
@@ -85,7 +94,7 @@ public class RedBlackTree<T extends Comparable<T>> {
 
     /* Rotates the given node NODE to the left. Returns the new root node of
        this subtree. */
-    RBTreeNode<T> rotateLeft(RBTreeNode<T> node) {
+    RBTreeNode<T> RL(RBTreeNode<T> node) {
         RBTreeNode<T> tmp = node.right;
         node.right = tmp.left;
         if (tmp.left != null) {
@@ -111,89 +120,124 @@ public class RedBlackTree<T extends Comparable<T>> {
     }
 
     public void insert(T item) {
-        RBTreeNode<T> r = new RBTreeNode<>(false, item, null, null);
-        if (root == null) {
-            r.isBlack = true;
-            root = r;
-        } else {
-            insert(r, r.item);
-        }
+//        RBTreeNode<T> r = new RBTreeNode<>(false, item, null, null);
+//        if (root == null) {
+//            r.isBlack = true;
+//            root = r;
+//        } else {
+//            insert(r, r.item);
+//        }
+        root = insert(root, item);
+        root.isBlack = true;
     }
 
     /* Inserts the given node into this Red Black Tree*/
     private RBTreeNode<T> insert(RBTreeNode<T> node, T item) {
-        RBTreeNode<T> oneBefore = null;
-        RBTreeNode<T> addLocation = this.root;
+//        RBTreeNode<T> oneBefore = null;
+//        RBTreeNode<T> addLocation = this.root;
+//
+//        while(addLocation != null) {
+//            oneBefore = addLocation;
+//            int comp = node.item.compareTo(addLocation.item);
+//            if (comp < 0) {
+//                addLocation = addLocation.left;
+//            } else if (comp > 0) {
+//                addLocation = addLocation.right;
+//            }
+//        }
+//
+//        node.parent = oneBefore;
+//
+//        // Adds to correct location, account for case that it's the first node.
+//        if (oneBefore == null) {
+//            this.root = node;
+//        } else if(node.item.compareTo(oneBefore.item) < 0) {
+//            oneBefore.left = node;
+//        } else {
+//            oneBefore.right = node;
+//        }
+//
+//        // Handle the cases for balance violations.
+////        node
+//        RBTreeNode<T> tmp;
+//
+//        while (!(node.parent.isBlack)) {
+//            if (node.parent.parent.right != null && node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
+//                // parent's sibling
+//                tmp = node.parent.parent.left;
+//                if (!(tmp.isBlack)) {
+//                    tmp.isBlack = true;
+//                    node.parent.isBlack = true; // *
+//                    node.parent.parent.isBlack = false; // *
+//                    node = node.parent.parent;
+//                } else {
+//                    if (node.item.compareTo(node.parent.left.item) == 0) {
+//                        node = node.parent;
+//                         RR(node);
+//                    }
+//                    node.parent.isBlack = true; // *
+//                    node.parent.parent.isBlack = false; // *
+//                    RL(node.parent.parent);
+//
+//                    //* try to refactor later..
+//                }
+//            } else {
+//                tmp = node.parent.parent.right;
+//                if (tmp != null && !(tmp.isBlack)) {
+//                    tmp.isBlack = true;
+//                    node.parent.isBlack = true;
+//                    node.parent.parent.isBlack = false;
+//                    node = node.parent.parent;
+//                } else {
+//                    if (node.item.compareTo(node.parent.right.item) == 0) {
+//                        node = node.parent;
+//                         RL(node);
+//                    }
+//                    node.parent.isBlack = true;
+//                    node.parent.parent.isBlack =  false;
+//                     RR(node.parent.parent);
+//                }
+//            }
+//            if (node.equals(root)) {
+//                break;
+//            }
+//        }
+//        this.root.isBlack = true;
+//        return this.root;
 
-        while(addLocation != null) {
-            oneBefore = addLocation;
-            int comp = node.item.compareTo(addLocation.item);
-            if (comp < 0) {
-                addLocation = addLocation.left;
-            } else if (comp > 0) {
-                addLocation = addLocation.right;
-            }
+        if (node == null) {
+            return new RBTreeNode<>(false, item);
         }
 
-        node.parent = oneBefore;
-
-        // Adds to correct location, account for case that it's the first node.
-        if (oneBefore == null) {
-            this.root = node;
-        } else if(node.item.compareTo(oneBefore.item) < 0) {
-            oneBefore.left = node;
+        // Handle normal binary search tree insertion.
+        int comp = item.compareTo(node.item);
+        if (comp == 0) {
+            return node; // do nothing.
+        } else if (comp < 0) {
+            node.left = insert(node.left, item);
         } else {
-            oneBefore.right = node;
+            node.right = insert(node.right, item);
         }
 
-        // Handle the cases for balance violations.
-//        node
-        RBTreeNode<T> tmp;
-
-        while (!(node.parent.isBlack)) {
-            if (node.parent.parent.right != null && node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
-                // parent's sibling
-                tmp = node.parent.parent.left;
-                if (!(tmp.isBlack)) {
-                    tmp.isBlack = true;
-                    node.parent.isBlack = true; // *
-                    node.parent.parent.isBlack = false; // *
-                    node = node.parent.parent;
-                } else {
-                    if (node.item.compareTo(node.parent.left.item) == 0) {
-                        node = node.parent;
-                         rotateRight(node);
-                    }
-                    node.parent.isBlack = true; // *
-                    node.parent.parent.isBlack = false; // *
-                    rotateLeft(node.parent.parent);
-
-                    //* try to refactor later..
-                }
-            } else {
-                tmp = node.parent.parent.right;
-                if (tmp != null && !(tmp.isBlack)) {
-                    tmp.isBlack = true;
-                    node.parent.isBlack = true;
-                    node.parent.parent.isBlack = false;
-                    node = node.parent.parent;
-                } else {
-                    if (node.item.compareTo(node.parent.right.item) == 0) {
-                        node = node.parent;
-                         rotateLeft(node);
-                    }
-                    node.parent.isBlack = true;
-                    node.parent.parent.isBlack =  false;
-                     rotateRight(node.parent.parent);
-                }
-            }
-            if (node.equals(root)) {
-                break;
-            }
+        if (isRed(node.right) && !isRed(node.left)) {
+            node = rotateLeft(node);
         }
-        this.root.isBlack = true;
-        return this.root;
+
+
+
+        if (isRed(node.left) && isRed(node.left.left)) {
+            node = rotateRight(node);
+        }
+
+        if (isRed(node.left) && isRed(node.right)) {
+            flipColors(node);
+        }
+        return node;
     }
+
+//    private recursiveHelper() {
+//
+//    }
 
     private boolean isRed(RBTreeNode<T> node) {
         return node != null && !node.isBlack;
@@ -223,11 +267,11 @@ public class RedBlackTree<T extends Comparable<T>> {
             this.right = right;
         }
 
-        RBTreeNode(boolean isBlack, T item, RBTreeNode<T> left,
-                   RBTreeNode<T> right, RBTreeNode<T> parent) {
-            this(isBlack, item, left, right);
-            this.parent = parent;
-        }
+//        RBTreeNode(boolean isBlack, T item, RBTreeNode<T> left,
+//                   RBTreeNode<T> right, RBTreeNode<T> parent) {
+//            this(isBlack, item, left, right);
+//            this.parent = parent;
+//        }
     }
 
 }
