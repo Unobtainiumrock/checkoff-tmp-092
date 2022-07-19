@@ -54,7 +54,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         node.isBlack = !node.isBlack;
         node.right = tmp.left;
         tmp.left = node;
-        return node;
+        return tmp;
     }
 
     RBTreeNode<T> rotateRight(RBTreeNode node) {
@@ -63,7 +63,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         node.isBlack = !node.isBlack;
         node.left = tmp.right;
         tmp.right = node;
-        return node;
+        return tmp;
     }
 
     /* Rotates the given node NODE to the right. Returns the new root node of
