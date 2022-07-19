@@ -29,12 +29,30 @@ public class Repository implements Save {
 
     }
 
-    public static void globalLog() {
-
+    //Displays information about all commits ever made.
+    public void globalLog() {
+        //TODO: still buggy
+        //somehow go through every commit in commit store, but commit store has branches?
+        //or maybe go through branchstore? and then avoid duplicates somehow
+        //or use Utils.plainFilenamesIn to go over all files in a directory? but tried with COMMIT_DIR and it seems like
+        //our commit_dir either is null or isn't really a directory...
+        Commit currentCommit = this.commitStore.getHead();
+        while (currentCommit != null) {
+            System.out.println("===");
+            System.out.println("commit " + currentCommit.getHashID());
+            System.out.println("Date: " + currentCommit.getTimestamp());
+            System.out.println(currentCommit.getMessage());
+            System.out.println();
+            currentCommit = this.commitStore.get(currentCommit.getParentID());
+        }
+        //TODO: remember to come back and fix the case when there are merge commits i.e. two parents
     }
 
     public static void find() {
-
+        //use same logic of global log to go through all the files
+        //create some kind of object to store the ids
+        //check if commit.getmsg() == msg
+        //if yes, append in commit.getHashID()
     }
 
     public static void rmBranch() {
