@@ -18,6 +18,14 @@ public class TwoThreeTree<T extends Comparable<T>> {
             this.children = (Node<T>[]) new Node[items.length + 1];
         }
 
+        public T[] getItems() {
+            return this.items;
+        }
+
+        public Node<T>[] getChildren() {
+            return this.children;
+        }
+
         @Override
         public int getItemCount() {
             return items.length;

@@ -105,7 +105,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        this.stageStore.stage(tobeAdded, this.blobStore);
+        this.stageStore.add(tobeAdded, this.blobStore);
     }
 
     /**
@@ -232,12 +232,16 @@ public class Repository implements Save {
 
 //        A || B || C || D
 
-//        A
+//        A: Staged, commit, cwd
+//        B: Staged, cwd
+//        C: Staged, cwd
+//        D: Removal stage, commit, cwd
 
 //        File[] directoryFiles = CWD.listFiles();
 
         Commit currentCommit = this.branchStore.get(this.currentBranch).getHead();
         StageStore stage = this.stageStore;
+
         boolean inCurrentCommit = false;
         boolean changedInWorkingDirectory = false;
         boolean staged = false;
