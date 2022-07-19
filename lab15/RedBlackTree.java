@@ -172,7 +172,7 @@ public class RedBlackTree<T extends Comparable<T>> {
                 }
             } else {
                 tmp = node.parent.parent.right;
-                if (!(tmp.isBlack)) {
+                if (tmp != null && !(tmp.isBlack)) {
                     tmp.isBlack = true;
                     node.parent.isBlack = true;
                     node.parent.parent.isBlack = false;
