@@ -220,7 +220,7 @@ public class RedBlackTree<T extends Comparable<T>> {
             node.right = insert(node.right, item);
         }
 
-        if (isRed(node.right) && !isRed(node.left)) {
+        if (isRed(node.right)) {
             node = rotateLeft(node);
         }
 
