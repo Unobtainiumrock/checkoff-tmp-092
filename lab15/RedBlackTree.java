@@ -43,8 +43,14 @@ public class RedBlackTree<T extends Comparable<T>> {
 
     void flipColors(RBTreeNode<T> node) {
         node.isBlack = !node.isBlack;
-        node.left.isBlack = !node.left.isBlack;
-        node.right.isBlack = !node.right.isBlack;
+
+        if (node.left != null) {
+            node.left.isBlack = !node.left.isBlack;
+        }
+
+        if (node.right != null) {
+            node.right.isBlack = !node.right.isBlack;
+        }
     }
 
     RBTreeNode<T> rotateLeft(RBTreeNode node) {
@@ -120,15 +126,15 @@ public class RedBlackTree<T extends Comparable<T>> {
     }
 
     public void insert(T item) {
-//        RBTreeNode<T> r = new RBTreeNode<>(false, item, null, null);
-//        if (root == null) {
-//            r.isBlack = true;
-//            root = r;
-//        } else {
-//            insert(r, r.item);
-//        }
-        root = insert(root, item);
-        root.isBlack = true;
+        RBTreeNode<T> r = new RBTreeNode<>(false, item, null, null);
+        if (root == null) {
+            r.isBlack = true;
+            root = r;
+        } else {
+            insert(root, r.item);
+        }
+//        root = insert(root, item);
+//        root.isBlack = true;
     }
 
     /* Inserts the given node into this Red Black Tree*/
@@ -161,9 +167,19 @@ public class RedBlackTree<T extends Comparable<T>> {
     }
 
     private RBTreeNode<T> recursiveHelper(RBTreeNode<T> node, Function<RBTreeNode<T>, RBTreeNode<T>> fn) {
+        if (node.left == null || node.right == null) {
+            if (node.left != null) {
+                return new RBTreeNode<>(node.isBlack, node.item, node.left, null);
+            } else if (node.right != null) {
+                return new RBTreeNode<>(node.isBlack, node.item, null, node.right);
+            } else {
+                return new RBTreeNode<>(node.isBlack, node.item);
+            }
+        }
+
         RBTreeNode<T> left = recursiveHelper(fn.apply(node.left), fn);
         RBTreeNode<T> right = recursiveHelper(fn.apply(node.right), fn);
-        return new RBTreeNode<T>(true, null, left, right);
+        return new RBTreeNode<T>(node.isBlack, node.item, left, right);
     }
 
     private boolean isRed(RBTreeNode<T> node) {
