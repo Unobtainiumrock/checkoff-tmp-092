@@ -151,7 +151,7 @@ public class RedBlackTree<T extends Comparable<T>> {
         RBTreeNode<T> tmp;
 
         while (!(node.parent.isBlack)) {
-            if (node.parent.item.compareTo(node.parent.parent.right.item) == 0 && node.parent.parent.right != null) {
+            if (node.parent.parent.right != null && node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
                 // parent's sibling
                 tmp = node.parent.parent.left;
                 if (!(tmp.isBlack)) {
