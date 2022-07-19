@@ -79,7 +79,8 @@ public class RedBlackTree<T extends Comparable<T>> {
         node.parent = tmp;
 
         // Just to meet their recursive output requirements
-        return new RBTreeNode<>(69, null);
+//        return new RBTreeNode<>(69, null);
+        return node.parent;
     }
 
     /* Rotates the given node NODE to the left. Returns the new root node of
@@ -105,7 +106,8 @@ public class RedBlackTree<T extends Comparable<T>> {
         node.parent = tmp;
 
         // Just to meet their recursive output requirements
-        return new RBTreeNode<>(69, null);
+//        return new RBTreeNode<>(69, null);
+        return node.parent;
     }
 
     public void insert(T item) {
