@@ -108,8 +108,13 @@ public class RedBlackTree<T extends Comparable<T>> {
     }
 
     public void insert(T item) {
-        root = insert(root, item);
-        root.isBlack = true;
+        RBTreeNode<T> r = new RBTreeNode<>(false, item, null, null);
+        if (root == null) {
+            r.isBlack = true;
+            root = r;
+        } else {
+            insert(r, r.item);
+        }
     }
 
     /* Inserts the given node into this Red Black Tree*/
@@ -138,15 +143,14 @@ public class RedBlackTree<T extends Comparable<T>> {
 
         // Ignore the node that they give us and make a copy of it's properties
         // over to a new node for which we can establish a parent-child relationship.
-        RBTreeNode<T> copyButWithParents = new RBTreeNode<>(false,
-                node.item, node.left, node.right, null);
-
+//        RBTreeNode<T> node;
+    
         RBTreeNode<T> oneBefore = null;
         RBTreeNode<T> addLocation = this.root;
 
         while(addLocation != null) {
             oneBefore = addLocation;
-            int comp = copyButWithParents.item.compareTo(addLocation.item);
+            int comp = node.item.compareTo(addLocation.item);
             if (comp < 0) {
                 addLocation = addLocation.left;
             } else if (comp > 0) {
@@ -154,63 +158,63 @@ public class RedBlackTree<T extends Comparable<T>> {
             }
         }
 
-        copyButWithParents.parent = oneBefore;
+        node.parent = oneBefore;
 
         // Adds to correct location, account for case that it's the first node.
         if (oneBefore == null) {
-            this.root = copyButWithParents;
-        } else if(copyButWithParents.item.compareTo(oneBefore.item) < 0) {
-            oneBefore.left = copyButWithParents;
+            this.root = node;
+        } else if(node.item.compareTo(oneBefore.item) < 0) {
+            oneBefore.left = node;
         } else {
-            oneBefore.right = copyButWithParents;
+            oneBefore.right = node;
         }
 
         // Handle the cases for balance violations.
-//        copyButWithParents
+//        node
         RBTreeNode<T> tmp;
 
-        while (!(copyButWithParents.parent.isBlack)) {
-            if (copyButWithParents.parent.item.compareTo(copyButWithParents.parent.parent.right.item) == 0) {
+        while (!(node.parent.isBlack)) {
+            if (node.parent.item.compareTo(node.parent.parent.right.item) == 0) {
                 // parent's sibling
-                tmp = copyButWithParents.parent.parent.left;
+                tmp = node.parent.parent.left;
                 if (!(tmp.isBlack)) {
                     tmp.isBlack = true;
-                    copyButWithParents.parent.isBlack = true; // *
-                    copyButWithParents.parent.parent.isBlack = false; // *
-                    copyButWithParents = copyButWithParents.parent.parent;
+                    node.parent.isBlack = true; // *
+                    node.parent.parent.isBlack = false; // *
+                    node = node.parent.parent;
                 } else {
-                    if (copyButWithParents.item.compareTo(copyButWithParents.parent.left.item) == 0) {
-                        copyButWithParents = copyButWithParents.parent;
-                        // rotate right(copyButWithParents)
+                    if (node.item.compareTo(node.parent.left.item) == 0) {
+                        node = node.parent;
+                         rotateRight(node);
                     }
-                    copyButWithParents.parent.isBlack = true; // *
-                    copyButWithParents.parent.parent.isBlack = false; // *
-                    //rotate left(copyButWithParents.parent.parent)
+                    node.parent.isBlack = true; // *
+                    node.parent.parent.isBlack = false; // *
+                    rotateLeft(node.parent.parent);
 
                     //* try to refactor later..
                 }
             } else {
-                tmp = copyButWithParents.parent.parent.right;
+                tmp = node.parent.parent.right;
                 if (!(tmp.isBlack)) {
                     tmp.isBlack = true;
-                    copyButWithParents.parent.isBlack = true;
-                    copyButWithParents.parent.parent.isBlack = false;
-                    copyButWithParents = copyButWithParents.parent.parent;
+                    node.parent.isBlack = true;
+                    node.parent.parent.isBlack = false;
+                    node = node.parent.parent;
                 } else {
-                    if (copyButWithParents.item.compareTo(copyButWithParents.parent.right.item) == 0) {
-                        copyButWithParents = copyButWithParents.parent;
-                        // rotate left(copyButWithParents)
+                    if (node.item.compareTo(node.parent.right.item) == 0) {
+                        node = node.parent;
+                         rotateLeft(node);
                     }
-                    copyButWithParents.parent.isBlack = true;
-                    copyButWithParents.parent.parent.isBlack =  false;
-                    // right rotate(copyButWithParents.parent.parent)
+                    node.parent.isBlack = true;
+                    node.parent.parent.isBlack =  false;
+                     rotateRight(node.parent.parent);
                 }
             }
-            if (copyButWithParents.equals(root)) {
+            if (node.equals(root)) {
                 break;
             }
         }
-        this.root.isBlack = false;
+        this.root.isBlack = true;
         return this.root;
     }
 
