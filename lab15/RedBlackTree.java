@@ -55,74 +55,22 @@ public class RedBlackTree<T extends Comparable<T>> {
 
     RBTreeNode<T> rotateLeft(RBTreeNode node) {
         RBTreeNode<T> tmp = node.right;
-        tmp.isBlack = node.isBlack;
-        node.isBlack = false;
         node.right = tmp.left;
         tmp.left = node;
+        tmp.isBlack = tmp.left.isBlack;
+        tmp.left.isBlack = false;
+//        node.isBlack = !node.isBlack;
         return tmp;
     }
 
     RBTreeNode<T> rotateRight(RBTreeNode node) {
         RBTreeNode<T> tmp = node.left;
-        tmp.isBlack = node.isBlack;
-        node.isBlack = false;
         node.left = tmp.right;
         tmp.right = node;
+        tmp.isBlack = node.right.isBlack;
+        tmp.right.isBlack = false;
+//        node.isBlack = !node.isBlack;
         return tmp;
-    }
-
-    /* Rotates the given node NODE to the right. Returns the new root node of
-       this subtree. */
-    RBTreeNode<T> RR(RBTreeNode<T> node) {
-        RBTreeNode<T> tmp = node.left;
-        node.left = tmp.right;
-        if (tmp.right != null) {
-            tmp.right.parent = node;
-        }
-
-        tmp.parent = node.parent;
-
-        if (node.parent == null) {
-            this.root = tmp;
-        } else if (node.item.compareTo(node.parent.right.item) == 0) {
-            node.parent.right = tmp;
-        } else {
-            node.parent.left = tmp;
-        }
-
-        tmp.right = node;
-        node.parent = tmp;
-
-        // Just to meet their recursive output requirements
-//        return new RBTreeNode<>(69, null);
-        return node.parent;
-    }
-
-    /* Rotates the given node NODE to the left. Returns the new root node of
-       this subtree. */
-    RBTreeNode<T> RL(RBTreeNode<T> node) {
-        RBTreeNode<T> tmp = node.right;
-        node.right = tmp.left;
-        if (tmp.left != null) {
-            tmp.left.parent = node;
-        }
-
-        tmp.parent = node.parent;
-
-        if (node.parent == null) {
-            this.root = tmp;
-        } else if (node.item.compareTo(node.parent.left.item) == 0) {
-            node.parent.left = tmp;
-        } else {
-            node.parent.right = tmp;
-        }
-
-        tmp.left = node;
-        node.parent = tmp;
-
-        // Just to meet their recursive output requirements
-//        return new RBTreeNode<>(69, null);
-        return node.parent;
     }
 
     public void insert(T item) {
@@ -133,8 +81,6 @@ public class RedBlackTree<T extends Comparable<T>> {
         } else {
             insert(root, r.item);
         }
-//        root = insert(root, item);
-//        root.isBlack = true;
     }
 
     /* Inserts the given node into this Red Black Tree*/
@@ -153,15 +99,18 @@ public class RedBlackTree<T extends Comparable<T>> {
         }
 
         return recursiveHelper(node, (n) -> {
-            if (isRed(n.right)) {
+            if (isRed(n.right) && !isRed(n.left)) {
                 n = rotateLeft(n);
-            } else if (isRed(n.left) && isRed(n.left.left)) {
-                n = rotateRight(n);
-            } else if (isRed(n.left) && isRed(n.left.right)) { // change check maybe.
-                n = rotateLeft(n.left);
+            }
+            if (n.left == null) {
+                return n;
+            }
+            if (isRed(n.left) & isRed(n.left.left)) {
                 n = rotateRight(n);
             }
-            flipColors(n);
+            if (isRed(n.left) && isRed((n.right))) {
+                flipColors(n);
+            }
             return n;
         });
     }
@@ -176,7 +125,6 @@ public class RedBlackTree<T extends Comparable<T>> {
                 return new RBTreeNode<>(node.isBlack, node.item);
             }
         }
-
         RBTreeNode<T> left = recursiveHelper(fn.apply(node.left), fn);
         RBTreeNode<T> right = recursiveHelper(fn.apply(node.right), fn);
         return new RBTreeNode<T>(node.isBlack, node.item, left, right);
@@ -205,12 +153,6 @@ public class RedBlackTree<T extends Comparable<T>> {
             this.left = left;
             this.right = right;
         }
-
-//        RBTreeNode(boolean isBlack, T item, RBTreeNode<T> left,
-//                   RBTreeNode<T> right, RBTreeNode<T> parent) {
-//            this(isBlack, item, left, right);
-//            this.parent = parent;
-//        }
     }
 
 }
