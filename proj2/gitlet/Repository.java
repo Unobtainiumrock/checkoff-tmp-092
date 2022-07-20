@@ -14,28 +14,15 @@ public class Repository implements Save {
     private boolean initialized = false;
     private String currentBranch = "main";
 
-    /**
-     * Usage: java gitlet.Main rm [file name]
-     * <p>
-     * Description: Unstage the file if it is currently staged for addition. If the file is tracked in the current commit,
-     * stage it for removal and remove the file from the working directory if the user has not already done so
-     * (do not remove it unless it is tracked in the current commit).
-     * <p>
-     * Runtime: O(1)
-     *
-     * @param file
-     */
-    public static void rm(String file) {
 
-    }
 
     //Displays information about all commits ever made.
     public void globalLog() {
         //TODO: still buggy
         //somehow go through every commit in commit store, but commit store has branches?
         //or maybe go through branchstore? and then avoid duplicates somehow
-        //or use Utils.plainFilenamesIn to go over all files in a directory? but tried with COMMIT_DIR and it seems like
-        //our commit_dir either is null or isn't really a directory...
+        //or use Utils.plainFilenamesIn to go over all files in a directory? but tried with COMMIT_DIR but our COMMIT_DIR
+        //is actually a file not directory
         Commit currentCommit = this.commitStore.getHead();
         while (currentCommit != null) {
             System.out.println("===");
@@ -49,18 +36,37 @@ public class Repository implements Save {
     }
 
     public static void find() {
-        //use same logic of global log to go through all the files
+        //use same logic as global log to go through all the files
         //create some kind of object to store the ids
         //check if commit.getmsg() == msg
         //if yes, append in commit.getHashID()
     }
 
-    public static void rmBranch() {
-
+    public void rmBranch(String branchName) {
+        if (!this.branchStore.containsKey(branchName)) {
+            System.out.println("A branch with that name does not exist.");
+            System.exit(0);
+        } else if (this.currentBranch == branchName) {
+            System.out.println("Cannot remove the current branch.");
+            System.exit(0);
+        }
+        this.branchStore.remove(branchName);
     }
 
-    public static void reset() {
+    public void reset(String commitID) {
+        if (!this.commitStore.containsKey(commitID)) {
+            System.out.println("No commit with that id exists.");
+            System.exit(0);
+        }
+        Commit commit = this.commitStore.get(commitID);
+        Set<Map<String, String>> fileHashes = commit.getFileHashes();
+        Iterator<Map<String, String>> iter = fileHashes.iterator();
 
+        while (iter.hasNext()) {
+            checkoutHelper(commitID, iter.next().keySet().iterator().next());
+        }
+        //go through each branch name's commit store, find the commit store containing the commitID. Set currBranch =
+        //this branch name.
     }
 
     public static void merge() {
@@ -124,6 +130,22 @@ public class Repository implements Save {
         }
 
         this.stageStore.stage(tobeAdded, this.blobStore);
+    }
+
+    /**
+     * Usage: java gitlet.Main rm [file name]
+     * <p>
+     * Description: Unstage the file if it is currently staged for addition. If the file is tracked in the current commit,
+     * stage it for removal and remove the file from the working directory if the user has not already done so
+     * (do not remove it unless it is tracked in the current commit).
+     * <p>
+     * Runtime: O(1)
+     *
+     * @param file
+     */
+    public void rm(String file) {
+        File tobeRemoved = join(CWD, file);
+        if ()
     }
 
     /**

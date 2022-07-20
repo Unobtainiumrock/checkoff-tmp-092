@@ -56,8 +56,9 @@ public class Main {
                 repo.createRuntimeObjects();
                 repo.branch(args[1]);
                 break;
-//            case "rm-branch":
-//                Repository.rmBranch();
+            case "rm-branch":
+                repo.createRuntimeObjects();
+                repo.rmBranch(args[1]);
 //            case "reset":
 //                Repository.reset();
 //            case "merge":

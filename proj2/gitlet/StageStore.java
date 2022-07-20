@@ -46,7 +46,21 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
         return this.removeStage;
     }
 
-    public boolean canRemove(File file) {
-        return this.contains(file);
+    public boolean canRemove(Map<String, String> fileDualKey) {
+        return this.contains(fileDualKey);
+    }
+
+    public boolean removeFromStage(File file) {
+        String fileName = file.getName();
+        String version = sha1(fileName, readContents(file));
+        Map<String, String> deleteKey = new HashMap<>();
+        deleteKey.put(fileName, version);
+
+        if (canRemove(deleteKey)) {
+            this.remove(deleteKey);
+            this.repo.getBlobStore().remove(deleteKey);
+            return true;
+        }
+        return false;
     }
 }

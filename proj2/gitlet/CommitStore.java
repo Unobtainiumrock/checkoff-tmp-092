@@ -1,8 +1,9 @@
 package gitlet;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-//TODO change this to a HashMap instead, since we preserve "order" in a different matter.
-public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
+//TODO change this to a HashMap instead, since we preserve "order" in a different matter. Changed!
+public class CommitStore extends HashMap<String, Commit> implements Save {
     private Repository repo;
     private Commit head;
 
