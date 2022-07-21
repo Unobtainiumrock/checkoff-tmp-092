@@ -2,8 +2,9 @@ package gitlet;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-//TODO change this to a HashMap instead, since we preserve "order" in a different matter. Changed!
-public class CommitStore extends HashMap<String, Commit> implements Save {
+
+//TODO change this to a HashMap instead, since we preserve "order" in a different manner.
+public class CommitStore extends LinkedHashMap<String, Commit> implements Save {
     private Repository repo;
     private Commit head;
 
@@ -17,7 +18,7 @@ public class CommitStore extends HashMap<String, Commit> implements Save {
     // Used for when we are making a new branch.
     public CommitStore(Commit commit) {
         this.head = commit;
-        this.add(commit.getHashID(), commit);
+//        this.add(commit.getHashID(), commit);
     }
 
     public Commit add(String sha1, Commit commit) {

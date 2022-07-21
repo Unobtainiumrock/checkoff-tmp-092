@@ -129,7 +129,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        this.stageStore.stage(tobeAdded, this.blobStore);
+        this.stageStore.add(tobeAdded, this.blobStore); // Stage needs access to blobStore
     }
 
     /**
@@ -145,7 +145,6 @@ public class Repository implements Save {
      */
     public void rm(String file) {
         File tobeRemoved = join(CWD, file);
-        if ()
     }
 
     /**
@@ -272,12 +271,16 @@ public class Repository implements Save {
 
 //        A || B || C || D
 
-//        A
+//        A: Staged, commit, cwd
+//        B: Staged, cwd
+//        C: Staged, cwd
+//        D: Removal stage, commit, cwd
 
 //        File[] directoryFiles = CWD.listFiles();
 
         Commit currentCommit = this.branchStore.get(this.currentBranch).getHead();
         StageStore stage = this.stageStore;
+
         boolean inCurrentCommit = false;
         boolean changedInWorkingDirectory = false;
         boolean staged = false;
@@ -296,7 +299,7 @@ public class Repository implements Save {
             if(currentCommit.getFileHashes().contains(fileName)) {
 
             }
-//            System.out.println(file.getName());
+            System.out.println(file.getName());
         });
 
 
@@ -309,6 +312,8 @@ public class Repository implements Save {
             System.exit(0);
         }
         Commit previousBranchesCommit = this.branchStore.get(this.currentBranch).getHead();
+        // This is the key reason we need a commitStore. Think of each CommitStore as a container around a batch of commits
+        // it has a
         this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
     }
 
