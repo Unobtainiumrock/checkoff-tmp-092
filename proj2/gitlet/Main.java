@@ -29,15 +29,17 @@ public class Main {
                 repo.createRuntimeObjects();
                 repo.commit(args[1]);
                 break;
-//            case "rm" :
-//                Repository.rm(args[1]);
-//                break;
+            case "rm" :
+                repo.createRuntimeObjects();
+                repo.rm(args[1]);
+                break;
             case "log":
                 repo.createRuntimeObjects();
                 repo.log();
                 break;
-//            case "global-log":
-//                Repository.globalLog();
+            case "global-log":
+                repo.createRuntimeObjects();
+                repo.globalLog();
 //            case "find":
 //                Repository.find();
 //                break;

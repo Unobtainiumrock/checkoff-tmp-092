@@ -11,6 +11,7 @@ public interface Save extends Serializable {
     File BLOB_DIR = Utils.join(GITLET_DIR, ".blobs");
     File COMMIT_DIR = Utils.join(GITLET_DIR, ".commits");
     File BRANCH_DIR = Utils.join(GITLET_DIR, ".branches");
+    File RMSTAGE_DIR = Utils.join(GITLET_DIR, ".unstaging");
 
 
 //    CommitStore commitStore = new CommitStore();

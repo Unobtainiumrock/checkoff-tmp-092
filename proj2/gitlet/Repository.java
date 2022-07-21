@@ -9,6 +9,7 @@ import static gitlet.Utils.*;
 public class Repository implements Save {
     private CommitStore commitStore;
     private StageStore stageStore;
+    private RemoveStageStore removeStageStore;
     private BlobStore blobStore;
     private BranchStore branchStore;
     private boolean initialized = false;
@@ -23,14 +24,23 @@ public class Repository implements Save {
         //or maybe go through branchstore? and then avoid duplicates somehow
         //or use Utils.plainFilenamesIn to go over all files in a directory? but tried with COMMIT_DIR but our COMMIT_DIR
         //is actually a file not directory
-        Commit currentCommit = this.commitStore.getHead();
-        while (currentCommit != null) {
-            System.out.println("===");
-            System.out.println("commit " + currentCommit.getHashID());
-            System.out.println("Date: " + currentCommit.getTimestamp());
-            System.out.println(currentCommit.getMessage());
+//        Commit currentCommit = this.commitStore.getHead();
+//        while (currentCommit != null) {
+//            System.out.println("===");
+//            System.out.println("commit " + currentCommit.getHashID());
+//            System.out.println("Date: " + currentCommit.getTimestamp());
+//            System.out.println(currentCommit.getMessage());
+//            System.out.println();
+//            currentCommit = this.commitStore.get(currentCommit.getParentID());
+//        }
+        for (CommitStore cs : this.branchStore.values()) {
+            for (Commit c : cs.values()) {
+                System.out.println("===");
+            System.out.println("commit " + c.getHashID());
+            System.out.println("Date: " + c.getTimestamp());
+            System.out.println(c.getMessage());
             System.out.println();
-            currentCommit = this.commitStore.get(currentCommit.getParentID());
+            }
         }
         //TODO: remember to come back and fix the case when there are merge commits i.e. two parents
     }
@@ -97,6 +107,7 @@ public class Repository implements Save {
         GITLET_DIR.mkdir();
         this.commitStore = new CommitStore(this);
         this.stageStore = new StageStore(this);
+        this.removeStageStore = new RemoveStageStore(this);
         this.blobStore = new BlobStore(this);
         this.branchStore = new BranchStore(this);
         this.initialized = true;
@@ -123,13 +134,19 @@ public class Repository implements Save {
      */
     public void add(String file) {
         File tobeAdded = join(CWD, file);
+        String fileName = tobeAdded.getName();
+        String version = sha1(fileName, readContents(tobeAdded));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
 
         if (!tobeAdded.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
 
-        this.stageStore.add(tobeAdded, this.blobStore); // Stage needs access to blobStore
+        if (!this.removeStageStore.contains(dualKey)) {
+            this.stageStore.add(tobeAdded, this.blobStore); // Stage needs access to blobStore
+        }
     }
 
     /**
@@ -145,6 +162,32 @@ public class Repository implements Save {
      */
     public void rm(String file) {
         File tobeRemoved = join(CWD, file);
+        if (!tobeRemoved.exists()) {
+
+        }
+        String fileName = tobeRemoved.getName();
+        String version = sha1(fileName, readContents(tobeRemoved));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
+
+        Commit commit = this.branchStore.get(this.currentBranch).getHead();
+
+        boolean A = this.stageStore.canRemove(dualKey);
+        boolean B = commit.getFileHashes().remove(dualKey);
+
+        if (A) {
+            this.stageStore.removeFromAddStage(tobeRemoved, this.blobStore);
+        }
+
+        if (B) {
+            this.removeStageStore.add(dualKey);
+            tobeRemoved.delete();
+        }
+
+        if (!(A || B)) {
+         System.out.println("No reason to remove the file.");
+         System.exit(0);
+        }
     }
 
     /**
@@ -173,12 +216,15 @@ public class Repository implements Save {
         String parentHash = parent.getHashID();
         Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
-        parentFileHashes.iterator().forEachRemaining((fileHash) -> this.stageStore.add(fileHash));
+        // parentFileHashes.iterator().forEachRemaining((fileHash) -> this.stageStore.add(fileHash));
+        parentFileHashes.stream().filter((fileHash) -> !this.removeStageStore.contains(fileHash))
+                .forEach((fileHash) -> this.stageStore.add(fileHash));
 
         Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone());
 
         this.branchStore.get(this.currentBranch).add(commit.getHashID(), commit);
         this.stageStore.clear();
+        this.removeStageStore.clear();
     }
 
     public void checkout(String branchName) {
@@ -254,7 +300,7 @@ public class Repository implements Save {
         System.out.println();
         System.out.println("=== Removed Files ===");
 
-        Iterator<Map<String, String>> iterThree = this.stageStore.getRemoveStage().iterator();
+        Iterator<Map<String, String>> iterThree = this.removeStageStore.iterator();
 
         while (iterThree.hasNext()) {
             Map<String, String> curr = iterThree.next();
@@ -299,10 +345,12 @@ public class Repository implements Save {
             if(currentCommit.getFileHashes().contains(fileName)) {
 
             }
-            System.out.println(file.getName());
+//            System.out.println(file.getName());
         });
 
-
+        System.out.println();
+        System.out.println("=== Untracked Files ===");
+        System.out.println();
 
     }
 
@@ -340,6 +388,7 @@ public class Repository implements Save {
     public void createRuntimeObjects() {
         this.commitStore = readObject(COMMIT_DIR, CommitStore.class);
         this.stageStore = readObject(STAGE_DIR, StageStore.class);
+        this.removeStageStore = readObject(RMSTAGE_DIR, RemoveStageStore.class);
         this.blobStore = readObject(BLOB_DIR, BlobStore.class);
         this.branchStore = readObject(BRANCH_DIR, BranchStore.class);
     }
@@ -347,6 +396,7 @@ public class Repository implements Save {
     public void saveRuntimeObjects() {
         writeObject(COMMIT_DIR, this.commitStore);
         writeObject(STAGE_DIR, this.stageStore);
+        writeObject(RMSTAGE_DIR, this.removeStageStore);
         writeObject(BLOB_DIR, this.blobStore);
         writeObject(BRANCH_DIR, this.branchStore);
     }
