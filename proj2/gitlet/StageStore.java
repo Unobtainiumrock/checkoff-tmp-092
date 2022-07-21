@@ -3,7 +3,8 @@ package gitlet;
 import java.io.*;
 import java.util.*;
 import static gitlet.Utils.*;
-
+//TODO de-couple the StageStore and removeStage. See the abstract class Store which this will eventually
+//TODO extend.
 /**
  * The StageStore contains a HashSet of dual-keys which are used as a single lookup key for the BlobStore.
  * Each key consists of a HashMap<file name, sha1(filename, file contents)>
@@ -20,7 +21,7 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
 
     public StageStore(Repository repo) {
         this.repo = repo;
-        this.removeStage = new HashSet<>();
+          this.removeStage = new HashSet<>();
     }
 
     private boolean canAdd(Map<String, String> dualKey) {
@@ -35,7 +36,7 @@ public class StageStore extends HashSet<Map<String, String>> implements Save {
         dualKey.put(fileName, version);
 
             if (canAdd(dualKey)) {
-            this.add(dualKey); // Add a dual key of <fileName, version> to the StageStore's Set
+            super.add(dualKey); // Add a dual key of <fileName, version> to the StageStore's Set.
             blobStore.put(dualKey, readContents(file)); // Map the dualKey to the current file version.
             return true;
         }

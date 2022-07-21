@@ -123,7 +123,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        this.stageStore.add(tobeAdded, this.blobStore);
+        this.stageStore.add(tobeAdded, this.blobStore); // Stage needs access to blobStore
     }
 
     /**
@@ -278,7 +278,7 @@ public class Repository implements Save {
             if(currentCommit.getFileHashes().contains(fileName)) {
 
             }
-//            System.out.println(file.getName());
+            System.out.println(file.getName());
         });
 
 
@@ -291,6 +291,8 @@ public class Repository implements Save {
             System.exit(0);
         }
         Commit previousBranchesCommit = this.branchStore.get(this.currentBranch).getHead();
+        // This is the key reason we need a commitStore. Think of each CommitStore as a container around a batch of commits
+        // it has a
         this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
     }
 
