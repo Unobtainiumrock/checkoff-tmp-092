@@ -1,21 +1,35 @@
 package gitlet;
 import java.io.IOException;
 import static gitlet.Repository.*;
+import static gitlet.Utils.*;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         Repository repo = new Repository();
 
         if (args.length == 0) {
-            System.out.println("Incorrect operands.");
+            System.out.println("Please enter a command.");
             System.exit(0);
         }
 
         String firstArg = args[0];
 
+//        if (firstArg.equals("init")) {
+//            repo.init();
+//        } else {
+//            if (!join(CWD, ".gitlet").exists()) {
+//                System.out.println("Not in an initialized Gitlet directory.");
+//                System.exit(0);
+//            }
+//        }
+
         switch(firstArg) {
             case "init":
                 repo.init();
+                if (!join(CWD, ".gitlet").exists()) {
+                    System.out.println("Not in an initialized Gitlet directory.");
+                    System.exit(0);
+                }
                 break;
             case "add":
                 repo.createRuntimeObjects();
@@ -40,9 +54,10 @@ public class Main {
             case "global-log":
                 repo.createRuntimeObjects();
                 repo.globalLog();
-//            case "find":
-//                Repository.find();
-//                break;
+            case "find":
+                repo.createRuntimeObjects();
+                repo.find(args[1]);
+                break;
             case "status":
                 repo.createRuntimeObjects();
                 repo.status();
@@ -53,6 +68,8 @@ public class Main {
                     repo.checkout(args[1], args[2]);
                 } else if (args.length == 4) {
                     repo.checkout(args[1], args[2], args[3]);
+                } else if (args.length == 2) {
+                    repo.checkout(args[1]);
                 }
             case "branch":
                 repo.createRuntimeObjects();
@@ -65,6 +82,8 @@ public class Main {
 //                Repository.reset();
 //            case "merge":
 //                Repository.merge();
+            default:
+                System.out.println("No command with that name exists.");
 
             // This "test" case will be used for development purposes. I'm going to see if not closing the program
             // and interacting with it as a true CLI app using a while loop will let us handle reading/writing to

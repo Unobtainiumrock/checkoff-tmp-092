@@ -19,20 +19,6 @@ public class Repository implements Save {
 
     //Displays information about all commits ever made.
     public void globalLog() {
-        //TODO: still buggy
-        //somehow go through every commit in commit store, but commit store has branches?
-        //or maybe go through branchstore? and then avoid duplicates somehow
-        //or use Utils.plainFilenamesIn to go over all files in a directory? but tried with COMMIT_DIR but our COMMIT_DIR
-        //is actually a file not directory
-//        Commit currentCommit = this.commitStore.getHead();
-//        while (currentCommit != null) {
-//            System.out.println("===");
-//            System.out.println("commit " + currentCommit.getHashID());
-//            System.out.println("Date: " + currentCommit.getTimestamp());
-//            System.out.println(currentCommit.getMessage());
-//            System.out.println();
-//            currentCommit = this.commitStore.get(currentCommit.getParentID());
-//        }
         for (CommitStore cs : this.branchStore.values()) {
             for (Commit c : cs.values()) {
                 System.out.println("===");
@@ -45,11 +31,19 @@ public class Repository implements Save {
         //TODO: remember to come back and fix the case when there are merge commits i.e. two parents
     }
 
-    public static void find() {
-        //use same logic as global log to go through all the files
-        //create some kind of object to store the ids
-        //check if commit.getmsg() == msg
-        //if yes, append in commit.getHashID()
+    public void find(String commitMsg) {
+        boolean emptyChecker = true;
+        for (CommitStore cs: this.branchStore.values()) {
+            for (Commit c: cs.values()) {
+                if (c.getMessage().equals(commitMsg)) {
+                    System.out.println(c.getHashID());
+                    emptyChecker = false;
+                }
+            }
+        }
+        if (emptyChecker) {
+            System.out.println("Found no commit with that message.");
+        }
     }
 
     public void rmBranch(String branchName) {
@@ -75,8 +69,12 @@ public class Repository implements Save {
         while (iter.hasNext()) {
             checkoutHelper(commitID, iter.next().keySet().iterator().next());
         }
-        //go through each branch name's commit store, find the commit store containing the commitID. Set currBranch =
-        //this branch name.
+        //TODO: Removes tracked files that are not present in that commit.
+
+        // Also moves the current branch’s head to that commit node.
+        this.branchStore.get(this.currentBranch).setHead(commit);
+
+
     }
 
     public static void merge() {
@@ -134,15 +132,16 @@ public class Repository implements Save {
      */
     public void add(String file) {
         File tobeAdded = join(CWD, file);
-        String fileName = tobeAdded.getName();
-        String version = sha1(fileName, readContents(tobeAdded));
-        Map<String, String> dualKey = new HashMap<>();
-        dualKey.put(fileName, version);
 
         if (!tobeAdded.exists()) {
             System.out.println("File does not exist.");
             System.exit(0);
         }
+
+        String fileName = tobeAdded.getName();
+        String version = sha1(fileName, readContents(tobeAdded));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
 
         if (!this.removeStageStore.contains(dualKey)) {
             this.stageStore.add(tobeAdded, this.blobStore); // Stage needs access to blobStore
@@ -163,7 +162,8 @@ public class Repository implements Save {
     public void rm(String file) {
         File tobeRemoved = join(CWD, file);
         if (!tobeRemoved.exists()) {
-
+            System.out.println("File does not exist.");
+            System.exit(0);
         }
         String fileName = tobeRemoved.getName();
         String version = sha1(fileName, readContents(tobeRemoved));
@@ -207,8 +207,13 @@ public class Repository implements Save {
      */
     public void commit(String commitMsg) {
 
-        if (this.stageStore.isEmpty()) {
+        if (this.stageStore.isEmpty() && this.removeStageStore.isEmpty()) {
             System.out.println("No changes added to the commit.");
+            System.exit(0);
+        }
+
+        if (commitMsg.equals("")) {
+            System.out.println("Please enter a commit message.");
             System.exit(0);
         }
 
@@ -228,14 +233,33 @@ public class Repository implements Save {
     }
 
     public void checkout(String branchName) {
+        if (!this.branchStore.containsKey(branchName)) {
+            System.out.println("No such branch exists.");
+            System.exit(0);
+        }
+        if (branchName.equals(this.currentBranch)) {
+            System.out.println("No need to checkout the current branch.");
+            System.exit(0);
+        }
+//        if () //TODO: If a working file is untracked in the current branch and would be overwritten by the checkout,
+            //TODO: print There is an untracked file in the way; delete it, or add and commit it first. and exit.
+
         this.currentBranch = branchName;
     }
 
     public void checkout(String separator, String fileName) {
+        if (!separator.equals("--")) {
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
         checkoutHelper(this.branchStore.get(this.currentBranch).getHead().getHashID(), fileName);
     }
 
     public void checkout(String commitID, String separator, String fileName) {
+        if (!separator.equals("--")) {
+            System.out.println("Incorrect operands.");
+            System.exit(0);
+        }
         checkoutHelper(commitID, fileName);
     }
 
