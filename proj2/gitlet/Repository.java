@@ -5,7 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.stream.Collectors;
-
+import java.util.List;
+import java.util.Stack;
 
 import static gitlet.Utils.*;
 
@@ -19,16 +20,15 @@ public class Repository implements Save {
     private String currentBranch;
 
 
-
     //Displays information about all commits ever made.
     public void globalLog() {
         for (CommitStore cs : this.branchStore.values()) {
             for (Commit c : cs.values()) {
                 System.out.println("===");
-            System.out.println("commit " + c.getHashID());
-            System.out.println("Date: " + c.getTimestamp());
-            System.out.println(c.getMessage());
-            System.out.println();
+                System.out.println("commit " + c.getHashID());
+                System.out.println("Date: " + c.getTimestamp());
+                System.out.println(c.getMessage());
+                System.out.println();
             }
         }
         //TODO: remember to come back and fix the case when there are merge commits i.e. two parents
@@ -36,8 +36,8 @@ public class Repository implements Save {
 
     public void find(String commitMsg) {
         boolean emptyChecker = true;
-        for (CommitStore cs: this.branchStore.values()) {
-            for (Commit c: cs.values()) {
+        for (CommitStore cs : this.branchStore.values()) {
+            for (Commit c : cs.values()) {
                 if (c.getMessage().equals(commitMsg)) {
                     System.out.println(c.getHashID());
                     emptyChecker = false;
@@ -88,16 +88,21 @@ public class Repository implements Save {
     // The [commit id] may be abbreviated as for checkout. The staging area is cleared.
     // The command is essentially checkout of an arbitrary commit that also changes the current branch head.
     public void reset(String commitID) {
-        if (!this.commitStore.containsKey(commitID)) {
+        if (!this.branchStore.get(this.branchStore.getBranchName()).containsKey(commitID)) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
 
-        Commit commit = this.commitStore.get(commitID);
+        Commit commit = this.branchStore.get(this.branchStore.getBranchName()).get(commitID);
         Set<Map<String, String>> fileHashes = commit.getFileHashes();
 
         for (File f : CWD.listFiles()) {
-            if (!fileHashes.contains(f)) {
+//            System.out.println(f + " is");
+//            System.out.println(f.isFile() + " file or not");
+//            System.out.println(f.isDirectory() + " directory or not");
+//            System.out.println(f.getPath() + " path");
+//            System.out.println(f.getName() + " name");
+            if (!fileHashes.contains(f) && !f.isDirectory()) {
                 try {
                     Files.delete(Path.of(f.getName()));
                 } catch (IOException e) {
@@ -214,7 +219,7 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        if (A && ! B) {
+        if (A && !B) {
             String version = sha1("dummy.txt");
             Map<String, String> realDualKey = new HashMap<>();
             realDualKey.put(file, version);
@@ -222,33 +227,32 @@ public class Repository implements Save {
             return;
         }
 
+        String fileName = tobeRemoved.getName();
+        String version = sha1(fileName, readContents(tobeRemoved));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
+
+        boolean C = this.stageStore.canRemove(dualKey);
+        boolean D = headCommit.getFileHashes().contains(dualKey);
+
         if (!(A || B)) {
-            String fileName = tobeRemoved.getName();
-            String version = sha1(fileName, readContents(tobeRemoved));
-            Map<String, String> dualKey = new HashMap<>();
-            dualKey.put(fileName, version);
-
-            Commit commit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-
-            boolean C = this.stageStore.canRemove(dualKey);
-            boolean D = commit.getFileHashes().remove(dualKey);
-
-            if (C) {
-                this.stageStore.removeFromAddStage(tobeRemoved, this.blobStore);
-            }
-
             if (D) {
                 this.removeStageStore.add(dualKey);
                 tobeRemoved.delete();
             }
-
-            if (!(C || D)) {
-                System.out.println("No reason to remove the file.");
-                System.exit(0);
-            }
         }
 
+        if (!A && B) {
+            if (C) {
+                this.stageStore.removeFromAddStage(tobeRemoved, this.blobStore);
+            }
+        }
+        if (!(C || D)) {
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
+        }
     }
+
 
     /**
      * Usage: java gitlet.Main commit [message]
@@ -285,7 +289,9 @@ public class Repository implements Save {
         parentFileHashes.stream().filter((fileHash) -> !this.removeStageStore.contains(fileHash))
                 .forEach((fileHash) -> this.stageStore.add(fileHash));
 
-        Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(), this.branchStore.getBranchName());
+
+        Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(),
+                this.branchStore.getBranchName(), parent);
 
         this.branchStore.get(this.branchStore.getBranchName()).add(commit.getHashID(), commit);
         this.stageStore.clear();
@@ -313,7 +319,7 @@ public class Repository implements Save {
         File[] files = CWD.listFiles();
         Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
         if (headCommit.getBranchMom().equals(branchName)) {
-            for (File f: Arrays.asList(files)) {
+            for (File f : Arrays.asList(files)) {
                 if (!isTracked(f)) {
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                     System.exit(0);
@@ -365,16 +371,80 @@ public class Repository implements Save {
     }
 
     public void log() {
+
         Commit currentCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
+
         while (currentCommit != null) {
             System.out.println("===");
             System.out.println("commit " + currentCommit.getHashID());
             System.out.println("Date: " + currentCommit.getTimestamp());
             System.out.println(currentCommit.getMessage());
             System.out.println();
-            currentCommit = this.branchStore.get(this.branchStore.getBranchName()).get(currentCommit.getParentID());
+            currentCommit = currentCommit.getParent();
         }
+
+//        Commit rest = this.branchStore.get(this.branchStore.getBranchName()).getHead();
+//        System.out.println("===");
+//        System.out.println("commit " + rest.getHashID());
+//        System.out.println("Date: " + rest.getTimestamp());
+//        System.out.println(rest.getMessage());
+//        System.out.println();
+//
+//        while (rest != null) {
+//            System.out.println("===");
+//            System.out.println("commit " + currentCommit.getHashID());
+//            System.out.println("Date: " + currentCommit.getTimestamp());
+//            System.out.println(currentCommit.getMessage());
+//            System.out.println();
+//            rest = this.branchStore.get(this.branchStore.getBranchName()).get(rest.getParentID());
+//        }
+
+//        List<Commit> stack = new Stack<>();
+//        HashMap<String, Commit> root = this.branchStore.get("main");
+//        HashMap<String, Commit> branch = this.branchStore.get(this.branchStore.getBranchName());
+
+//        for (Commit c : root.values()) {
+//            ((Stack<Commit>) stack).push(c);
+//        }
+//
+//        for (Commit c : branch.values()) {
+//            ((Stack<Commit>) stack).push(c);
+//        }
+
+//        for (CommitStore cs : this.branchStore.values()) {
+//            for (Commit c : cs.values()) {
+//                ((Stack<Commit>) stack).push(c);
+//                if (c.equals(this.branchStore.get(this.branchStore.getBranchName()).getHead())) {
+//                    break;
+//                }
+//            }
+//            ((Stack<Commit>) stack).pop();
+//        }
+//        recurser((Stack<Commit>) stack);
+//
+//        while (!stack.isEmpty()) {
+//            Commit c = ((Stack<Commit>) stack).pop();
+//            System.out.println("===");
+//            System.out.println("commit " + c.getHashID());
+//            System.out.println("Date: " + c.getTimestamp());
+//            System.out.println(c.getMessage());
+//            System.out.println();
+//        }
+
     }
+
+//    private void recurser(Stack<Commit> stack) {
+//        for (CommitStore cs : this.branchStore.values()) {
+//            for (Commit c : cs.values()) {
+//                stack.push(c);
+//                if (c.equals(this.branchStore.get(this.branchStore.getBranchName()).getHead())) {
+//                    break;
+//                }
+//            }
+//            recurser(stack);
+//            stack.pop();
+//        }
+//    }
 
     public void status() {
         System.out.println("=== Branches ===");
@@ -443,7 +513,7 @@ public class Repository implements Save {
 
         Arrays.stream(CWD.listFiles()).forEach((file) -> {
             String fileName = file.getName();
-            if(currentCommit.getFileHashes().contains(fileName)) {
+            if (currentCommit.getFileHashes().contains(fileName)) {
 
             }
 //            System.out.println(file.getName());
@@ -461,8 +531,6 @@ public class Repository implements Save {
             System.exit(0);
         }
         Commit previousBranchesCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        // This is the key reason we need a commitStore. Think of each CommitStore as a container around a batch of commits
-        // it has a
         this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
     }
 

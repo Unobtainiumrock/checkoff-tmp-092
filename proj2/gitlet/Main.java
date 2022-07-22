@@ -47,6 +47,7 @@ public class Main {
             case "global-log":
                 repo.createRuntimeObjects();
                 repo.globalLog();
+                break;
             case "find":
                 repo.createRuntimeObjects();
                 repo.find(args[1]);

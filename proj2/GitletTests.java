@@ -1194,14 +1194,14 @@ public class GitletTests {
 
     @Test
     public void test37_reset1() {
-        i_setup2();
-        gitletCommand(new String[]{"branch", "other"}, "");
+        i_setup2(); //init, add f.txt, add g.txt, commit "Two files"
+        gitletCommand(new String[]{"branch", "other"}, ""); //still on main branch
         writeFile(WUG2, "h.txt");
-        gitletCommand(new String[]{"add", "h.txt"}, "");
-        gitletCommand(new String[]{"rm", "g.txt"}, "");
+        gitletCommand(new String[]{"add", "h.txt"}, ""); //added onto main
+        gitletCommand(new String[]{"rm", "g.txt"}, ""); //main: have f and h left
         gitletCommand(new String[]{"commit", "Add h.txt and remove g.txt"}, "");
-        gitletCommand(new String[]{"checkout", "other"}, "");
-        gitletCommand(new String[]{"rm", "f.txt"}, "");
+        gitletCommand(new String[]{"checkout", "other"}, ""); //now on other
+        gitletCommand(new String[]{"rm", "f.txt"}, ""); //main: have h left
         writeFile(WUG3, "k.txt");
         gitletCommand(new String[]{"add", "k.txt"}, "");
         gitletCommand(new String[]{"commit", "Add k.txt and remove f.txt"}, "");
