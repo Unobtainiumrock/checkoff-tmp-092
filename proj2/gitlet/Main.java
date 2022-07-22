@@ -14,22 +14,15 @@ public class Main {
 
         String firstArg = args[0];
 
-//        if (firstArg.equals("init")) {
-//            repo.init();
-//        } else {
-//            if (!join(CWD, ".gitlet").exists()) {
-//                System.out.println("Not in an initialized Gitlet directory.");
-//                System.exit(0);
-//            }
-//        }
+        if (!join(CWD, ".gitlet").exists() && !firstArg.equals("init")) {
+            System.out.println("Not in an initialized Gitlet directory.");
+            System.exit(0);
+        }
+
 
         switch(firstArg) {
             case "init":
                 repo.init();
-                if (!join(CWD, ".gitlet").exists()) {
-                    System.out.println("Not in an initialized Gitlet directory.");
-                    System.exit(0);
-                }
                 break;
             case "add":
                 repo.createRuntimeObjects();
@@ -71,6 +64,7 @@ public class Main {
                 } else if (args.length == 2) {
                     repo.checkout(args[1]);
                 }
+                break;
             case "branch":
                 repo.createRuntimeObjects();
                 repo.branch(args[1]);
@@ -78,8 +72,11 @@ public class Main {
             case "rm-branch":
                 repo.createRuntimeObjects();
                 repo.rmBranch(args[1]);
-//            case "reset":
-//                Repository.reset();
+                break;
+            case "reset":
+                repo.createRuntimeObjects();
+                repo.reset(args[1]);
+                break;
 //            case "merge":
 //                Repository.merge();
             default:
