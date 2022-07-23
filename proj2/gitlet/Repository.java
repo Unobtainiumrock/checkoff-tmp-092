@@ -4,9 +4,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.List;
-import java.util.Stack;
 
 import static gitlet.Utils.*;
 
@@ -64,9 +63,7 @@ public class Repository implements Save {
         String origBranch = this.branchStore.getBranchName();
         this.branchStore.setBranchName(branchName);
         Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        Set<String> hFileHashes = headCommit.getFileHashes().stream()
-                .map((dualKey) -> dualKey.keySet().iterator().next())
-                .collect(Collectors.toSet());
+        Set<String> hFileHashes = headCommit.getFileHashes().stream().map((dualKey) -> dualKey.keySet().iterator().next()).collect(Collectors.toSet());
 
         File[] files = CWD.listFiles();
 
@@ -90,31 +87,25 @@ public class Repository implements Save {
     // Also moves the current branch’s head to that commit node. See the intro for an example of what happens to the head pointer after using reset.
     // The [commit id] may be abbreviated as for checkout. The staging area is cleared.
     // The command is essentially checkout of an arbitrary commit that also changes the current branch head.
+
     public void reset(String commitID) {
-        if (!this.branchStore.get(this.branchStore.getBranchName()).containsKey(commitID)) {
-            System.out.println("No commit with that id exists.");
-            System.exit(0);
-        }
-
-        Commit commit = this.branchStore.get(this.branchStore.getBranchName()).get(commitID);
-        Set<Map<String, String>> fileHashes = commit.getFileHashes();
-
-        for (File f : CWD.listFiles()) {
-//            System.out.println(f + " is");
-//            System.out.println(f.isFile() + " file or not");
-//            System.out.println(f.isDirectory() + " directory or not");
-//            System.out.println(f.getPath() + " path");
-//            System.out.println(f.getName() + " name");
-            if (!fileHashes.contains(f) && !f.isDirectory()) {
-                try {
-                    Files.delete(Path.of(f.getName()));
-                } catch (IOException e) {
-                    e.printStackTrace();
+        String branchName = this.branchStore.getBranchName();
+        Commit head = this.branchStore.get(branchName).getHead();
+        for (CommitStore cs : this.branchStore.values()) {
+            for (Commit c : cs.values()) {
+                if (c.getHashID().equals(commitID)) {
+                    File[] files = CWD.listFiles();
+                    checkForUntrackedFiles(head, files, branchName);
+                    transfer(head.getFileHashes(), c.getFileHashes(), branchName);
+                    this.stageStore.clear();
+                    this.removeStageStore.clear();
+                    this.branchStore.get(branchName).setHead(c);
+                    return;
                 }
             }
         }
-        this.branchStore.get(this.branchStore.getBranchName()).setHead(commit);
-
+        System.out.println("No commit with that id exists.");
+        System.exit(0);
     }
 
     /**
@@ -202,15 +193,15 @@ public class Repository implements Save {
      * @param file
      */
     public void rm(String file) {
+//        rmTwo(file);
         File tobeRemoved = join(CWD, file);
-
+//
         boolean A = !tobeRemoved.exists(); //checking if file is in CWD. Ugh true = it isn't
+        String branchName = this.branchStore.getBranchName();
+        Commit headCommit = this.branchStore.get(branchName).getHead();
 
-        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        Set<String> hFileHashes = headCommit.getFileHashes().stream()
-                .map((dualKey) -> dualKey.keySet().iterator().next())
-                .collect(Collectors.toSet());
-
+        Set<String> hFileHashes = headCommit.getFileHashes().stream().map((dualKey) -> dualKey.keySet().iterator().next()).collect(Collectors.toSet());
+//
         boolean B = !hFileHashes.contains(file);
 
         if (A && B) {
@@ -225,7 +216,7 @@ public class Repository implements Save {
             this.removeStageStore.add(realDualKey);
             return;
         }
-
+//
         String fileName = tobeRemoved.getName();
         String version = sha1(fileName, readContents(tobeRemoved));
         Map<String, String> dualKey = new HashMap<>();
@@ -237,6 +228,77 @@ public class Repository implements Save {
         if (!(A || B)) {
             if (D) {
                 this.removeStageStore.add(dualKey);
+//                tobeRemoved.delete();
+                try {
+                    Files.delete(Path.of(tobeRemoved.getName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if (!A && B) {
+            if (C) {
+                this.stageStore.removeFromAddStage(tobeRemoved, this.blobStore);
+            }
+        }
+        if (!(C || D)) {
+            System.out.println("No reason to remove the file.");
+            System.exit(0);
+        }
+
+//        try {
+//            Files.delete(Path.of(tobeRemoved.getName()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+    }
+
+
+    public void rmTwo(String file) {
+        File tobeRemoved = join(CWD, file);
+        String fileName = tobeRemoved.getName();
+        String version = sha1(fileName, readContents(tobeRemoved));
+        String branchName = this.branchStore.getBranchName();
+        Commit headCommit = this.branchStore.get(branchName).getHead();
+
+        Map<String, String> dk = new HashMap<>();
+        dk.put(fileName, version);
+
+        boolean A = !tobeRemoved.exists(); //checking if file is in CWD. Ugh true = it isn't
+        boolean B = !headCommit.getFileHashes().contains(dk);
+
+//        Set<String> hFileHashes = headCommit.getFileHashes().stream()
+//                .map((dualKey) -> dualKey.keySet().iterator().next())
+//                .collect(Collectors.toSet());
+//
+//        boolean B = !hFileHashes.contains(file);
+
+        if (A && B) {
+            System.out.println("File does not exist.");
+            System.exit(0);
+        }
+
+        if (A && !B) {
+            String v = sha1("dummy.txt");
+            Map<String, String> realDualKey = new HashMap<>();
+            realDualKey.put(file, v);
+            this.removeStageStore.add(realDualKey);
+            return;
+        }
+
+        fileName = tobeRemoved.getName();
+        version = sha1(fileName, readContents(tobeRemoved));
+        dk = new HashMap<>();
+        dk.put(fileName, version);
+
+        boolean C = this.stageStore.canRemove(dk);
+        boolean D = headCommit.getFileHashes().contains(dk);
+
+        if (!(A || B)) {
+            if (D) {
+                this.removeStageStore.add(dk);
                 tobeRemoved.delete();
             }
         }
@@ -283,11 +345,9 @@ public class Repository implements Save {
         String parentHash = parent.getHashID();
         Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
-        parentFileHashes.stream().filter((fileHash) -> !this.removeStageStore.contains(fileHash))
-                .forEach((fileHash) -> this.stageStore.add(fileHash));
+        parentFileHashes.stream().filter((fileHash) -> !this.removeStageStore.contains(fileHash)).forEach((fileHash) -> this.stageStore.add(fileHash));
 
-        Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(),
-                this.branchStore.getBranchName(), parent);
+        Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(), this.branchStore.getBranchName(), parent);
 
         this.branchStore.get(this.branchStore.getBranchName()).add(commit.getHashID(), commit);
         this.stageStore.clear();
@@ -295,14 +355,17 @@ public class Repository implements Save {
     }
 
     public boolean isTracked(Commit c, File file) {
-//        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        Set<String> hFileHashes = c.getFileHashes().stream()
-                .map((dualKey) -> dualKey.keySet().iterator().next())
-                .collect(Collectors.toSet());
+        Set<Map<String, String>> fileHashes = c.getFileHashes();
+        String fileName = file.getName();
+        String version = sha1(fileName, readContents(file));
+        Map<String, String> dualKey = new HashMap<>();
+        dualKey.put(fileName, version);
 
-        return hFileHashes.contains(file.getName());
+        return fileHashes.contains(dualKey);
+
     }
 
+    // Branch Name
     public void checkout(String branchName) {
         if (!this.branchStore.containsKey(branchName)) {
             System.out.println("No such branch exists.");
@@ -313,61 +376,17 @@ public class Repository implements Save {
             System.exit(0);
         }
 
-        Commit other = this.branchStore.get(branchName).getHead();
         Commit thisOne = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        // Used as a readonly copy to avoid concurrent modification errors. Didn't bother wrapping in a synchronized Set.
-        Set<Map<String, String>> copy = new HashSet<>();
-        // The one we actually perform modifications on.
+        Commit other = this.branchStore.get(branchName).getHead();
         Set<Map<String, String>> thisOnesHashes = thisOne.getFileHashes();
-        // What we compare against.
         Set<Map<String, String>> otherFileHashes = other.getFileHashes();
-        // populate copy.
-        for (Map<String, String> m : thisOne.getFileHashes()) {
-            copy.add(m);
-        }
 
         checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
-        transfer(thisOnesHashes, otherFileHashes, copy);
+        transfer(thisOnesHashes, otherFileHashes, branchName);
 
         this.branchStore.setBranchName(branchName);
     }
 
-    private void checkForUntrackedFiles(Commit c, File[] files, String branchName) {
-        if (c.getBranchMom().equals(branchName)) {
-            for (File f : Arrays.asList(files)) {
-                if (!isTracked(f)) {
-                    System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                    System.exit(0);
-                }
-            }
-        }
-    }
-
-    public void transfer(Set<Map<String, String>> from, Set<Map<String, String>> to, Set<Map<String, String>> copy) {
-        checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
-        for (Map<String, String> thisHash : copy) {
-            String fileName = thisHash.keySet().iterator().next();
-            File thizF = join(CWD, fileName);
-            if (!to.contains(thisHash)) {
-                from.remove(thisHash); // Remove from this HEAD commit.
-                // Delete from file system
-                try {
-                    Files.delete(Path.of(thizF.getName()));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                to.add(thisHash);// write to other head
-                try {
-                    Files.delete(Path.of(thizF.getName()));// write to file system
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    // File name
     public void checkout(String separator, String fileName) {
         if (!separator.equals("--")) {
             System.out.println("Incorrect operands.");
@@ -376,7 +395,6 @@ public class Repository implements Save {
         checkoutHelper(this.branchStore.get(this.branchStore.getBranchName()).getHead().getHashID(), fileName);
     }
 
-    // Commit ID, filename
     public void checkout(String commitID, String separator, String fileName) {
         if (!separator.equals("--")) {
             System.out.println("Incorrect operands.");
@@ -385,38 +403,95 @@ public class Repository implements Save {
         checkoutHelper(commitID, fileName);
     }
 
-
     private void checkoutHelper(String commitID, String fileName) {
-        if (!this.branchStore.get(this.branchStore.getBranchName()).containsKey(commitID)) {
+        String branchName = this.branchStore.getBranchName();
+        CommitStore cs = this.branchStore.get(branchName);
+
+        if (!cs.containsKey(commitID)) {
             System.out.println("No commit with that id exists.");
             System.exit(0);
         }
-        Commit commit = this.branchStore.get(this.branchStore.getBranchName()).get(commitID);
+
+        Commit commit = cs.get(commitID);
         Set<Map<String, String>> fileHashes = commit.getFileHashes();
-        Iterator<Map<String, String>> iter = fileHashes.iterator();
 
-        while (iter.hasNext()) {
-            Map<String, String> curr = iter.next(); // Dual key
-            String currFileName = curr.keySet().iterator().next(); // Grab file name from first part of key
-
-            if (currFileName.equals(fileName)) {
-                byte[] serializedFile = this.blobStore.get(curr);
-                File f = join(CWD, currFileName);
+        for (Map<String, String> m : fileHashes) {
+            String fname = m.keySet().iterator().next();
+            if (fname.equals(fileName)) {
+                byte[] serializedFile = this.blobStore.get(m);
+                File f = join(CWD, fname);
                 writeContents(f, serializedFile);
                 return;
             }
         }
+
         System.out.println("File does not exist in that commit.");
         System.exit(0);
     }
 
-    public void allCommit() {
+    private void checkForUntrackedFiles(Commit c, File[] files, String branchName) {
+        if (c.getBranchMom().equals(branchName)) {
+            for (File f : Arrays.asList(files)) {
+
+                if (!f.isDirectory()) {
+                    String fileName = f.getName();
+                    String version = sha1(fileName, readContents(f));
+                    Map<String, String> dualKey = new HashMap<>();
+                    dualKey.put(fileName, version);
+
+                    if (!isTracked(c, f) && !this.stageStore.contains(dualKey)) {
+                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                        System.exit(0);
+                    }
+
+                }
+            }
+        }
+    }
+
+    // Every file in a given commit, specified by branch name.
+    private void transfer(Set<Map<String, String>> fromHashes, Set<Map<String, String>> toHashes, String branchName) {
+
+        for (Map<String, String> thisHash : fromHashes) {
+            String fileName = thisHash.keySet().iterator().next();
+            File thizF = join(CWD, fileName);
+
+            if (!toHashes.contains(thisHash)) {
+                // Delete from file system
+                try {
+                    Files.delete(Path.of(thizF.getName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            CommitStore cs = this.branchStore.get(branchName);
+
+
+            Commit head = cs.getHead();
+
+            Set<Map<String, String>> dk = head.getFileHashes();
+
+            if (!dk.isEmpty()) {
+                String headName = dk.iterator().next().keySet().iterator().next();
+                byte[] serializedHead = this.blobStore.get(dk.iterator().next());
+                File headFile = join(CWD, headName);
+                writeContents(headFile, serializedHead);
+            }
+
+            for (Commit c : cs.values()) {
+                for (Map<String, String> f : c.getFileHashes()) {
+                    String fname = f.keySet().iterator().next();
+                    byte[] serializedFile = this.blobStore.get(f);
+                    File file = join(CWD, fname);
+                    writeContents(file, serializedFile);
+                }
+            }
+        }
 
     }
 
-
     public void log() {
-
         Commit currentCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
 
         while (currentCommit != null) {
@@ -427,69 +502,7 @@ public class Repository implements Save {
             System.out.println();
             currentCommit = currentCommit.getParent();
         }
-
-//        Commit rest = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-//        System.out.println("===");
-//        System.out.println("commit " + rest.getHashID());
-//        System.out.println("Date: " + rest.getTimestamp());
-//        System.out.println(rest.getMessage());
-//        System.out.println();
-//
-//        while (rest != null) {
-//            System.out.println("===");
-//            System.out.println("commit " + currentCommit.getHashID());
-//            System.out.println("Date: " + currentCommit.getTimestamp());
-//            System.out.println(currentCommit.getMessage());
-//            System.out.println();
-//            rest = this.branchStore.get(this.branchStore.getBranchName()).get(rest.getParentID());
-//        }
-
-//        List<Commit> stack = new Stack<>();
-//        HashMap<String, Commit> root = this.branchStore.get("main");
-//        HashMap<String, Commit> branch = this.branchStore.get(this.branchStore.getBranchName());
-
-//        for (Commit c : root.values()) {
-//            ((Stack<Commit>) stack).push(c);
-//        }
-//
-//        for (Commit c : branch.values()) {
-//            ((Stack<Commit>) stack).push(c);
-//        }
-
-//        for (CommitStore cs : this.branchStore.values()) {
-//            for (Commit c : cs.values()) {
-//                ((Stack<Commit>) stack).push(c);
-//                if (c.equals(this.branchStore.get(this.branchStore.getBranchName()).getHead())) {
-//                    break;
-//                }
-//            }
-//            ((Stack<Commit>) stack).pop();
-//        }
-//        recurser((Stack<Commit>) stack);
-//
-//        while (!stack.isEmpty()) {
-//            Commit c = ((Stack<Commit>) stack).pop();
-//            System.out.println("===");
-//            System.out.println("commit " + c.getHashID());
-//            System.out.println("Date: " + c.getTimestamp());
-//            System.out.println(c.getMessage());
-//            System.out.println();
-//        }
-
     }
-
-//    private void recurser(Stack<Commit> stack) {
-//        for (CommitStore cs : this.branchStore.values()) {
-//            for (Commit c : cs.values()) {
-//                stack.push(c);
-//                if (c.equals(this.branchStore.get(this.branchStore.getBranchName()).getHead())) {
-//                    break;
-//                }
-//            }
-//            recurser(stack);
-//            stack.pop();
-//        }
-//    }
 
     public void status() {
         System.out.println("=== Branches ===");
@@ -499,7 +512,7 @@ public class Repository implements Save {
         while (iter.hasNext()) {
             String next = iter.next();
             if (!(next.equals(this.branchStore.getBranchName()))) {
-                System.out.println(iter.next());
+                System.out.println(next);
             }
         }
         System.out.println();
