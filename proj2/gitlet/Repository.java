@@ -269,7 +269,6 @@ public class Repository implements Save {
      * @param commitMsg A string representing the commit message.
      */
     public void commit(String commitMsg) {
-
         if (this.stageStore.isEmpty() && this.removeStageStore.isEmpty()) {
             System.out.println("No changes added to the commit.");
             System.exit(0);
@@ -284,10 +283,8 @@ public class Repository implements Save {
         String parentHash = parent.getHashID();
         Set<Map<String, String>> parentFileHashes = parent.getFileHashes();
 
-        // parentFileHashes.iterator().forEachRemaining((fileHash) -> this.stageStore.add(fileHash));
         parentFileHashes.stream().filter((fileHash) -> !this.removeStageStore.contains(fileHash))
                 .forEach((fileHash) -> this.stageStore.add(fileHash));
-
 
         Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(),
                 this.branchStore.getBranchName(), parent);
@@ -297,9 +294,9 @@ public class Repository implements Save {
         this.removeStageStore.clear();
     }
 
-    public boolean isTracked(File file) {
-        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        Set<String> hFileHashes = headCommit.getFileHashes().stream()
+    public boolean isTracked(Commit c, File file) {
+//        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
+        Set<String> hFileHashes = c.getFileHashes().stream()
                 .map((dualKey) -> dualKey.keySet().iterator().next())
                 .collect(Collectors.toSet());
 
@@ -324,14 +321,19 @@ public class Repository implements Save {
         Set<Map<String, String>> thisOnesHashes = thisOne.getFileHashes();
         // What we compare against.
         Set<Map<String, String>> otherFileHashes = other.getFileHashes();
-
         // populate copy.
-        for (Map<String, String> m: thisOne.getFileHashes()) {
+        for (Map<String, String> m : thisOne.getFileHashes()) {
             copy.add(m);
         }
 
-        File[] files = CWD.listFiles();
-        if (thisOne.getBranchMom().equals(branchName)) {
+        checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
+        transfer(thisOnesHashes, otherFileHashes, copy);
+
+        this.branchStore.setBranchName(branchName);
+    }
+
+    private void checkForUntrackedFiles(Commit c, File[] files, String branchName) {
+        if (c.getBranchMom().equals(branchName)) {
             for (File f : Arrays.asList(files)) {
                 if (!isTracked(f)) {
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
@@ -339,13 +341,15 @@ public class Repository implements Save {
                 }
             }
         }
+    }
 
-        ///TODO Break this apart into a helper method to be clean.
+    public void transfer(Set<Map<String, String>> from, Set<Map<String, String>> to, Set<Map<String, String>> copy) {
+        checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
         for (Map<String, String> thisHash : copy) {
             String fileName = thisHash.keySet().iterator().next();
             File thizF = join(CWD, fileName);
-            if (!otherFileHashes.contains(thisHash)) {
-                thisOnesHashes.remove(thisHash); // Remove from this HEAD commit.
+            if (!to.contains(thisHash)) {
+                from.remove(thisHash); // Remove from this HEAD commit.
                 // Delete from file system
                 try {
                     Files.delete(Path.of(thizF.getName()));
@@ -353,7 +357,7 @@ public class Repository implements Save {
                     e.printStackTrace();
                 }
             } else {
-                otherFileHashes.add(thisHash);// write to other head
+                to.add(thisHash);// write to other head
                 try {
                     Files.delete(Path.of(thizF.getName()));// write to file system
                 } catch (IOException e) {
@@ -361,7 +365,6 @@ public class Repository implements Save {
                 }
             }
         }
-        this.branchStore.setBranchName(branchName);
     }
 
     // File name
@@ -406,6 +409,11 @@ public class Repository implements Save {
         System.out.println("File does not exist in that commit.");
         System.exit(0);
     }
+
+    public void allCommit() {
+
+    }
+
 
     public void log() {
 
