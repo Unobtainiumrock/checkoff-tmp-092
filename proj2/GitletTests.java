@@ -501,6 +501,19 @@ public class GitletTests {
     }
 
     @Test
+    public void test_0() {
+        gitletCommand(new String[]{"init"}, "");
+        gitletCommand(new String[]{"branch", "other"}, "");
+        writeFile(WUG,"wug.txt");
+        writeFile(NOTWUG, "notwug.txt");
+        gitletCommand(new String[]{"add", "wug.txt"}, "");
+        gitletCommand(new String[]{"add", "notwug.txt"}, "");
+        gitletCommand(new String[]{"commit", "Add two files"}, "");
+        gitletCommand(new String[]{"checkout", "other"}, "");
+        assertFileDoesNotExist("wug.txt");
+    }
+
+    @Test
     public void test01_init() {
         gitletCommand(new String[]{"init"}, "");
     }

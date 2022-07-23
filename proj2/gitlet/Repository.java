@@ -19,6 +19,9 @@ public class Repository implements Save {
     private boolean initialized = false;
     private String currentBranch;
 
+    public static void merge() {
+
+    }
 
     //Displays information about all commits ever made.
     public void globalLog() {
@@ -111,10 +114,6 @@ public class Repository implements Save {
             }
         }
         this.branchStore.get(this.branchStore.getBranchName()).setHead(commit);
-
-    }
-
-    public static void merge() {
 
     }
 
@@ -316,9 +315,23 @@ public class Repository implements Save {
             System.out.println("No need to checkout the current branch.");
             System.exit(0);
         }
+
+        Commit other = this.branchStore.get(branchName).getHead();
+        Commit thisOne = this.branchStore.get(this.branchStore.getBranchName()).getHead();
+        // Used as a readonly copy to avoid concurrent modification errors. Didn't bother wrapping in a synchronized Set.
+        Set<Map<String, String>> copy = new HashSet<>();
+        // The one we actually perform modifications on.
+        Set<Map<String, String>> thisOnesHashes = thisOne.getFileHashes();
+        // What we compare against.
+        Set<Map<String, String>> otherFileHashes = other.getFileHashes();
+
+        // populate copy.
+        for (Map<String, String> m: thisOne.getFileHashes()) {
+            copy.add(m);
+        }
+
         File[] files = CWD.listFiles();
-        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        if (headCommit.getBranchMom().equals(branchName)) {
+        if (thisOne.getBranchMom().equals(branchName)) {
             for (File f : Arrays.asList(files)) {
                 if (!isTracked(f)) {
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
@@ -327,9 +340,31 @@ public class Repository implements Save {
             }
         }
 
+        ///TODO Break this apart into a helper method to be clean.
+        for (Map<String, String> thisHash : copy) {
+            String fileName = thisHash.keySet().iterator().next();
+            File thizF = join(CWD, fileName);
+            if (!otherFileHashes.contains(thisHash)) {
+                thisOnesHashes.remove(thisHash); // Remove from this HEAD commit.
+                // Delete from file system
+                try {
+                    Files.delete(Path.of(thizF.getName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                otherFileHashes.add(thisHash);// write to other head
+                try {
+                    Files.delete(Path.of(thizF.getName()));// write to file system
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         this.branchStore.setBranchName(branchName);
     }
 
+    // File name
     public void checkout(String separator, String fileName) {
         if (!separator.equals("--")) {
             System.out.println("Incorrect operands.");
@@ -338,6 +373,7 @@ public class Repository implements Save {
         checkoutHelper(this.branchStore.get(this.branchStore.getBranchName()).getHead().getHashID(), fileName);
     }
 
+    // Commit ID, filename
     public void checkout(String commitID, String separator, String fileName) {
         if (!separator.equals("--")) {
             System.out.println("Incorrect operands.");
@@ -345,6 +381,7 @@ public class Repository implements Save {
         }
         checkoutHelper(commitID, fileName);
     }
+
 
     private void checkoutHelper(String commitID, String fileName) {
         if (!this.branchStore.get(this.branchStore.getBranchName()).containsKey(commitID)) {
