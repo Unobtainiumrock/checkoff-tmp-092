@@ -3,8 +3,7 @@ package gitlet;
 import java.io.*;
 import java.util.*;
 import static gitlet.Utils.*;
-//TODO de-couple the StageStore and removeStage. See the abstract class Store which this will eventually
-//TODO extend.
+
 /**
  * The StageStore contains a HashSet of dual-keys which are used as a single lookup key for the BlobStore.
  * Each key consists of a HashMap<file name, sha1(filename, file contents)>
