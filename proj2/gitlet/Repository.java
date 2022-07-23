@@ -88,29 +88,40 @@ public class Repository implements Save {
     // The [commit id] may be abbreviated as for checkout. The staging area is cleared.
     // The command is essentially checkout of an arbitrary commit that also changes the current branch head.
     public void reset(String commitID) {
-        if (!this.branchStore.get(this.branchStore.getBranchName()).containsKey(commitID)) {
-            System.out.println("No commit with that id exists.");
-            System.exit(0);
-        }
+        for (CommitStore cs : this.branchStore.values()) {
+            for (Commit c : cs.values()) {
+                if (c.getHashID().equals(commitID)) {
+//                    checkout(c.getBranchMom());
 
-        Commit commit = this.branchStore.get(this.branchStore.getBranchName()).get(commitID);
-        Set<Map<String, String>> fileHashes = commit.getFileHashes();
+//                    checkout(c.getBranchMom(), "--", );
+                    File[] files = CWD.listFiles();
 
-        for (File f : CWD.listFiles()) {
-//            System.out.println(f + " is");
-//            System.out.println(f.isFile() + " file or not");
-//            System.out.println(f.isDirectory() + " directory or not");
-//            System.out.println(f.getPath() + " path");
-//            System.out.println(f.getName() + " name");
-            if (!fileHashes.contains(f) && !f.isDirectory()) {
-                try {
-                    Files.delete(Path.of(f.getName()));
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    for (File f : Arrays.asList(files)) {
+                        if (!isTracked(f) && !f.isDirectory()) {
+                            System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                            System.exit(0);
+                        }
+                    }
+                    Set<Map<String, String>> fileHashes = c.getFileHashes();
+                    for (File f : CWD.listFiles()) {
+                        if (!fileHashes.contains(f) && !f.isDirectory()) {
+                            try {
+                                Files.delete(Path.of(f.getName()));
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    this.stageStore.clear();
+                    this.removeStageStore.clear();
+                    this.branchStore.get(this.branchStore.getBranchName()).setHead(c);
+                    return;
                 }
             }
         }
-        this.branchStore.get(this.branchStore.getBranchName()).setHead(commit);
+        System.out.println("No commit with that id exists.");
+        System.exit(0);
 
     }
 
@@ -454,7 +465,7 @@ public class Repository implements Save {
         while (iter.hasNext()) {
             String next = iter.next();
             if (!(next.equals(this.branchStore.getBranchName()))) {
-                System.out.println(iter.next());
+                System.out.println(next);
             }
         }
         System.out.println();

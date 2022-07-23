@@ -1192,6 +1192,7 @@ public class GitletTests {
         assertFileEquals(WUG, "h.txt");
     }
 
+
     @Test
     public void test37_reset1() {
         i_setup2(); //init, add f.txt, add g.txt, commit "Two files"
