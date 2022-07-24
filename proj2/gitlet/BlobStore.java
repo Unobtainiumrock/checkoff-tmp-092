@@ -2,14 +2,16 @@ package gitlet;
 import java.util.Map;
 import java.util.HashMap;
 
-public class BlobStore extends HashMap<Map<String, String>, byte[]> implements Save {
-    private Repository repo;
+/**
+ * @author Grandpa Weekend
+ */
+public class BlobStore extends HashMap<Map<String, String>,
+        byte[]> implements Save {
 
-    public BlobStore(Repository repo) {
-        this.repo = repo;
-    }
-
-    public Repository getRepo() {
-        return this.repo;
+    /**
+     *
+     * @param repo
+     */
+    public BlobStore() {
     }
 }

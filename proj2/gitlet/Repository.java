@@ -1,28 +1,53 @@
 package gitlet;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.Set;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Arrays;
+import java.util.Iterator;
+
+
 import java.util.stream.Collectors;
 
 import static gitlet.Utils.*;
 
+/**
+ * @author ppapa
+ */
 public class Repository implements Save {
+    /**
+     *
+     */
     private CommitStore commitStore;
+    /**
+     *
+     */
     private StageStore stageStore;
+    /**
+     *
+     */
     private RemoveStageStore removeStageStore;
+    /**
+     *
+     */
     private BlobStore blobStore;
+    /**
+     *
+     */
     private BranchStore branchStore;
+    /**
+     *
+     */
     private boolean initialized = false;
-    private String currentBranch;
 
-    public static void merge() {
-
-    }
-
-    //Displays information about all commits ever made.
+    /**
+     *
+     */
     public void globalLog() {
         for (CommitStore cs : this.branchStore.values()) {
             for (Commit c : cs.values()) {
@@ -33,9 +58,12 @@ public class Repository implements Save {
                 System.out.println();
             }
         }
-        //TODO: remember to come back and fix the case when there are merge commits i.e. two parents
     }
 
+    /**
+     *
+     * @param commitMsg s
+     */
     public void find(String commitMsg) {
         boolean emptyChecker = true;
         for (CommitStore cs : this.branchStore.values()) {
@@ -51,6 +79,10 @@ public class Repository implements Save {
         }
     }
 
+    /**
+     *
+     * @param branchName b
+     */
     public void rmBranch(String branchName) {
         if (!this.branchStore.containsKey(branchName)) {
             System.out.println("A branch with that name does not exist.");
@@ -62,8 +94,11 @@ public class Repository implements Save {
 
         String origBranch = this.branchStore.getBranchName();
         this.branchStore.setBranchName(branchName);
-        Commit headCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
-        Set<String> hFileHashes = headCommit.getFileHashes().stream().map((dualKey) -> dualKey.keySet().iterator().next()).collect(Collectors.toSet());
+        Commit headCommit = this.branchStore
+                .get(this.branchStore.getBranchName()).getHead();
+        Set<String> hFileHashes = headCommit.getFileHashes().stream()
+                .map((dualKey) -> dualKey.keySet()
+                        .iterator().next()).collect(Collectors.toSet());
 
         File[] files = CWD.listFiles();
 
@@ -83,11 +118,10 @@ public class Repository implements Save {
 
     }
 
-    //Checks out all the files tracked by the given commit. Removes tracked files that are not present in that commit.
-    // Also moves the current branch’s head to that commit node. See the intro for an example of what happens to the head pointer after using reset.
-    // The [commit id] may be abbreviated as for checkout. The staging area is cleared.
-    // The command is essentially checkout of an arbitrary commit that also changes the current branch head.
-
+    /**
+     *
+     * @param commitID b
+     */
     public void reset(String commitID) {
         String branchName = this.branchStore.getBranchName();
         Commit head = this.branchStore.get(branchName).getHead();
@@ -96,7 +130,8 @@ public class Repository implements Save {
                 if (c.getHashID().equals(commitID)) {
                     File[] files = CWD.listFiles();
                     checkForUntrackedFiles(head, files, branchName);
-                    transfer(head.getFileHashes(), c.getFileHashes(), branchName);
+                    transfer(head.getFileHashes(),
+                            c.getFileHashes(), branchName);
 
                     for (Map<String, String> m : this.stageStore) {
                         String fname = m.keySet().iterator().next();
@@ -120,23 +155,13 @@ public class Repository implements Save {
     }
 
     /**
-     * Usage: java gitlet.Main init
-     * <p>
-     * Description: Creates a new Gitlet version-control system in the current directory.
-     * This system will automatically start with one commit: a commit that contains no files
-     * and has the commit message initial commit (just like that, with no punctuation). It will have a
-     * single branch: main, which initially points to this initial commit, and main will be the current branch.
-     * The timestamp for this initial commit will be 00:00:00 UTC, Thursday, 1 January 1970 in whatever format
-     * you choose for dates (this is called “The (Unix) Epoch”, represented internally by the time 0.)
-     * Since the initial commit in all repositories created by Gitlet will have exactly the same content,
-     * it follows that all repositories will automatically share this commit (they will all have the same UID)
-     * and all commits in all repositories will trace back to it.
-     * <p>
-     * Runtime: O(1)
+     *
      */
     public void init() {
         if (COMMIT_DIR.exists()) {
-            System.out.println("A Gitlet version-control system already exists in the current directory.");
+            System.out.println("A Gitlet version-control system"
+                    +
+                    " already exists in the current directory.");
             System.exit(0);
         }
 
@@ -144,10 +169,11 @@ public class Repository implements Save {
         this.commitStore = new CommitStore(this);
         this.stageStore = new StageStore(this);
         this.removeStageStore = new RemoveStageStore(this);
-        this.blobStore = new BlobStore(this);
-        this.branchStore = new BranchStore(this, "main");
+        this.blobStore = new BlobStore();
+        this.branchStore = new BranchStore("main");
         this.initialized = true;
-        this.branchStore.put(this.branchStore.getBranchName(), this.commitStore);
+        this.branchStore.put(this.branchStore.getBranchName(),
+                this.commitStore);
         this.saveRuntimeObjects();
     }
 
@@ -201,18 +227,15 @@ public class Repository implements Save {
      * <p>
      * Runtime: O(1)
      *
-     * @param file
+     * @param file f
      */
     public void rm(String file) {
-//        rmTwo(file);
         File tobeRemoved = join(CWD, file);
-//
-        boolean A = !tobeRemoved.exists(); //checking if file is in CWD. Ugh true = it isn't
+        boolean A = !tobeRemoved.exists();
         String branchName = this.branchStore.getBranchName();
         Commit headCommit = this.branchStore.get(branchName).getHead();
 
         Set<String> hFileHashes = headCommit.getFileHashes().stream().map((dualKey) -> dualKey.keySet().iterator().next()).collect(Collectors.toSet());
-//
         boolean B = !hFileHashes.contains(file);
 
         if (A && B) {
@@ -227,7 +250,7 @@ public class Repository implements Save {
             this.removeStageStore.add(realDualKey);
             return;
         }
-//
+
         String fileName = tobeRemoved.getName();
         String version = sha1(fileName, readContents(tobeRemoved));
         Map<String, String> dualKey = new HashMap<>();
@@ -239,7 +262,6 @@ public class Repository implements Save {
         if (!(A || B)) {
             if (D) {
                 this.removeStageStore.add(dualKey);
-//                tobeRemoved.delete();
                 try {
                     Files.delete(Path.of(tobeRemoved.getName()));
                 } catch (IOException e) {
@@ -257,74 +279,7 @@ public class Repository implements Save {
             System.out.println("No reason to remove the file.");
             System.exit(0);
         }
-
-//        try {
-//            Files.delete(Path.of(tobeRemoved.getName()));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
-
-
-    public void rmTwo(String file) {
-        File tobeRemoved = join(CWD, file);
-        String fileName = tobeRemoved.getName();
-        String version = sha1(fileName, readContents(tobeRemoved));
-        String branchName = this.branchStore.getBranchName();
-        Commit headCommit = this.branchStore.get(branchName).getHead();
-
-        Map<String, String> dk = new HashMap<>();
-        dk.put(fileName, version);
-
-        boolean A = !tobeRemoved.exists(); //checking if file is in CWD. Ugh true = it isn't
-        boolean B = !headCommit.getFileHashes().contains(dk);
-
-//        Set<String> hFileHashes = headCommit.getFileHashes().stream()
-//                .map((dualKey) -> dualKey.keySet().iterator().next())
-//                .collect(Collectors.toSet());
-//
-//        boolean B = !hFileHashes.contains(file);
-
-        if (A && B) {
-            System.out.println("File does not exist.");
-            System.exit(0);
-        }
-
-        if (A && !B) {
-            String v = sha1("dummy.txt");
-            Map<String, String> realDualKey = new HashMap<>();
-            realDualKey.put(file, v);
-            this.removeStageStore.add(realDualKey);
-            return;
-        }
-
-        fileName = tobeRemoved.getName();
-        version = sha1(fileName, readContents(tobeRemoved));
-        dk = new HashMap<>();
-        dk.put(fileName, version);
-
-        boolean C = this.stageStore.canRemove(dk);
-        boolean D = headCommit.getFileHashes().contains(dk);
-
-        if (!(A || B)) {
-            if (D) {
-                this.removeStageStore.add(dk);
-                tobeRemoved.delete();
-            }
-        }
-
-        if (!A && B) {
-            if (C) {
-                this.stageStore.removeFromAddStage(tobeRemoved, this.blobStore);
-            }
-        }
-        if (!(C || D)) {
-            System.out.println("No reason to remove the file.");
-            System.exit(0);
-        }
-    }
-
 
     /**
      * Usage: java gitlet.Main commit [message]
@@ -376,7 +331,10 @@ public class Repository implements Save {
 
     }
 
-    // Branch Name
+    /**
+     *
+     * @param branchName v
+     */
     public void checkout(String branchName) {
         if (!this.branchStore.containsKey(branchName)) {
             System.out.println("No such branch exists.");
@@ -408,6 +366,11 @@ public class Repository implements Save {
         this.stageStore.clear();
     }
 
+    /**
+     *
+     * @param separator v
+     * @param fileName v
+     */
     public void checkout(String separator, String fileName) {
         if (!separator.equals("--")) {
             System.out.println("Incorrect operands.");
@@ -424,6 +387,11 @@ public class Repository implements Save {
         checkoutHelper(commitID, fileName);
     }
 
+    /**
+     *
+     * @param commitID v
+     * @param fileName v
+     */
     private void checkoutHelper(String commitID, String fileName) {
         String branchName = this.branchStore.getBranchName();
         CommitStore cs = this.branchStore.get(branchName);
@@ -470,34 +438,24 @@ public class Repository implements Save {
                 Set<String> fnames = this.stageStore.stream().map((dk) -> dk.keySet().iterator().next()).collect(Collectors.toSet());
 
                 if (!isTracked(c, f) && !fnames.contains(f.getName())) {
-//                    for (File fing : CWD.listFiles()) {
-//                        System.out.println("I'm in CWD: " + fing.getName());
-//                    }
-//                    System.out.println("File it thinks is untracked:" + f.getName());
-//
-//                    System.out.println("Commit Object's File Hashes: ");
-//                    for (Map<String, String> ch : c.getFileHashes()) {
-//                        String f_name = ch.keySet().iterator().next();
-//                        System.out.println(f_name);
-//                    }
-
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                     System.exit(0);
                 }
 
             }
         }
-//        }
     }
 
-    // Every file in a given commit, specified by branch name.
+    /**
+     *
+     * @param src v
+     * @param dest v
+     * @param branchName v
+     */
     private void transfer(Set<Map<String, String>> src, Set<Map<String, String>> dest, String branchName) {
         File[] files = CWD.listFiles();
         List<File> filesList = Arrays.asList(files);
         List<String> fileNames = filesList.stream().map((file) -> file.getName()).collect(Collectors.toList());
-
-        // Compare src filehashes against dest file hashes
-        // delete any
 
         for (Map<String, String> srcHash : src) {
             String fileName = srcHash.keySet().iterator().next();
@@ -515,14 +473,6 @@ public class Repository implements Save {
             File file = join(CWD, fileName);
             writeContents(file, serializedFile);
 
-
-//
-//            CommitStore cs = this.branchStore.get(branchName);
-//            Commit head = cs.getHead();
-
-//            Set<Map<String, String>> dk = head.getFileHashes();
-
-            // Write
             if (!dest.isEmpty()) {
                 for (Map<String, String> f : dest) {
                     String fname = f.keySet().iterator().next();
@@ -532,7 +482,6 @@ public class Repository implements Save {
                 }
             }
 
-            // Deletion
             if (!dest.contains(srcHash)) {
                 try {
                     Files.delete(Path.of(thizF.getName()));
@@ -545,6 +494,9 @@ public class Repository implements Save {
 
     }
 
+    /**
+     *
+     */
     public void log() {
         Commit currentCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
 
@@ -557,6 +509,10 @@ public class Repository implements Save {
             currentCommit = currentCommit.getParent();
         }
     }
+
+    /**
+     *
+     */
 
     public void status() {
         System.out.println("=== Branches ===");
@@ -576,7 +532,7 @@ public class Repository implements Save {
 
         while (iterTwo.hasNext()) {
             Map<String, String> curr = iterTwo.next();
-            String currFileName = curr.keySet().iterator().next(); // Grabs first key on a single element HashMap. --The filename
+            String currFileName = curr.keySet().iterator().next();
             System.out.println(currFileName);
         }
 
@@ -587,25 +543,12 @@ public class Repository implements Save {
 
         while (iterThree.hasNext()) {
             Map<String, String> curr = iterThree.next();
-            String currFileName = curr.keySet().iterator().next(); // Grabs first key on a single element HashMap. TODO Refactor later.
+            String currFileName = curr.keySet().iterator().next();
             System.out.println(currFileName);
         }
 
         System.out.println();
-        System.out.println("=== Modifications Not Staged For Commit ===");
-//       A: Tracked in the current commit, changed in the working directory, but not staged; or
-//       B: Staged for addition, but with different contents than in the working directory; or
-//       C: Staged for addition, but deleted in the working directory; or
-//       D: Not staged for removal, but tracked in the current commit and deleted from the working directory.
-
-//        A || B || C || D
-
-//        A: Staged, commit, cwd
-//        B: Staged, cwd
-//        C: Staged, cwd
-//        D: Removal stage, commit, cwd
-
-//        File[] directoryFiles = CWD.listFiles();
+        System.out.println("=== Modifications Not Staged For Commit ===");;
 
         Commit currentCommit = this.branchStore.get(this.branchStore.getBranchName()).getHead();
         StageStore stage = this.stageStore;
@@ -615,7 +558,7 @@ public class Repository implements Save {
         boolean staged = false;
         boolean removalStaged = false;
         boolean differentContents = false;
-        boolean inCWD = false; // clarify if D.N.E in cwd is the same as deleted in cwd.
+        boolean inCWD = false;
 
 
         boolean A = inCurrentCommit && changedInWorkingDirectory && !staged;
@@ -628,7 +571,6 @@ public class Repository implements Save {
             if (currentCommit.getFileHashes().contains(fileName)) {
 
             }
-//            System.out.println(file.getName());
         });
 
         System.out.println();
@@ -637,6 +579,10 @@ public class Repository implements Save {
 
     }
 
+    /**
+     *
+     * @param branchName v
+     */
     public void branch(String branchName) {
         if (this.branchStore.containsKey(branchName)) {
             System.out.println("A branch with that name already exists.");
@@ -646,26 +592,49 @@ public class Repository implements Save {
         this.branchStore.put(branchName, new CommitStore(previousBranchesCommit));
     }
 
+    /**
+     *
+     * @return
+     */
     public boolean getInitialized() {
         return this.initialized;
     }
 
+    /**
+     *
+     * @param initialized v
+     */
     public void setInitialized(boolean initialized) {
         this.initialized = initialized;
     }
 
+    /**
+     *
+     * @return
+     */
     public CommitStore getCommitStore() {
         return this.commitStore;
     }
 
+    /**
+     *
+     * @return
+     */
     public StageStore getStageStore() {
         return this.stageStore;
     }
 
+    /**
+     *
+     * @return
+     */
     public BlobStore getBlobStore() {
         return this.blobStore;
     }
 
+    /**
+     *
+     */
     public void createRuntimeObjects() {
         this.commitStore = readObject(COMMIT_DIR, CommitStore.class);
         this.stageStore = readObject(STAGE_DIR, StageStore.class);
@@ -674,6 +643,9 @@ public class Repository implements Save {
         this.branchStore = readObject(BRANCH_DIR, BranchStore.class);
     }
 
+    /**
+     *
+     */
     public void saveRuntimeObjects() {
         writeObject(COMMIT_DIR, this.commitStore);
         writeObject(STAGE_DIR, this.stageStore);
@@ -682,6 +654,10 @@ public class Repository implements Save {
         writeObject(BRANCH_DIR, this.branchStore);
     }
 
+    /**
+     *
+     * @param f v
+     */
     @Override
     public void save(File f) {
         return;

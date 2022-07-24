@@ -2,25 +2,36 @@ package gitlet;
 
 import java.util.HashMap;
 
-public class BranchStore extends HashMap<String, CommitStore> implements Save {
-    private Repository repo;
+/**
+ * @author Granpa Weekend
+ */
+public class BranchStore extends HashMap<String,
+        CommitStore> implements Save {
+    /**
+     *
+     */
     private String branchName;
 
-    public BranchStore(Repository repo, String branchName) {
-        this.repo = repo;
-        this.branchName = branchName;
+    /**
+     *
+     * @param b b
+     */
+    public BranchStore(String b) {
+        this.branchName = b;
     }
 
-    public void setBranchName(String branchName) {
-        this.branchName = branchName;
+    /**
+     * @param b b
+     */
+    public void setBranchName(String b) {
+        this.branchName = b;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getBranchName() {
         return this.branchName;
     }
-
-//    public Commit branch(String branchname, Commit commit) {
-//        this.put(branchname, commit);
-//        return commit;
-//    }
 }
