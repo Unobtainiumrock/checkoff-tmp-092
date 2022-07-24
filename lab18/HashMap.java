@@ -27,16 +27,7 @@ public class HashMap<K, V> implements Map61BL<K, V> {
 
     // Convert hash code to a valid index for the table.
     private int helper(int hashCode) {
-        // primes
-        int a = 3;
-        int b = 5;
-        int c = 137;
-        int withinRange = ((a * hashCode + b) % c) % table.length;
-
-        if (withinRange < 0) {
-            withinRange = withinRange + table.length;
-        }
-        return withinRange;
+        return Math.floorMod(hashCode, this.capacity);
     }
 
     public int capacity() {
@@ -68,23 +59,21 @@ public class HashMap<K, V> implements Map61BL<K, V> {
     @Override
     public void put(K key, V value) {
 
-//        if (!this.containsKey(key)) {
-        this.size++;
-//        }
+        if (!this.containsKey(key)) {
 
-        double lf = this.size() / ((double) (this.capacity));
+            double lf = (this.size() + 1) / ((double) (this.capacity));
 
-        if (lf > this.loadFactor) {
-            LinkedList<Entry<K, V>>[] tmp = new LinkedList[this.capacity * 2];
-            this.capacity *= 2;
+            if (lf > this.loadFactor) {
+                LinkedList<Entry<K, V>>[] tmp = new LinkedList[this.capacity * 2];
+                this.capacity *= 2;
 
-            for (int i = 0; i < this.table.length; i++) {
-                tmp[i] = this.table[i];
+                for (int i = 0; i < this.table.length; i++) {
+                    tmp[i] = this.table[i];
+                }
+
+                this.table = tmp;
             }
-
-            this.table = tmp;
         }
-
 
         Entry<K, V> e = new Entry(key, value);
 
@@ -96,7 +85,7 @@ public class HashMap<K, V> implements Map61BL<K, V> {
         }
 
         table[hashCode].addFirst(e);
-
+        this.size++;
     }
 
     @Override
@@ -105,7 +94,7 @@ public class HashMap<K, V> implements Map61BL<K, V> {
             int k = helper(key.hashCode());
             LinkedList<Entry<K, V>> el = table[k];
             V val = el.getFirst().getValue();
-            table[k] = null; // Either I null it out, or I removeFist from the thing.
+            table[k] = null;
             this.size--;
             return val;
         }
