@@ -96,7 +96,7 @@ public class Repository implements Save {
                 if (c.getHashID().equals(commitID)) {
                     File[] files = CWD.listFiles();
                     checkForUntrackedFiles(head, files, branchName);
-                    transfer(head.getFileHashes(), c.getFileHashes(), branchName);
+                    transfer(head, c, head.getFileHashes(), c.getFileHashes(), branchName);
                     this.stageStore.clear();
                     this.removeStageStore.clear();
                     this.branchStore.get(branchName).setHead(c);
@@ -383,7 +383,7 @@ public class Repository implements Save {
         Set<Map<String, String>> otherFileHashes = other.getFileHashes();
 
         checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
-        transfer(thisOnesHashes, otherFileHashes, branchName);
+        transfer(thisOne, other, thisOnesHashes, otherFileHashes, branchName);
 
         this.branchStore.setBranchName(branchName);
     }
@@ -431,38 +431,69 @@ public class Repository implements Save {
     }
 
     private void checkForUntrackedFiles(Commit c, File[] files, String branchName) {
-        if (c.getBranchMom().equals(branchName)) {
-            for (File f : Arrays.asList(files)) {
+//        if (c.getBranchMom().equals(branchName)) {
+        for (File f : Arrays.asList(files)) {
 
-                if (!f.isDirectory()) {
-                    String fileName = f.getName();
-                    String version = sha1(fileName, readContents(f));
-                    Map<String, String> dualKey = new HashMap<>();
-                    dualKey.put(fileName, version);
+            if (!f.isDirectory()) {
+                String fileName = f.getName();
+                String version = sha1(fileName, readContents(f));
+                Map<String, String> dualKey = new HashMap<>();
+                dualKey.put(fileName, version);
 
-                    if (!isTracked(c, f) && !this.stageStore.contains(dualKey)) {
-                        System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
-                        System.exit(0);
+                if (!isTracked(c, f) && !this.stageStore.contains(dualKey)) {
+                    for (File fing : CWD.listFiles()) {
+                        System.out.println("I'm in CWD: " + fing.getName());
+                    }
+                    System.out.println("File it thinks is untracked:" + f.getName());
+
+                    System.out.println("Commit Object's File Hashes: ");
+                    for (Map<String, String> ch : c.getFileHashes()) {
+                        String f_name = ch.keySet().iterator().next();
+                        System.out.println(f_name);
                     }
 
+                    System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
+                    System.exit(0);
                 }
+
             }
         }
+//        }
     }
 
     // Every file in a given commit, specified by branch name.
-    private void transfer(Set<Map<String, String>> fromHashes, Set<Map<String, String>> toHashes, String branchName) {
+    private void transfer(Commit src, Commit dest, Set<Map<String, String>> fromHashes, Set<Map<String, String>> toHashes, String branchName) {
+        // Checkout and reset use transfer
+        // src against dest
+        // CWD: Serves as a reference for what to delete
+        // filehashes: Serve as a reference for what we write to CWD.
+        //
 
-        for (Map<String, String> thisHash : fromHashes) {
+        File[] files = CWD.listFiles();
+        List<File> filesList = Arrays.asList(files);
+        List<String> fileNames = filesList.stream().map((file) -> file.getName()).collect(Collectors.toList());
 
-            String fileName = thisHash.keySet().iterator().next();
+        // Compare src filehashes against dest file hashes
+        // delete any
+
+        for (Map<String, String> otherHash : toHashes) {
+            String fileName = otherHash.keySet().iterator().next();
             File thizF = join(CWD, fileName);
 
-            File[] files = CWD.listFiles();
-            List filesList = Arrays.asList(files);
+            if (fileNames.contains(fileName)) {
+                try {
+                    Files.delete(Path.of(thizF.getName()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
 
-            if (!toHashes.contains(thisHash) && filesList.contains(thizF)) {
-                // Delete from file system
+            byte[] serializedFile = this.blobStore.get(otherHash);
+            File file = join(CWD, fileName);
+            writeContents(file, serializedFile);
+
+            // Deletion
+            if (!toHashes.contains(otherHash)) {
                 try {
                     Files.delete(Path.of(thizF.getName()));
                 } catch (IOException e) {
@@ -471,25 +502,17 @@ public class Repository implements Save {
             }
 
             CommitStore cs = this.branchStore.get(branchName);
-
-
             Commit head = cs.getHead();
 
             Set<Map<String, String>> dk = head.getFileHashes();
 
+            // Write
             if (!dk.isEmpty()) {
-                String headName = dk.iterator().next().keySet().iterator().next();
-                byte[] serializedHead = this.blobStore.get(dk.iterator().next());
-                File headFile = join(CWD, headName);
-                writeContents(headFile, serializedHead);
-            }
-
-            for (Commit c : cs.values()) {
-                for (Map<String, String> f : c.getFileHashes()) {
+                for (Map<String, String> f : dk) {
                     String fname = f.keySet().iterator().next();
-                    byte[] serializedFile = this.blobStore.get(f);
-                    File file = join(CWD, fname);
-                    writeContents(file, serializedFile);
+                    byte[] sf = this.blobStore.get(f);
+                    File fi = join(CWD, fname);
+                    writeContents(fi, sf);
                 }
             }
         }
