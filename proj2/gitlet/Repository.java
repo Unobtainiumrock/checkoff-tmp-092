@@ -360,7 +360,7 @@ public class Repository implements Save {
 
         Commit commit = new Commit(commitMsg, parentHash, (Set<Map<String, String>>) this.stageStore.clone(), this.branchStore.getBranchName(), parent);
 
-        this.branchStore.get(this.branchStore.getBranchName()).add(commit.getHashID(), commit);
+        this.branchStore.get(this.branchStore.getBranchName()).add(commit.getShortenedHashID(), commit);
         this.stageStore.clear();
         this.removeStageStore.clear();
     }
@@ -427,6 +427,10 @@ public class Repository implements Save {
     private void checkoutHelper(String commitID, String fileName) {
         String branchName = this.branchStore.getBranchName();
         CommitStore cs = this.branchStore.get(branchName);
+
+        if (commitID.length() > 8) {
+            commitID = commitID.substring(0, 8);
+        }
 
         if (!cs.containsKey(commitID)) {
             System.out.println("No commit with that id exists.");

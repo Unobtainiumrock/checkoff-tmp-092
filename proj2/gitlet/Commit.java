@@ -13,6 +13,7 @@ public class Commit implements Save {
     private Commit parent;
     private Set<Map<String, String>> fileHashes;
     private String hashID;
+    private String shortenedHashID;
     private String branchMom;
 
     public Commit (String message, String parentID, Set<Map<String, String>> fileHashes, String branchMom, Commit parent) {
@@ -36,12 +37,15 @@ public class Commit implements Save {
         this.parent = null;
         this.fileHashes = new HashSet<>();
         this.hashID = sha1(serialize(this), this.message);
+        this.shortenedHashID = this.hashID.substring(0, 8);
         this.branchMom = "main";
     }
 
     private String generateHashID() {
 //        return sha1(this.message, parentHashID, this.fileHashes);
-        return sha1(serialize(this), this.message);
+        String hash = sha1(serialize(this), this.message);
+        this.shortenedHashID = hash.substring(0, 8);
+        return hash;
     }
 
     public Set<Map<String, String>> getFileHashes() {
@@ -62,6 +66,10 @@ public class Commit implements Save {
 
     public String getHashID() {
         return this.hashID;
+    }
+
+    public String getShortenedHashID() {
+        return this.shortenedHashID;
     }
 
     public String getParentID() {
