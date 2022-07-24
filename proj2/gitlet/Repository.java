@@ -96,7 +96,17 @@ public class Repository implements Save {
                 if (c.getHashID().equals(commitID)) {
                     File[] files = CWD.listFiles();
                     checkForUntrackedFiles(head, files, branchName);
-                    transfer(head, c, head.getFileHashes(), c.getFileHashes(), branchName);
+                    transfer(head.getFileHashes(), c.getFileHashes(), branchName);
+
+                    for (Map<String, String> m : this.stageStore) {
+                        String fname = m.keySet().iterator().next();
+                        try {
+                            Files.delete(Path.of(join(CWD, fname).getName()));
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                     this.stageStore.clear();
                     this.removeStageStore.clear();
                     this.branchStore.get(branchName).setHead(c);
@@ -382,10 +392,20 @@ public class Repository implements Save {
         Set<Map<String, String>> thisOnesHashes = thisOne.getFileHashes();
         Set<Map<String, String>> otherFileHashes = other.getFileHashes();
 
+        for (Map<String, String> m : this.stageStore) {
+            String fname = m.keySet().iterator().next();
+            try {
+                Files.delete(Path.of(join(CWD, fname).getName()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         checkForUntrackedFiles(thisOne, CWD.listFiles(), branchName);
-        transfer(thisOne, other, thisOnesHashes, otherFileHashes, branchName);
+        transfer(thisOnesHashes, otherFileHashes, branchName);
 
         this.branchStore.setBranchName(branchName);
+        this.stageStore.clear();
     }
 
     public void checkout(String separator, String fileName) {
@@ -431,7 +451,10 @@ public class Repository implements Save {
     }
 
     private void checkForUntrackedFiles(Commit c, File[] files, String branchName) {
-//        if (c.getBranchMom().equals(branchName)) {
+//        if (branchName.equals("other")) {
+//
+//        }
+
         for (File f : Arrays.asList(files)) {
 
             if (!f.isDirectory()) {
@@ -440,17 +463,19 @@ public class Repository implements Save {
                 Map<String, String> dualKey = new HashMap<>();
                 dualKey.put(fileName, version);
 
-                if (!isTracked(c, f) && !this.stageStore.contains(dualKey)) {
-                    for (File fing : CWD.listFiles()) {
-                        System.out.println("I'm in CWD: " + fing.getName());
-                    }
-                    System.out.println("File it thinks is untracked:" + f.getName());
+                Set<String> fnames = this.stageStore.stream().map((dk) -> dk.keySet().iterator().next()).collect(Collectors.toSet());
 
-                    System.out.println("Commit Object's File Hashes: ");
-                    for (Map<String, String> ch : c.getFileHashes()) {
-                        String f_name = ch.keySet().iterator().next();
-                        System.out.println(f_name);
-                    }
+                if (!isTracked(c, f) && !fnames.contains(f.getName())) {
+//                    for (File fing : CWD.listFiles()) {
+//                        System.out.println("I'm in CWD: " + fing.getName());
+//                    }
+//                    System.out.println("File it thinks is untracked:" + f.getName());
+//
+//                    System.out.println("Commit Object's File Hashes: ");
+//                    for (Map<String, String> ch : c.getFileHashes()) {
+//                        String f_name = ch.keySet().iterator().next();
+//                        System.out.println(f_name);
+//                    }
 
                     System.out.println("There is an untracked file in the way; delete it, or add and commit it first.");
                     System.exit(0);
@@ -462,13 +487,7 @@ public class Repository implements Save {
     }
 
     // Every file in a given commit, specified by branch name.
-    private void transfer(Commit src, Commit dest, Set<Map<String, String>> fromHashes, Set<Map<String, String>> toHashes, String branchName) {
-        // Checkout and reset use transfer
-        // src against dest
-        // CWD: Serves as a reference for what to delete
-        // filehashes: Serve as a reference for what we write to CWD.
-        //
-
+    private void transfer(Set<Map<String, String>> src, Set<Map<String, String>> dest, String branchName) {
         File[] files = CWD.listFiles();
         List<File> filesList = Arrays.asList(files);
         List<String> fileNames = filesList.stream().map((file) -> file.getName()).collect(Collectors.toList());
@@ -476,8 +495,8 @@ public class Repository implements Save {
         // Compare src filehashes against dest file hashes
         // delete any
 
-        for (Map<String, String> otherHash : toHashes) {
-            String fileName = otherHash.keySet().iterator().next();
+        for (Map<String, String> srcHash : src) {
+            String fileName = srcHash.keySet().iterator().next();
             File thizF = join(CWD, fileName);
 
             if (fileNames.contains(fileName)) {
@@ -488,12 +507,29 @@ public class Repository implements Save {
                 }
             }
 
-            byte[] serializedFile = this.blobStore.get(otherHash);
+            byte[] serializedFile = this.blobStore.get(srcHash);
             File file = join(CWD, fileName);
             writeContents(file, serializedFile);
 
+
+//
+//            CommitStore cs = this.branchStore.get(branchName);
+//            Commit head = cs.getHead();
+
+//            Set<Map<String, String>> dk = head.getFileHashes();
+
+            // Write
+            if (!dest.isEmpty()) {
+                for (Map<String, String> f : dest) {
+                    String fname = f.keySet().iterator().next();
+                    byte[] sf = this.blobStore.get(f);
+                    File fi = join(CWD, fname);
+                    writeContents(fi, sf);
+                }
+            }
+
             // Deletion
-            if (!toHashes.contains(otherHash)) {
+            if (!dest.contains(srcHash)) {
                 try {
                     Files.delete(Path.of(thizF.getName()));
                 } catch (IOException e) {
@@ -501,20 +537,6 @@ public class Repository implements Save {
                 }
             }
 
-            CommitStore cs = this.branchStore.get(branchName);
-            Commit head = cs.getHead();
-
-            Set<Map<String, String>> dk = head.getFileHashes();
-
-            // Write
-            if (!dk.isEmpty()) {
-                for (Map<String, String> f : dk) {
-                    String fname = f.keySet().iterator().next();
-                    byte[] sf = this.blobStore.get(f);
-                    File fi = join(CWD, fname);
-                    writeContents(fi, sf);
-                }
-            }
         }
 
     }
