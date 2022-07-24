@@ -68,9 +68,9 @@ public class HashMap<K, V> implements Map61BL<K, V> {
     @Override
     public void put(K key, V value) {
 
-        if (!this.containsKey(key)) {
-            this.size++;
-        }
+//        if (!this.containsKey(key)) {
+        this.size++;
+//        }
 
         double lf = this.size() / ((double) (this.capacity));
 
