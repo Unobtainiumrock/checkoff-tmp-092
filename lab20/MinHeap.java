@@ -106,15 +106,13 @@ public class MinHeap<E extends Comparable<E>> {
            //swap arr[index] with arr[parent]
             //update index to parent
         //}
-//        E a = this.getElement(index); // arr[index]
         int x = this.getParentOf(index);
-        E b = this.getElement(x);
 
-        if (b == null) {
+        if (this.getElement(x) == null) {
             return;
         }
         
-        while (index != 1 && min(index, x) == x) {
+        while (index != 1 && min(index, x) == index) {
             swap(index, x);
             index = x;
             x = this.getParentOf(index);
@@ -147,7 +145,7 @@ public class MinHeap<E extends Comparable<E>> {
 
     /* Returns the number of elements in the MinHeap. */
     public int size() {
-        return size;
+        return this.size;
     }
 
     /* Inserts ELEMENT into the MinHeap. If ELEMENT is already in the MinHeap,
@@ -158,8 +156,7 @@ public class MinHeap<E extends Comparable<E>> {
         }
         contents.add(element);
         this.size++;
-        bubbleUp(contents.indexOf(element));
-
+        bubbleUp(this.size);
     }
 
     /* Returns and removes the smallest element in the MinHeap. */
@@ -177,12 +174,14 @@ public class MinHeap<E extends Comparable<E>> {
        not exist in the MinHeap, throw a NoSuchElementException. Item equality
        should be checked using .equals(), not ==. */
     public void update(E element) throws IllegalArgumentException {
-        if (!this.contains(element)) {
+        int loc = contents.indexOf(element);
+
+        if (loc == -1) {
             throw new NoSuchElementException();
         }
 
-        bubbleDown(contents.indexOf(element));
-        bubbleUp(contents.indexOf(element));
+        bubbleDown(loc);
+        bubbleUp(loc);
     }
 
     /* Returns true if ELEMENT is contained in the MinHeap. Item equality should
