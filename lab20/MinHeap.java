@@ -6,7 +6,7 @@ public class MinHeap<E extends Comparable<E>> {
 
     /* An ArrayList that stores the elements in this MinHeap. */
     private ArrayList<E> contents;
-    private int size = 1;
+    private int size;
     // TODO: YOUR CODE HERE (no code should be needed here if not 
     // implementing the more optimized version)
 
@@ -18,7 +18,7 @@ public class MinHeap<E extends Comparable<E>> {
 
     /* Returns the element at index INDEX, and null if it is out of bounds. */
     private E getElement(int index) {
-        if (index >= contents.size() - 1) {
+        if (index >= contents.size()) {
             return null;
         } else {
             return contents.get(index);
@@ -28,7 +28,7 @@ public class MinHeap<E extends Comparable<E>> {
     /* Sets the element at index INDEX to ELEMENT. If the ArrayList is not big
        enough, add elements until it is the right size. */
     private void setElement(int index, E element) {
-        while (index >= contents.size() - 1) {
+        while (index >= contents.size()) {
             contents.add(null);
         }
         contents.set(index, element);
@@ -154,16 +154,17 @@ public class MinHeap<E extends Comparable<E>> {
         if (this.contains(element)) {
             throw new IllegalArgumentException();
         }
-        this.setElement(this.size, element);
-        bubbleUp(this.size);
+//        this.contents.add(this.size + 1, element);
+        this.setElement(this.size + 1, element);
         this.size++;
+        bubbleUp(this.size);
     }
 
     /* Returns and removes the smallest element in the MinHeap. */
     public E removeMin() {
         E res = this.findMin();
-        swap(1, size() - 1);
-        setElement(size() - 1, null);
+        swap(1, size());
+        setElement(size(), null);
         this.size--;
         bubbleDown(1);
         return res;

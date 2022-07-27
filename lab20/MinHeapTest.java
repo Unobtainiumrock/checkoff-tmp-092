@@ -47,35 +47,10 @@ public class MinHeapTest {
         System.out.println("Remove two elements and expect them to no longer exist in the heap");
         System.out.println("Removing: " + a);
         System.out.println("Removing: " + b);
-        System.out.println();
-        System.out.println("Heap contains " + a + "? " + heap.contains(a));
-        System.out.println("Heap contains " + b + "? " + heap.contains(b));
+        System.out.println("Heap no longer contains " + a + "? " + heap.contains(a));
+        System.out.println("Heap no longer contains " + b + "? " + heap.contains(b));
 
     }
-
-//    @Test
-//    public void briefBubbleDownTest() {
-//        this.l = new ArrayList<>();
-//        this.heap = new MinHeap<>();
-//
-//        for (int i = 0; i < 10; i++) {
-//            System.out.println("Adding: " + i + " to the min heap.");
-//            this.heap.insert(i);
-//            this.l.add(i);
-//        }
-//
-//        heap.add(6)
-//
-//
-//        System.out.println();
-//        System.out.println("Expect a large value to bubble waaay down ");
-//        System.out.println();
-//
-//        for (Integer i : ) {
-//
-//        }
-
-//    }
 
     private void setStuff(int seed) {
         this.r = new Random(123);
@@ -84,10 +59,10 @@ public class MinHeapTest {
 
         for (int i = 0; i < 10; i++) {
             Integer rand = r.nextInt(10);
+            System.out.println("Adding: " + rand + " to the min heap.");
             while (this.heap.contains(rand)) {
                 rand = r.nextInt(10);
             }
-            System.out.println("Adding: " + rand + " to the min heap.");
             this.heap.insert(rand);
             this.l.add(rand);
         }
