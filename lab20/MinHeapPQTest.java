@@ -18,5 +18,13 @@ public class MinHeapPQTest {
         pq.poll();
         pq.insert("Goodbye", 6);
         pq.poll();
+
+
+        pq.insert("Hello", 1);
+        pq.insert("World", 2);
+
+        pq.changePriority("Hello", 3);
+        assertTrue(pq.peek().equals("World"));
+
     }
 }
