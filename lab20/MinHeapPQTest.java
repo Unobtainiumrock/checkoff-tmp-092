@@ -20,10 +20,10 @@ public class MinHeapPQTest {
         pq.poll();
 
 
-        pq.insert("Hello", 1);
-        pq.insert("World", 2);
+        pq.insert("Hello", 2);
+        pq.insert("World", 3);
 
-        pq.changePriority("Hello", 3);
+        pq.changePriority("World", 1);
         assertTrue(pq.peek().equals("World"));
 
     }

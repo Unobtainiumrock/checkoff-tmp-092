@@ -176,12 +176,11 @@ public class MinHeap<E extends Comparable<E>> {
        should be checked using .equals(), not ==. */
     public void update(E element) throws IllegalArgumentException {
         int loc = contents.indexOf(element);
-        this.setElement(loc, element);
 
         if (loc == -1) {
             throw new NoSuchElementException();
         }
-
+        this.setElement(loc, element);
         bubbleDown(loc);
         bubbleUp(loc);
     }
