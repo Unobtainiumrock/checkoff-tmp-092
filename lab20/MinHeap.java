@@ -117,6 +117,7 @@ public class MinHeap<E extends Comparable<E>> {
         while (index != 1 && min(index, x) == x) {
             swap(index, x);
             index = x;
+            x = this.getParentOf(index);
         }
     }
 
