@@ -84,10 +84,10 @@ public class MinHeapTest {
 
         for (int i = 0; i < 10; i++) {
             Integer rand = r.nextInt(10);
-            System.out.println("Adding: " + rand + " to the min heap.");
             while (this.heap.contains(rand)) {
                 rand = r.nextInt(10);
             }
+            System.out.println("Adding: " + rand + " to the min heap.");
             this.heap.insert(rand);
             this.l.add(rand);
         }
