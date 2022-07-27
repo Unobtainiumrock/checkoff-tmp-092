@@ -106,17 +106,17 @@ public class MinHeap<E extends Comparable<E>> {
            //swap arr[index] with arr[parent]
             //update index to parent
         //}
-        E a = this.getElement(index); // arr[index]
-        E b = this.getElement(this.getParentOf(index)); //arr[parent]
+//        E a = this.getElement(index); // arr[index]
+        int x = this.getParentOf(index);
+        E b = this.getElement(x);
 
         if (b == null) {
             return;
         }
-
-        while (index != 1 && min(index, this.getParentOf(index)) == index) {
-            int p = this.getParentOf(index);
-            swap(index, p);
-            index = p;
+        
+        while (index != 1 && min(index, x) == x) {
+            swap(index, x);
+            index = x;
         }
     }
 
@@ -126,13 +126,21 @@ public class MinHeap<E extends Comparable<E>> {
             //swap arr[index] with the SMALLER child
             //update index to the index of the swapped child
         //}
-        int z = this.getLeftOf(index);
+        int x = this.getLeftOf(index);
         int y = this.getRightOf(index);
-        E b = this.getElement(z);
-        while (b != null && index != size && (min(index, this.getLeftOf(index)) == this.getLeftOf(index) || min(index, this.getRightOf(index)) == this.getRightOf(index))) {
-            int w = min(this.getLeftOf(index), this.getRightOf(index));
+        E b = this.getElement(x);
+//        while (b != null && index != size && (min(index, this.getLeftOf(index)) == this.getLeftOf(index) || min(index, this.getRightOf(index)) == this.getRightOf(index))) {
+//            int w = min(this.getLeftOf(index), this.getRightOf(index));
+//            swap(index, w);
+//            index = w;
+//        }
+        while(b != null && (this.min(index, y) == y || this.min(index, x) == x)) {
+            int w = min(x, y);
             swap(index, w);
             index = w;
+            x = this.getLeftOf(w);
+            y = this.getRightOf(w);
+            b = this.getElement(x);
         }
     }
 
@@ -150,6 +158,7 @@ public class MinHeap<E extends Comparable<E>> {
         contents.add(element);
         this.size++;
         bubbleUp(contents.indexOf(element));
+
     }
 
     /* Returns and removes the smallest element in the MinHeap. */
