@@ -76,7 +76,12 @@ public class Graph implements Iterable<Integer> {
        weight WEIGHT. */
     public void addEdge(int v1, int v2, int weight) {
         if (isAdjacent(v1, v2)) {
-            adjLists[v1].get(v2).weight = weight;
+//            adjLists[v1].get(v2).weight = weight;
+            adjLists[v1].forEach((edge) -> {
+                if (edge.equals(new Edge(v1, v2, weight))) {
+                    edge.weight = weight;
+                }
+            });
         } else {
             adjLists[v1].add(new Edge(v1, v2, weight));
         }
@@ -262,7 +267,6 @@ public class Graph implements Iterable<Integer> {
     }
 
     private static class Edge {
-
         private int from;
         private int to;
         private int weight;
@@ -275,6 +279,15 @@ public class Graph implements Iterable<Integer> {
 
         public String toString() {
             return "(" + from + ", " + to + ", weight = " + weight + ")";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Edge) {
+                Edge other = (Edge) o;
+                return other.to == this.to && other.from == this.from;
+            }
+            return false;
         }
 
     }
@@ -353,15 +366,6 @@ public class Graph implements Iterable<Integer> {
         }
 
         public boolean hasNext() {
-//            if (!fringe.isEmpty()) {
-//                int i = fringe.pop();
-//                if (neighbors(i).isEmpty()) {
-//                    return false;
-//                }
-//                fringe.push(i);
-//                return true;
-//            }
-//            return false;
             return !fringe.isEmpty();
         }
 
