@@ -102,6 +102,10 @@ public class MinHeap<E extends Comparable<E>> {
 
     /* Bubbles up the element currently at index INDEX. */
     private void bubbleUp(int index) {
+        //while (index is not the root and arr[index] is smaller than parent) {
+           //swap arr[index] with arr[parent]
+            //update index to parent
+        //}
         int x = this.getParentOf(index);
 
         if (this.getElement(x) == null) {
@@ -117,10 +121,18 @@ public class MinHeap<E extends Comparable<E>> {
 
     /* Bubbles down the element currently at index INDEX. */
     private void bubbleDown(int index) {
+        //while (there is a child and arr[index] is greater than either child) {
+            //swap arr[index] with the SMALLER child
+            //update index to the index of the swapped child
+        //}
         int x = this.getLeftOf(index);
         int y = this.getRightOf(index);
         E b = this.getElement(x);
-
+//        while (b != null && index != size && (min(index, this.getLeftOf(index)) == this.getLeftOf(index) || min(index, this.getRightOf(index)) == this.getRightOf(index))) {
+//            int w = min(this.getLeftOf(index), this.getRightOf(index));
+//            swap(index, w);
+//            index = w;
+//        }
         while(b != null && (this.min(index, y) == y || this.min(index, x) == x)) {
             int w = min(x, y);
             swap(index, w);
@@ -142,7 +154,7 @@ public class MinHeap<E extends Comparable<E>> {
         if (this.contains(element)) {
             throw new IllegalArgumentException();
         }
-
+//        this.contents.add(this.size + 1, element);
         this.setElement(this.size + 1, element);
         this.size++;
         bubbleUp(this.size);
@@ -168,7 +180,8 @@ public class MinHeap<E extends Comparable<E>> {
         if (loc == -1) {
             throw new NoSuchElementException();
         }
-        this.setElement(loc, element);  bubbleDown(loc);
+        this.setElement(loc, element);
+        bubbleDown(loc);
         bubbleUp(loc);
     }
 

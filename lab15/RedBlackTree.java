@@ -1,3 +1,4 @@
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 // Heavily referenced this to better understand with R/B trees are.
@@ -113,6 +114,22 @@ public class RedBlackTree<T extends Comparable<T>> {
             }
             return n;
         });
+
+//        recursiveHelperTwo(node, (n) -> {
+//            if (n != null) {
+//                if (isRed(n.right) && !isRed(n.left)) {
+//                    n = rotateLeft(n);
+//                }
+//                if (n.left != null) {
+//                    if (isRed(n.left) & isRed(n.left.left)) {
+//                        n = rotateRight(n);
+//                    }
+//                    if (isRed(n.left) && isRed((n.right))) {
+//                        flipColors(n);
+//                    }
+//                }
+//            }
+//        });
     }
 
     private RBTreeNode<T> recursiveHelper(RBTreeNode<T> node, Function<RBTreeNode<T>, RBTreeNode<T>> fn) {
@@ -129,6 +146,16 @@ public class RedBlackTree<T extends Comparable<T>> {
         RBTreeNode<T> right = recursiveHelper(fn.apply(node.right), fn);
         return new RBTreeNode<T>(node.isBlack, node.item, left, right);
     }
+
+//    private void recursiveHelperTwo(RBTreeNode<T> node, Consumer<RBTreeNode<T>> fn) {
+//        if (node == null) {
+//            return;
+//        }
+//        fn.accept(node.left);
+//        fn.accept(node.right);
+//        recursiveHelperTwo(node.left, fn);
+//        recursiveHelperTwo(node.right, fn);
+//    }
 
     private boolean isRed(RBTreeNode<T> node) {
         return node != null && !node.isBlack;

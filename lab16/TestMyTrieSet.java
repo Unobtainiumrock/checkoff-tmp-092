@@ -1,12 +1,12 @@
-import static org.junit.Assert.*;
-import org.junit.Test;
-import java.util.List;
+    import static org.junit.Assert.*;
+    import org.junit.Test;
+    import java.util.List;
 
-/**
- * Created by Jenny Huang on 3/12/19.
- */
-public class TestMyTrieSet {
-    
+    /**
+     * Created by Jenny Huang on 3/12/19.
+     */
+    public class TestMyTrieSet {
+
     
 <<<<<<< HEAD
     @Test

@@ -28,7 +28,7 @@ public class MyTrieSet extends HashMap<Character, HashMap> implements TrieSet61B
     @Override
     public void add(String key) {
         MyTrieSet curr = this;
-        for (int i = 0; i < key.length(); i++) { //example: add("hello") add("hellu")
+        for (int i = 0; i < key.length(); i++) {
             char keyC = key.charAt(i);
             if (!curr.containsKey(keyC)) {
                 curr.put(keyC, new MyTrieSet());
@@ -45,7 +45,7 @@ public class MyTrieSet extends HashMap<Character, HashMap> implements TrieSet61B
         if (prefix == "") {
             return result;
         }
-            
+
         MyTrieSet curr = this;
         String t = "";
         for (int i = 0; i < prefix.length(); i++) {
