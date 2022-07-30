@@ -1,3 +1,4 @@
+
 import java.util.*;
 
 public class Graph implements Iterable<Integer> {
@@ -156,31 +157,6 @@ public class Graph implements Iterable<Integer> {
             result.add(iter.next());
         }
         return result;
-    }
-
-    public List<Integer> shortestPath(int start, int stop) {
-        ArrayList<Integer> result = new ArrayList<Integer>();
-        Iterator<Integer> iter = new Dijkstras(start, stop);
-        while (iter.hasNext()) {
-            result.add(iter.next());
-        }
-        return result;
-    }
-
-
-    //Instantiate an array for distTo filled with infinity
-    //Instantiate an array for EdgeTo filled with null
-    //Instantiate an ArrayList or just a list called Visited, empty to start off with
-    //Instantiate a PQ called fringe: new PriorityQueue<>(this.vertexCount, Comparator.comparingInt(v -> <length of the shortest path from start to v>))
-    // i.e a minheap sorting
-
-    //Constructor:
-    //fill the distTo array with infinity
-    //fill the PQ with node vals, associated priority value = node val's associated distTo value i.e.
-    // PQ = [(node val, distTo val -- this is the priority val), (node val, distTo val), (node val, distTo val)...]
-
-    public Edge getEdge(int from, int to) {
-        return adjLists[from].get(to);
     }
 
     private void generateG1() {
@@ -383,14 +359,32 @@ public class Graph implements Iterable<Integer> {
 
     }
 
-    private class Dijkstras implements Iterator<Integer> {
+    public List<Integer> shortestPath(int start, int stop) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        Iterator<Integer> iter = new Dijkstras(start, stop);
+        while (iter.hasNext()) {
+            result.add(iter.next());
+        }
+        return result;
+    }
 
+    public Edge getEdge(int from, int to) {
+        return adjLists[from].get(to);
+    }
+
+    private class Dijkstras implements Iterator<Integer> {
         private PriorityQueue<Node> fringe;
         private int[] distTo;
         private int[] edgeTo;
+        private Set<Integer> visited;
+
+
+// fringe = new PriorityQueue<>(vertexCount, new Node()); //think about what this comparator should be.
 
         Dijkstras(Integer start, Integer stop) {
-            fringe = new PriorityQueue<>(vertexCount, new Node()); //think about what this comparator should be.
+            Set<Integer> visited = new HashSet<>();
+            Queue<Node> fringe = new PriorityQueue<>(Comparator.comparing((node) -> node.getDistToSource()));
+
             fringe.add(new Node(start, 0));
             int[] distTo = new int[vertexCount];
             int[] edgeTo = new int[vertexCount - 1];
@@ -405,9 +399,22 @@ public class Graph implements Iterable<Integer> {
 
         @Override
         public boolean hasNext() {
+            return
+            if (!fringe.isEmpty() && (visited.size() != vertexCount)) {
+//                int i = fringe.pop();
+//                if (!neighbors(i).isEmpty()) {
+//                    return false;
+//                }
+//                fringe.push(i);
+//                return true;
+//            }
+//            return false;
+
+            //we DON'T have a hasNext when:
+                // the length of the visited hashSet = vertexCount OR
+                //the fringe is empty
             return false;
         }
-
 
         //Next:
         //while (!fringe.isEmpty())
@@ -420,51 +427,80 @@ public class Graph implements Iterable<Integer> {
         // edgeTo[i] = poppedOff; <- since we now have a new path of reaching i, we update the edgeTo to be the parent it now takes a path from
         // if (fringe.contains(i)) <- this if loop is to remove the old nodeval-distTo val priority pair, then add in the new one. might not need this?
         //coz if we hit this condition means that an update was made, so we def want to remove the old one and add in the new one.
-        //fringe.remove(i);
-        //fringe.add(i, distTo[i]);
+        //make a new node;
+        //add new node to fringe;
+
         @Override
         public Integer next() {
-            int poppedOff = fringe.poll().nodeVal; //
+            int poppedOff = fringe.poll().nodeVal; //poppedOff = k
+
+            if (visited.contains(poppedOff)) {
+                poppedOff = fringe.poll().nodeVal;
+            }
+
+            visited.add(poppedOff);
 
             for (int i : neighbors(poppedOff)) {
-                int weight = getEdge(poppedOff, i).weight;
-                int length = distTo[poppedOff] + weight;
-                if (length < distTo[i]) {
-                    distTo[i] = length;
-                    edgeTo[i] = poppedOff;
+                if (!visited.contains(i)) {
+                    int weight = getEdge(poppedOff, i).weight;
+                    int length = distTo[poppedOff] + weight;
+                    if (length < distTo[i]) {
+                        distTo[i] = length;
+                        edgeTo[i] = poppedOff;
 
-                    fringe.remove(i); //not remove(i) . it's remove the node with i as nodeVal
-                    fringe.add(new Node(i, distTo[i]));
-
+                        Node update = new Node(i, distTo[i]);
+                        fringe.add(update); //fringe: [1, infinity], [2, infinity], [1, 10], [2, 13]
+                    }
                 }
             }
 
             return poppedOff;
         }
 
-        private class Node implements Comparator<Node> {
+    }
 
-            private int nodeVal;
-            private int distToSource;
+    private class Node implements Comparable<Node> {
 
-            public Node() {
-            }
+        private int nodeVal;
+        private int distToSource;
 
-            public Node(int nodeVal, int distToSource) {
-                this.nodeVal = nodeVal;
-                this.distToSource = distToSource;
-            }
+        public Node() {
+        }
 
-            @Override
-            public int compare(Node o1, Node o2) {
-                if (o1.distToSource > o2.distToSource) {
-                    return 1;
-                }
-                if (o1.distToSource < o2.distToSource) {
-                    return -1;
-                }
-                return 0;
-            }
+        public Node(int nodeVal, int distToSource) {
+            this.nodeVal = nodeVal;
+            this.distToSource = distToSource;
+        }
+
+        public int getNodeVal() {
+            return this.nodeVal;
+        }
+
+        public int getDistToSource() {
+            return this.distToSource;
+        }
+
+//        @Override
+//        public int compare(Node o1, Node o2) {
+//            if (o1.distToSource > o2.distToSource) {
+//                return 1;
+//            }
+//            if (o1.distToSource < o2.distToSource) {
+//                return -1;
+//            }
+//            return 0;
+//        }
+
+        @Override
+        public String toString() {
+            return "Node val: " + this.nodeVal
+                    + " Dist to src: " + this.distToSource;
+        }
+
+
+        @Override
+        public int compareTo(Node node) {
+            return Integer.compare(this.distToSource, node.getDistToSource());
         }
     }
 }

@@ -52,10 +52,16 @@ public class Sandbox {
 
         Set<HashMap<Boolean, Node>> visited = new HashSet<>();
 
-        // 1) create a new node
+
+        Node update = new Node(1, distTo[1]); //i = 1
+
+        pq2.add(update);
+
+
+        // 1) create a new node //consider if need to check if pq contains the node first, don't think is necessary tho
         // 2) add to fringe pq
         // 3) pop off
-        // 4) use this popped off thing to go into the set
+        // 4) use this popped off thing to go into the visited set
 
         // therefore, every time we are doing a poll(), we will have a O(1) lookup on the hashset to see if something has been visited
         // already, and if they have, then we can ignore that particular value poll()'d.
