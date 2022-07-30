@@ -31,17 +31,17 @@ public class RandomWorldDemo {
         }
     }
 
-    public static void fillFlower(TETile[][] tiles, int n) {
-        for (int i = 0; i < tiles.length; i++) {
-            for (int j = 0; j < tiles[0].length; j++) {
-                if ((n <= i && i < 2 * n && j < 3 * n) || (n <= j && j < 2 * n && i < 3 * n)) {
-                    tiles[i][j] = Tileset.FLOWER;
-                } else {
-                    tiles[i][j] = Tileset.NOTHING;
-                }
-            }
-        }
-    }
+//    public static void fillFlower(TETile[][] tiles, int n) {
+//        for (int i = 0; i < tiles.length; i++) {
+//            for (int j = 0; j < tiles[0].length; j++) {
+//                if ((n <= i && i < 2 * n && j < 3 * n) || (n <= j && j < 2 * n && i < 3 * n)) {
+//                    tiles[i][j] = Tileset.FLOWER;
+//                } else {
+//                    tiles[i][j] = Tileset.NOTHING;
+//                }
+//            }
+//        }
+//    }
 
     /**
      * Picks a RANDOM tile with a 33% change of being
@@ -67,13 +67,13 @@ public class RandomWorldDemo {
         TERenderer ter = new TERenderer();
         ter.initialize(15, 15);
 
-//        TETile[][] randomTiles = new TETile[WIDTH][HEIGHT];
-//        fillWithRandomTiles(randomTiles);
-        TETile[][] flower = new TETile[15][15];
-        fillFlower(flower, 3);
+        TETile[][] randomTiles = new TETile[WIDTH][HEIGHT];
+        fillWithRandomTiles(randomTiles);
+//        TETile[][] flower = new TETile[15][15];
+//        fillFlower(flower, 3);
 
-        ter.renderFrame(flower);
-//        ter.renderFrame(randomTiles);
+//        ter.renderFrame(flower);
+        ter.renderFrame(randomTiles);
     }
 
 
