@@ -5,9 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="41b39fdf-8541-46f3-833c-8afa05c2f442" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../lab15/RedBlackTree.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab15/RedBlackTree.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lab16/MyTrieSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab16/MyTrieSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lab16/TestMyTrieSet.java" beforeDir="false" afterPath="$PROJECT_DIR$/../lab16/TestMyTrieSet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../lab16/out/production/lab16/MyTrieSet.class" beforeDir="false" afterPath="$PROJECT_DIR$/../lab16/out/production/lab16/MyTrieSet.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Graph.java" beforeDir="false" afterPath="$PROJECT_DIR$/Graph.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lab21.iml" beforeDir="false" afterPath="$PROJECT_DIR$/lab21.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/lab21/Graph$DFSIterator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/lab21/Graph$DFSIterator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/lab21/Graph$Edge.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/lab21/Graph$Edge.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/lab21/Graph$TopologicalIterator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/lab21/Graph$TopologicalIterator.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/lab21/Graph.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/lab21/Graph.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,6 +23,13 @@
   </component>
   <component name="CodeStyleSettingsInfer">
     <option name="done" value="true" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -43,7 +57,7 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
 }</component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.Sandbox">
     <configuration name="Graph" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Graph" />
       <module name="lab21" />
@@ -51,8 +65,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Sandbox" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Sandbox" />
+      <module name="lab21" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Application.Sandbox" />
         <item itemvalue="Application.Graph" />
       </list>
     </recent_temporary>
@@ -78,12 +100,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Graph.java</url>
-          <line>43</line>
+          <line>44</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/Graph.java</url>
-          <line>56</line>
+          <line>57</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
