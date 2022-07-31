@@ -1,6 +1,7 @@
 
 import java.util.*;
-
+import java.util.stream.Collectors;
+// Hello
 public class Graph implements Iterable<Integer> {
 
     private LinkedList<Edge>[] adjLists;
@@ -23,78 +24,99 @@ public class Graph implements Iterable<Integer> {
         g1.printDFS(3);
         g1.printDFS(4);
 
-        g1.printPath(0, 3);
-        g1.printPath(0, 4);
-        g1.printPath(1, 3);
-        g1.printPath(1, 4);
-        g1.printPath(4, 0);
+        g1.printPath(0, 3); // good
+        g1.printPath(0, 4); // good
+        g1.printPath(1, 3); // good
+        g1.printPath(1, 4); // good
+        g1.printPath(4, 0); // good
 
         Graph g2 = new Graph(5);
         g2.generateG2();
         g2.printTopologicalSort();
+
+        // Tree case
+        Graph g3 = new Graph(7);
+        g3.addEdge(0, 1);
+        g3.addEdge(0, 2);
+        g3.addEdge(1, 3);
+        g3.addEdge(1, 4);
+        g3.addEdge(2, 5);
+        g3.addEdge(2, 6);
+        g3.printTopologicalSort();
+
+        //A-H <=> 0-7 case
+        Graph g4 = new Graph(8);
+        g4.addEdge(0, 2);
+        g4.addEdge(0, 3);
+        g4.addEdge(1, 3);
+        g4.addEdge(1, 4);
+        g4.addEdge(2, 5);
+        g4.addEdge(3, 5);
+        g4.addEdge(4, 6);
+        g4.addEdge(5, 7);
+        g4.addEdge(6, 7);
+        g4.printTopologicalSort();
+
+
     }
 
     /* Adds a directed Edge (V1, V2) to the graph. That is, adds an edge
-     *        in ONE directions, from v1 to v2. */
+       in ONE directions, from v1 to v2. */
     public void addEdge(int v1, int v2) {
         addEdge(v1, v2, 0);
     }
 
     /* Adds an undirected Edge (V1, V2) to the graph. That is, adds an edge
-     *        in BOTH directions, from v1 to v2 and from v2 to v1. */
+       in BOTH directions, from v1 to v2 and from v2 to v1. */
     public void addUndirectedEdge(int v1, int v2) {
         addUndirectedEdge(v1, v2, 0);
     }
 
     /* Adds a directed Edge (V1, V2) to the graph with weight WEIGHT. If the
-     *        Edge already exists, replaces the current Edge with a new Edge with
-     *               weight WEIGHT. */
+       Edge already exists, replaces the current Edge with a new Edge with
+       weight WEIGHT. */
     public void addEdge(int v1, int v2, int weight) {
         if (isAdjacent(v1, v2)) {
-            adjLists[v1].get(v2).weight = weight;
+//            adjLists[v1].get(v2).weight = weight;
+            adjLists[v1].forEach((edge) -> {
+                if (edge.equals(new Edge(v1, v2, weight))) {
+                    edge.weight = weight;
+                }
+            });
         } else {
             adjLists[v1].add(new Edge(v1, v2, weight));
         }
     }
 
     /* Adds an undirected Edge (V1, V2) to the graph with weight WEIGHT. If the
-     *        Edge already exists, replaces the current Edge with a new Edge with
-     *               weight WEIGHT. */
+       Edge already exists, replaces the current Edge with a new Edge with
+       weight WEIGHT. */
     public void addUndirectedEdge(int v1, int v2, int weight) {
-        addEdge(v1, v2, weight);
-        addEdge(v2, v1, weight);
+        addEdge(v1, v2);
+        addEdge(v2, v1);
     }
 
     /* Returns true if there exists an Edge from vertex FROM to vertex TO.
-     *        Returns false otherwise. */
+       Returns false otherwise. */
     public boolean isAdjacent(int from, int to) {
-        for (int i = 0; i < adjLists[from].size(); i++) {
-            if (adjLists[from].get(i).to == to) {
-                return true;
-            }
-        }
-        return false;
+        return neighbors(from).contains(to);
     }
 
     /* Returns a list of all the vertices u such that the Edge (V, u)
-     *        exists in the graph. */
+       exists in the graph. */
     public List<Integer> neighbors(int v) {
-        List<Integer> res = new ArrayList<>();
-        for (int i = 0; i < adjLists[v].size(); i++) {
-            res.add(adjLists[v].get(i).to);
-        }
-        return res;
+        return adjLists[v].stream()
+                .map((edgeLL) -> edgeLL.to)
+                .collect(Collectors.toList());
     }
 
     /* Returns the number of incoming Edges for vertex V. */
     public int inDegree(int v) {
-//        i.e.the number of u to v paths that exist
-        //check each of the elem in adjList that is not v, see which of their to is = v
         int res = 0;
         for (int i = 0; i < adjLists.length; i++) {
             for (int j = 0; j < adjLists[i].size(); j++) {
                 if (adjLists[i].get(j).to == v) {
-                    res += 1;
+                    res++;
                 }
             }
         }
@@ -102,13 +124,13 @@ public class Graph implements Iterable<Integer> {
     }
 
     /* Returns an Iterator that outputs the vertices of the graph in topological
-           sorted order. */
+       sorted order. */
     public Iterator<Integer> iterator() {
         return new TopologicalIterator();
     }
 
     /* Returns the collected result of performing a depth-first search on this
-           graph's vertices starting from V. */
+       graph's vertices starting from V. */
     public List<Integer> dfs(int v) {
         ArrayList<Integer> result = new ArrayList<Integer>();
         Iterator<Integer> iter = new DFSIterator(v);
@@ -116,38 +138,52 @@ public class Graph implements Iterable<Integer> {
         while (iter.hasNext()) {
             result.add(iter.next());
         }
-
         return result;
     }
 
 
     /* Returns true iff there exists a path from START to STOP. Assumes both
-           START and STOP are in this graph. If START == STOP, returns true. */
+       START and STOP are in this graph. If START == STOP, returns true. */
     public boolean pathExists(int start, int stop) {
         return dfs(start).contains(stop);
     }
 
 
     /* Returns the path from START to STOP. If no path exists, returns an empty
-           List. If START == STOP, returns a List with START. */
+       List. If START == STOP, returns a List with START. */
     public List<Integer> path(int start, int stop) {
-        List<Integer> res = new ArrayList<>();
+        LinkedList<Integer> p = new LinkedList<>();
+        Iterator<Integer> iter = new DFSIterator(start);
 
-        if (!pathExists(start, stop)) {
-            return res;
+        if (start == stop) {
+            p.add(start);
+            return p;
         }
 
+        // Build path until hitting either stop, or a vertex with no neighbors.
+        while (iter.hasNext()) {
+            p.add(iter.next());
 
-        List<Integer> dfsList = dfs(start);
+            if (p.peekLast() == stop) {
+                return p;
+            }
 
-        for (Integer i : dfsList) {
-            res.add(i);
+            // Backtrack
+            if (neighbors(p.peekLast()).size() == 0) {
+                int curr = p.removeLast();
 
-            if (i == stop) {
-                break;
+                while (!isAdjacent(curr, stop)) {
+                    if (p.size() != 0) {
+                        curr = p.removeLast();
+                    } else {
+                        return new LinkedList<>();
+                    }
+
+                }
+                p.add(curr);
             }
         }
-        return res;
+        return p;
     }
 
     public List<Integer> topologicalSort() {
@@ -232,7 +268,6 @@ public class Graph implements Iterable<Integer> {
     }
 
     private static class Edge {
-
         private int from;
         private int to;
         private int weight;
@@ -245,6 +280,15 @@ public class Graph implements Iterable<Integer> {
 
         public String toString() {
             return "(" + from + ", " + to + ", weight = " + weight + ")";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (o instanceof Edge) {
+                Edge other = (Edge) o;
+                return other.to == this.to && other.from == this.from;
+            }
+            return false;
         }
 
     }
@@ -307,49 +351,38 @@ public class Graph implements Iterable<Integer> {
     private class TopologicalIterator implements Iterator<Integer> {
 
         private Stack<Integer> fringe;
-
         private ArrayList<Integer> currentInDegree;
 
         TopologicalIterator() {
             fringe = new Stack<Integer>();
             currentInDegree = new ArrayList<>();
-            //currentInDegree[v] is initialized with the in-degree of each vertex v.
+
             for (int i = 0; i < vertexCount; i++) {
                 currentInDegree.add(i, inDegree(i));
                 if (currentInDegree.get(i) == 0) {
                     fringe.push(i);
                 }
             }
+
         }
 
         public boolean hasNext() {
-            if (!fringe.isEmpty()) {
-                int i = fringe.pop();
-                if (!neighbors(i).isEmpty()) {
-                    return false;
-                }
-                fringe.push(i);
-                return true;
-            }
-            return false;
+            return !fringe.isEmpty();
         }
-
 
         public Integer next() {
             int curr = fringe.pop();
-            // Iterate the neighbords
-            // subtract 1 from each of their in-degrees
             for (int i : neighbors(curr)) {
-                int toUpdate = currentInDegree.indexOf(i);
-                int updateMe = currentInDegree.get(toUpdate);
-                currentInDegree.set(toUpdate, updateMe - 1);
 
-                int el = currentInDegree.get(toUpdate);
+                int updateMe = currentInDegree.get(i);
+                currentInDegree.set(i, updateMe - 1);
+
+                int el = currentInDegree.get(i);
+
                 if (el == 0) {
-                    fringe.push(toUpdate);
+                    fringe.push(i);
                 }
             }
-
             return curr;
         }
 
@@ -362,9 +395,11 @@ public class Graph implements Iterable<Integer> {
     public List<Integer> shortestPath(int start, int stop) {
         ArrayList<Integer> result = new ArrayList<Integer>();
         Iterator<Integer> iter = new Dijkstras(start, stop);
+        int curr;
         while (iter.hasNext()) {
-            result.add(iter.next());
+            curr = iter.next();
         }
+
         return result;
     }
 
@@ -377,17 +412,24 @@ public class Graph implements Iterable<Integer> {
         private int[] distTo;
         private int[] edgeTo;
         private Set<Integer> visited;
+        private int stop;
+
+//        private LinkedList<Integer> result;
+//
+//
+//        result.addFirst(edgeTo[curr]);
 
 
 // fringe = new PriorityQueue<>(vertexCount, new Node()); //think about what this comparator should be.
 
         Dijkstras(Integer start, Integer stop) {
+            this.stop = stop;
             Set<Integer> visited = new HashSet<>();
             Queue<Node> fringe = new PriorityQueue<>(Comparator.comparing((node) -> node.getDistToSource()));
 
             fringe.add(new Node(start, 0));
             int[] distTo = new int[vertexCount];
-            int[] edgeTo = new int[vertexCount - 1];
+            int[] edgeTo = new int[vertexCount];
             distTo[start] = 0;
 
             for (int i = 1; i < vertexCount; i++) {
@@ -399,36 +441,8 @@ public class Graph implements Iterable<Integer> {
 
         @Override
         public boolean hasNext() {
-            return
-            if (!fringe.isEmpty() && (visited.size() != vertexCount)) {
-//                int i = fringe.pop();
-//                if (!neighbors(i).isEmpty()) {
-//                    return false;
-//                }
-//                fringe.push(i);
-//                return true;
-//            }
-//            return false;
-
-            //we DON'T have a hasNext when:
-                // the length of the visited hashSet = vertexCount OR
-                //the fringe is empty
-            return false;
+            return !fringe.isEmpty() && visited.contains(stop);
         }
-
-        //Next:
-        //while (!fringe.isEmpty())
-        //int poppedOff = fringe.poll();
-        //for (int i: neighbors(poppedOff))
-        //int weight = getEdge(poppedOff, i).weight <-this gets the weight between poppedOff(which is the parent of "i" the neighbor) and i (the neighbor)
-        //int length = distTo[poppedOff] + weight; <- this is the distance to i, our node of interest, by going from: source -> poppedOff, poppedOff -> i
-        //if ( length < distTo[i])
-        // distTo[i] = length; <-updating our distTo source to be this new length, which is closer
-        // edgeTo[i] = poppedOff; <- since we now have a new path of reaching i, we update the edgeTo to be the parent it now takes a path from
-        // if (fringe.contains(i)) <- this if loop is to remove the old nodeval-distTo val priority pair, then add in the new one. might not need this?
-        //coz if we hit this condition means that an update was made, so we def want to remove the old one and add in the new one.
-        //make a new node;
-        //add new node to fringe;
 
         @Override
         public Integer next() {
@@ -453,7 +467,6 @@ public class Graph implements Iterable<Integer> {
                     }
                 }
             }
-
             return poppedOff;
         }
 
@@ -503,5 +516,6 @@ public class Graph implements Iterable<Integer> {
             return Integer.compare(this.distToSource, node.getDistToSource());
         }
     }
+
 }
 
