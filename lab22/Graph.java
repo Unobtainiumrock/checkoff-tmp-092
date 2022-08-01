@@ -407,18 +407,12 @@ public class Graph implements Iterable<Integer> {
         return adjLists[from].get(to);
     }
 
-    private class Dijkstras implements Iterator<Integer> {
+    private class Dijikstras implements Iterator<Integer> {
         private PriorityQueue<Node> fringe;
         private int[] distTo;
         private int[] edgeTo;
         private Set<Integer> visited;
         private int stop;
-
-//        private LinkedList<Integer> result;
-//
-//
-//        result.addFirst(edgeTo[curr]);
-
 
 // fringe = new PriorityQueue<>(vertexCount, new Node()); //think about what this comparator should be.
 
