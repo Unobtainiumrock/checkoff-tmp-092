@@ -88,6 +88,7 @@ public class RandomGraph {
         }
 
         this.adjMatrix[x][y] = 1;
+        this.adjMatrix[y][x] = 1;
 
         /**
          * Randomly walk.
