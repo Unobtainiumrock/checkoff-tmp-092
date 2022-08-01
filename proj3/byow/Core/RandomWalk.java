@@ -119,10 +119,10 @@ public class RandomWalk {
         l.add(down(orderedPair));
         l.add(left(orderedPair));
         l.add(right(orderedPair));
-        l.add(downRight(orderedPair));
-        l.add(downLeft(orderedPair));
-        l.add(upRight(orderedPair));
-        l.add(upLeft(orderedPair));
+//        l.add(downRight(orderedPair));
+//        l.add(downLeft(orderedPair));
+//        l.add(upRight(orderedPair));
+//        l.add(upLeft(orderedPair));
 
         int randomIndex = r.nextInt(8);
 

@@ -21,11 +21,11 @@ public class Cell {
 
     private Cell childTwo;
 
-    private Rectangle room; //TODO: Rectangle's (0,0) is at top left, need to consider orientation when implementing rooms
+    private Rectangle room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
 
     private ArrayList<Rectangle> hallways;
 
-    private int adjMatrix[][]; //TODO: populate this after hallways are established
+    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
 
 
     /**
@@ -47,71 +47,11 @@ public class Cell {
 
 
     /**
-     *
-     * @return true if we can split the cell more, and also does the size and coord position generation for the Cell
-     */
-    public boolean split() {
-        if (this.childOne != null || this.childTwo != null) {
-            return false; // already split, so don't need to split this cell anymore
-        }
-
-        boolean splitHori = r.nextBoolean();
-
-        if (this.width > this.height && this.width / this.height >= 1.25) {
-            splitHori = false;
-        } else if (this.height > this.width && this.height / this.width >= 1.25) {
-            splitHori = true;
-        }
-
-        maxSplit = (splitHori ? this.height : this.width) - this.minCellSize;
-
-        if (maxSplit <= this.minCellSize) {
-            return false;
-        }
-
-        int splitLoc = r.nextInt(maxSplit);
-
-        if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
-            childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
-            childTwo = new Cell(this.seed, this.x, this.y + splitLoc, this.width, this.height - splitLoc);
-        } else {
-            childOne = new Cell(this.seed, this.x, this.y, splitLoc, this.height);
-            childTwo = new Cell(this.seed, this.x + splitLoc, this.y, this.width - splitLoc, this.height);
-        }
-        return true;
-    }
-
-
-    /**
-     * create rooms within Cell by specifying the room width, room height, room x coord, room y coord in Cell
-     */
-    public void createRooms() {
-        if (this.childOne != null) { //make room for childOne until all children in childOne have rooms
-            this.childOne.createRooms();
-        } else if (this.childTwo != null) { //make room for childTwo until all children in childTwo have rooms
-            this.childTwo.createRooms();
-        } else if (this.childOne != null && this.childTwo != null) { //only hit here after above recursions have created rooms for all and returning back
-            createHallways(childOne.getRoom(), childTwo.getRoom());
-
-        } else {
-            //TODO: find if there's any way to set the lower bound of r.nextInt to be at least 1 so don't generate wasted rooms with height or width = 0
-            int roomWidth = r.nextInt(this.width - 2); //-2 for a space 1 buffer on each side
-            int roomHeight = r.nextInt(this.height - 2);
-            int roomXCoord = r.nextInt(this.width - roomWidth - 1); //-1 for buffer so room doesn't stick against side of Cell
-            int roomYCoord = r.nextInt(this.height - roomHeight - 1);
-            this.room = new Rectangle(x + roomXCoord, y + roomYCoord, roomHeight, roomWidth);
-            //TODO: fill grid in each room with a certain type of tile
-            //TODO: surround each room generated with wall tiles
-        }
-    }
-
-
-    /**
      * Creates an ArrayList that would be filled with Cells (including their position on the board and size), which
      * are then filled with a different sized room in each Cell
      */
     public void createCells() {
-        int maxCellSize = 10;
+        int maxCellSize = 10; //TODO: could maybe make this random too? But maybe not just so we don't get a crazy big room
 
         List<Cell> cells = new ArrayList<>();
 
@@ -137,6 +77,67 @@ public class Cell {
             }
         }
         srcCell.createRooms(); //create rooms starting from srcCell, recursively going into each of its children cells to make rooms
+    }
+
+
+    /**
+     *
+     * @return true if we can split the cell more -- would then generate the position and size of the Cell
+     */
+    public boolean split() {
+        if (this.childOne != null || this.childTwo != null) {
+            return false; // already split, so don't need to split this cell anymore
+        }
+
+        boolean splitHori = r.nextBoolean();
+
+        if (this.width > this.height && this.width / this.height >= 1.25) {
+            splitHori = false;
+        } else if (this.height > this.width && this.height / this.width >= 1.25) {
+            splitHori = true;
+        }
+
+        maxSplit = (splitHori ? this.height : this.width) - this.minCellSize;
+
+        if (maxSplit <= this.minCellSize) {
+            return false;
+        }
+
+        //TODO: find if there's any way to set the lower bound of r.nextInt to be at least 1 so
+        // we don't "generate" wasted cells with height or width = 0
+        int splitLoc = r.nextInt(maxSplit);
+
+        if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
+            childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
+            childTwo = new Cell(this.seed, this.x, this.y + splitLoc, this.width, this.height - splitLoc);
+        } else {
+            childOne = new Cell(this.seed, this.x, this.y, splitLoc, this.height);
+            childTwo = new Cell(this.seed, this.x + splitLoc, this.y, this.width - splitLoc, this.height);
+        }
+        return true;
+    }
+
+
+    /**
+     * create rooms within Cell by specifying the room width, room height, room x coord, room y coord in Cell
+     */
+    public void createRooms() {
+        if (this.childOne != null) { //make room for childOne until all children in childOne have rooms
+            this.childOne.createRooms();
+        } else if (this.childTwo != null) { //make room for childTwo until all children in childTwo have rooms
+            this.childTwo.createRooms();
+        } else if (this.childOne != null && this.childTwo != null) { //only hit here after above recursions have created rooms for all and returning back
+            createHallways(childOne.getRoom(), childTwo.getRoom());
+
+        } else {
+            int roomWidth = r.nextInt(this.width - 2); //-2 for a space 1 buffer on each side
+            int roomHeight = r.nextInt(this.height - 2);
+            int roomXCoord = r.nextInt(this.width - roomWidth - 1); //-1 for buffer so room doesn't stick against side of Cell
+            int roomYCoord = r.nextInt(this.height - roomHeight - 1);
+            this.room = new Rectangle(x + roomXCoord, y + roomYCoord, roomHeight, roomWidth);
+            //TODO: fill grid in each room with a certain type of tile
+            //TODO: surround each room generated with wall tiles
+        }
     }
 
 
