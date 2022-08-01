@@ -393,37 +393,40 @@ public class Graph implements Iterable<Integer> {
     }
 
     public List<Integer> shortestPath(int start, int stop) {
-        ArrayList<Integer> result = new ArrayList<Integer>();
         Iterator<Integer> iter = new Dijkstras(start, stop);
-        int curr;
+        int curr = 0;
         while (iter.hasNext()) {
             curr = iter.next();
         }
 
-        return result;
+        return Dijkstras.result(curr);
     }
 
     public Edge getEdge(int from, int to) {
-        return adjLists[from].get(to);
+
+        //return adjLists[from].get(adjLists[from].indexOf(to));
+        return adjLists[from].stream()
+                .filter((edge) -> edge.to == to)
+                .collect(Collectors.toList()).get(0);
     }
 
     private class Dijikstras implements Iterator<Integer> {
         private PriorityQueue<Node> fringe;
         private int[] distTo;
-        private int[] edgeTo;
+        private static int[] edgeTo;
         private Set<Integer> visited;
         private int stop;
 
-// fringe = new PriorityQueue<>(vertexCount, new Node()); //think about what this comparator should be.
 
+        //constructor
         Dijkstras(Integer start, Integer stop) {
             this.stop = stop;
-            Set<Integer> visited = new HashSet<>();
-            Queue<Node> fringe = new PriorityQueue<>(Comparator.comparing((node) -> node.getDistToSource()));
+            this.visited = new HashSet<>();
+            this.fringe = new PriorityQueue<>(Comparator.comparing((node) -> node.getDistToSource()));
 
             fringe.add(new Node(start, 0));
-            int[] distTo = new int[vertexCount];
-            int[] edgeTo = new int[vertexCount];
+            this.distTo = new int[vertexCount];
+            this.edgeTo = new int[vertexCount];
             distTo[start] = 0;
 
             for (int i = 1; i < vertexCount; i++) {
@@ -433,9 +436,20 @@ public class Graph implements Iterable<Integer> {
 
         }
 
+
+        public static LinkedList<Integer> result(int curr) {
+            LinkedList<Integer> result = new LinkedList<>();
+            while (curr != 0) {
+                result.addFirst(curr);
+                curr = edgeTo[curr];
+            }
+            result.addFirst(curr);
+            return result;
+        }
+
         @Override
         public boolean hasNext() {
-            return !fringe.isEmpty() && visited.contains(stop);
+            return !fringe.isEmpty() && !visited.contains(stop);
         }
 
         @Override
@@ -457,7 +471,7 @@ public class Graph implements Iterable<Integer> {
                         edgeTo[i] = poppedOff;
 
                         Node update = new Node(i, distTo[i]);
-                        fringe.add(update); //fringe: [1, infinity], [2, infinity], [1, 10], [2, 13]
+                        fringe.add(update);
                     }
                 }
             }
