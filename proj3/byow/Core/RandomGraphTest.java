@@ -1,10 +1,14 @@
 package byow.Core;
 
+import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import org.junit.Test;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static byow.Core.HelperFunctions.*;
 import static org.junit.Assert.assertTrue;
@@ -46,29 +50,73 @@ public class RandomGraphTest {
 
     @Test
     public void worldSandbox() {
-        TETile[][] world = new TETile[60][90];
+        TERenderer ter = new TERenderer();
+        TETile[][] world = new TETile[90][60];
 
+        // Fill the world with empty spaces
         for (int x = 0; x < 60; x += 1) {
             for (int y = 0; y < 90; y += 1) {
-                world[x][y] = Tileset.NOTHING;
+                world[y][x] = Tileset.NOTHING;
             }
         }
 
         Cell wo = new Cell();
 
-        System.out.println(wo.getCells().size());
-        System.out.println(wo.timesRan);
-
-        wo.getCells()
-                .stream().map((cell) -> cell.getRoom())
-                .forEach(System.out::println);
-
+//        wo.getCells()
+//                .stream().map((cell) -> cell.getRoom())
+//                .forEach((room) -> {
+//                    int x = (int) room.getX();
+//                    int y = (int) room.getY();
 //
-//        for (int i = 0; i < 100; i++) {
-//            System.out.println(inclusiveRandom(5, 7));
+////                    System.out.println(x);
+//
+//                    world[x][y] = Tileset.FLOWER;
+//                });
+
+        ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
+                .stream().map((cell) -> cell.getRoom())
+                .collect(Collectors.toList());
+
+        for (Rectangle r : rs) {
+            System.out.println(r);
+            int x = (int) r.getX();
+            int y = (int) r.getY();
+
+            world[x][y] = Tileset.FLOWER;
+        }
+
+        ter.renderFrame(world);
+    }
+
+    public static void main(String[] args) {
+        TERenderer ter = new TERenderer();
+        TETile[][] world = new TETile[90][60];
+
+//         Fill the world with empty spaces
+        for (int x = 0; x < 60; x += 1) {
+            for (int y = 0; y < 90; y += 1) {
+                world[y][x] = Tileset.FLOWER;
+            }
+        }
+
+//        Cell wo = new Cell();
+//
+//
+//        ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
+//                .stream().map((cell) -> cell.getRoom())
+//                .collect(Collectors.toList());
+//
+//        for (Rectangle r : rs) {
+//            System.out.println(r);
+//            int x = (int) r.getX();
+//            int y = (int) r.getY();
+//
+//            world[x][y] = Tileset.FLOOR;
 //        }
 
+        world[0][0] = Tileset.FLOWER;
 
+        ter.renderFrame(world);
     }
 
 }
