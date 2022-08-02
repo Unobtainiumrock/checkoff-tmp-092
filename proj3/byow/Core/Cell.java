@@ -36,7 +36,7 @@ public class Cell {
      * Used for when the world is first generated.
      */
     public Cell() {
-        this(69, 0, 0, 35, 30);
+        this(69, 0, 0, 90, 60);
         this.cells = this.partition();
     }
 
@@ -137,43 +137,47 @@ public class Cell {
     /**
      * create rooms within the Cell partitions by specifying the room width, room height, room x coord, room y coord in Cell
      */
+    private void createRooms(Cell c) {
+        if (c.getChildOne() != null || c.getChildTwo() != null) {
+            if (c.getChildOne() != null) {
+                createRooms(c.getChildOne());
+            }
+            if (c.getChildTwo() != null) {
+                createRooms(c.getChildTwo());
+            }
+            if (c.getChildOne() != null && c.getChildTwo() != null) {
+                createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
+            }
+        } else {
+//            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
+            int roomWidth = inclusiveRandom(this.MINSIZE, c.width) - 2;
+//            int roomHeight = r.nextInt(this.height - 1) + 1;
+            int roomHeight = inclusiveRandom(this.MINSIZE, c.height) - 2 ;
+//            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
+            int roomXCoord = inclusiveRandom(1, c.width - roomWidth) - 1;
+//            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
+            int roomYCoord = inclusiveRandom(1, c.height - roomHeight) - 1;
+            c.room = new Rectangle(c.getX() + roomXCoord, c.getY() + roomYCoord, roomHeight, roomWidth);
+
+            //TODO: fill grid in each room with a certain type of tile
+            // Tile
+            // tileset
+            // render
+
+            //TODO: surround each room generated with wall tiles
+        }
+    }
+//
 //    private void createRooms(Cell c) {
-//        if (c.getChildOne() != null) { //make room for childOne until all children in childOne have rooms
+//        this.timesRan++;
+//        if (c.getChildOne() != null) {
 //            createRooms(c.getChildOne());
-//        } else if (c.getChildTwo() != null) { //make room for childTwo until all children in childTwo have rooms
+//        } else if (c.getChildTwo() != null) {
 //            createRooms(c.getChildTwo());
 //        } else if (c.getChildOne() != null && c.getChildTwo() != null) { //only hit here after above recursions have created rooms for all and returning back
 //            createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
-//        } else {
-////            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides
-//            int roomWidth = inclusiveRandom(this.MINSIZE, c.width - 2);
-////            int roomHeight = r.nextInt(this.height - 1) + 1;
-//            int roomHeight = inclusiveRandom(this.MINSIZE, c.height - 2);
-////            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
-//            int roomXCoord = inclusiveRandom(1, this.width - roomWidth - 1);
-////            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
-//            int roomYCoord = inclusiveRandom(1, this.height - roomHeight - 1);
-//            this.room = new Rectangle(x + roomXCoord, y + roomYCoord, roomHeight, roomWidth);
-//
-//            //TODO: fill grid in each room with a certain type of tile
-//            // Tile
-//            // tileset
-//            // render
-//
-//            //TODO: surround each room generated with wall tiles
 //        }
 //    }
-    
-    private void createRooms(Cell c) {
-        this.timesRan++;
-        if (c.getChildOne() != null) {
-            createRooms(c.getChildOne());
-        } else if (c.getChildTwo() != null) {
-            createRooms(c.getChildTwo());
-        } else if (c.getChildOne() != null && c.getChildTwo() != null) { //only hit here after above recursions have created rooms for all and returning back
-            createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
-        }
-    }
 
 
     /**
