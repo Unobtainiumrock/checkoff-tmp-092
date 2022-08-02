@@ -90,32 +90,42 @@ public class RandomGraphTest {
 
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
+        ter.initialize(90, 60);
         TETile[][] world = new TETile[90][60];
 
 //         Fill the world with empty spaces
         for (int x = 0; x < 60; x += 1) {
             for (int y = 0; y < 90; y += 1) {
-                world[y][x] = Tileset.FLOWER;
+                world[y][x] = Tileset.NOTHING;
             }
         }
 
-//        Cell wo = new Cell();
+        Cell wo = new Cell();
 //
 //
-//        ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
-//                .stream().map((cell) -> cell.getRoom())
-//                .collect(Collectors.toList());
-//
-//        for (Rectangle r : rs) {
-//            System.out.println(r);
-//            int x = (int) r.getX();
-//            int y = (int) r.getY();
-//
-//            world[x][y] = Tileset.FLOOR;
-//        }
+        ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
+                .stream().map((cell) -> cell.getRoom())
+                .collect(Collectors.toList());
 
-        world[0][0] = Tileset.FLOWER;
+        for (Rectangle r : rs) {
+            int x = (int) r.getX(); // Top left corner
+            int y = (int) r.getY(); // top left corner
+            int width = (int) r.getWidth();
+            int height = (int) r.getHeight();
+            // x + width
+            // y + height
 
+            // Top/Bottom
+            for (int i = 0; i < width; i++) {
+                world[x + i][y] = Tileset.FLOOR;
+            }
+
+
+            // Left
+
+            // Right
+
+        }
         ter.renderFrame(world);
     }
 
