@@ -8,16 +8,25 @@ package byow.Core;
 
 
 
-// Density increases as number of edges approaches nuber of vertices squared.
+// Density increases as number of edges approaches number of vertices squared.
 
 // User provides seed
 
+// NOTE: This approach my no longer be used. My original approach was to generate a random graph
+// to provide relational data and size characteristics of hallways and rooms.
+// Then I was going to use graph as a reference for how elements would be placed within a system
+// that imposes spacial logic. I was looking into things like planar force-directed graphs
+// altogether, this would have been a random, planar, force-directed graph.
+// For time's sake, we'll likely transition to a system that uses BSP trees.
+// The new approach will scrap an adjacency matrix in favor of an adjacency list.
+// I'm keeping this here in case it ends up being revisited.
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 /**
+ *
  * This random graph will serve as our model in our MVC architecture.
  */
 public class RandomGraph {

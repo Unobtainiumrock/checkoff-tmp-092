@@ -1,40 +1,53 @@
 package byow.Core;
 
+import byow.TileEngine.TERenderer;
+import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static byow.Core.HelperFunctions.*;
+
 public class Cell {
 
+    private static final int MINSIZE = 5, MAXSIZE = 10;
     private Random r;
-
     private int seed;
-
-    private static final int minCellSize = 5;
-
     private int x, y, height, width;
 
     private int maxSplit;
 
-    private Cell childOne;
-
-    private Cell childTwo;
+    private Cell childOne, childTwo;
 
     private Rectangle room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
 
     private ArrayList<Rectangle> hallways;
+    private List<Cell> cells;
 
-    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
+    public int timesRan;
+
+//    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
 
 
     /**
+     * Used for when the world is first generated.
+     */
+    public Cell() {
+        this(69, 0, 0, 35, 30);
+        this.cells = this.partition();
+    }
+
+    /**
      * Constructor
-     * @param seed user's input seed
-     * @param x x coord position of Cell
-     * @param y y coord position of Cell
+     *
+     * @param seed   user's input seed
+     * @param x      x coord position of Cell
+     * @param y      y coord position of Cell
      * @param height height of the Cell
-     * @param width width of the Cell
+     * @param width  width of the Cell
      */
     public Cell(int seed, int x, int y, int width, int height) {
         this.seed = seed;
@@ -45,28 +58,32 @@ public class Cell {
         this.width = width;
     }
 
-
     /**
      * Creates an ArrayList that would be filled with Cells (including their position on the board and size), which
      * are then filled with a different sized room in each Cell
      */
-    public void createCells() {
-        int maxCellSize = 10; //TODO: could maybe make this random too? But maybe not just so we don't get a crazy big room
-
+    public List<Cell> partition() {
         List<Cell> cells = new ArrayList<>();
 
-        Cell srcCell = new Cell(seed, 0, 0, width, height);
+//        Cell srcCell = new Cell(seed, 0, 0, width, height);
+        Cell srcCell = this;
 
         cells.add(srcCell);
 
         boolean splitted = true;
 
         while (splitted) {
+
             splitted = false;
 
             for (int i = 0; i < cells.size(); i++) {
+
+                if (cells.get(i).width < this.MINSIZE || cells.get(i).height < this.MINSIZE) {
+                    System.out.println("Violation occurred");
+                }
+
                 if (cells.get(i).childOne == null && cells.get(i).childTwo == null) {
-                    if (cells.get(i).width > maxCellSize || cells.get(i).height > maxCellSize) {
+                    if (cells.get(i).width > this.MAXSIZE || cells.get(i).height > this.MAXSIZE) {
                         if (cells.get(i).split()) {
                             cells.add(cells.get(i).childOne);
                             cells.add(cells.get(i).childTwo);
@@ -76,20 +93,20 @@ public class Cell {
                 }
             }
         }
-        srcCell.createRooms(); //create rooms starting from srcCell, recursively going into each of its children cells to make rooms
+        srcCell.createRooms(srcCell);
+        return cells;
     }
 
 
     /**
-     *
      * @return true if we can split the cell more -- would then generate the position and size of the Cell
      */
-    public boolean split() {
+    private boolean split() {
         if (this.childOne != null || this.childTwo != null) {
             return false; // already split, so don't need to split this cell anymore
         }
 
-        boolean splitHori = r.nextBoolean();
+        boolean splitHori = this.r.nextBoolean();
 
         if (this.width > this.height && this.width / this.height >= 1.25) {
             splitHori = false;
@@ -97,15 +114,14 @@ public class Cell {
             splitHori = true;
         }
 
-        maxSplit = (splitHori ? this.height : this.width) - this.minCellSize;
+        maxSplit = (splitHori ? this.height : this.width) - this.MINSIZE;
 
-        if (maxSplit <= this.minCellSize) {
+        if (maxSplit <= this.MINSIZE) {
             return false;
         }
 
-        //TODO: find if there's any way to set the lower bound of r.nextInt to be at least 1 so
-        // we don't "generate" wasted cells with height or width = 0
-        int splitLoc = r.nextInt(maxSplit);
+        int splitLoc = inclusiveRandom(this.MINSIZE, maxSplit);
+
 
         if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
             childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
@@ -119,24 +135,43 @@ public class Cell {
 
 
     /**
-     * create rooms within Cell by specifying the room width, room height, room x coord, room y coord in Cell
+     * create rooms within the Cell partitions by specifying the room width, room height, room x coord, room y coord in Cell
      */
-    public void createRooms() {
-        if (this.childOne != null) { //make room for childOne until all children in childOne have rooms
-            this.childOne.createRooms();
-        } else if (this.childTwo != null) { //make room for childTwo until all children in childTwo have rooms
-            this.childTwo.createRooms();
-        } else if (this.childOne != null && this.childTwo != null) { //only hit here after above recursions have created rooms for all and returning back
-            createHallways(childOne.getRoom(), childTwo.getRoom());
-
-        } else {
-            int roomWidth = r.nextInt(this.width - 2); //-2 for a space 1 buffer on each side
-            int roomHeight = r.nextInt(this.height - 2);
-            int roomXCoord = r.nextInt(this.width - roomWidth - 1); //-1 for buffer so room doesn't stick against side of Cell
-            int roomYCoord = r.nextInt(this.height - roomHeight - 1);
-            this.room = new Rectangle(x + roomXCoord, y + roomYCoord, roomHeight, roomWidth);
-            //TODO: fill grid in each room with a certain type of tile
-            //TODO: surround each room generated with wall tiles
+//    private void createRooms(Cell c) {
+//        if (c.getChildOne() != null) { //make room for childOne until all children in childOne have rooms
+//            createRooms(c.getChildOne());
+//        } else if (c.getChildTwo() != null) { //make room for childTwo until all children in childTwo have rooms
+//            createRooms(c.getChildTwo());
+//        } else if (c.getChildOne() != null && c.getChildTwo() != null) { //only hit here after above recursions have created rooms for all and returning back
+//            createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
+//        } else {
+////            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides
+//            int roomWidth = inclusiveRandom(this.MINSIZE, c.width - 2);
+////            int roomHeight = r.nextInt(this.height - 1) + 1;
+//            int roomHeight = inclusiveRandom(this.MINSIZE, c.height - 2);
+////            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
+//            int roomXCoord = inclusiveRandom(1, this.width - roomWidth - 1);
+////            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
+//            int roomYCoord = inclusiveRandom(1, this.height - roomHeight - 1);
+//            this.room = new Rectangle(x + roomXCoord, y + roomYCoord, roomHeight, roomWidth);
+//
+//            //TODO: fill grid in each room with a certain type of tile
+//            // Tile
+//            // tileset
+//            // render
+//
+//            //TODO: surround each room generated with wall tiles
+//        }
+//    }
+    
+    private void createRooms(Cell c) {
+        this.timesRan++;
+        if (c.getChildOne() != null) {
+            createRooms(c.getChildOne());
+        } else if (c.getChildTwo() != null) {
+            createRooms(c.getChildTwo());
+        } else if (c.getChildOne() != null && c.getChildTwo() != null) { //only hit here after above recursions have created rooms for all and returning back
+            createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
         }
     }
 
@@ -165,6 +200,7 @@ public class Cell {
 
     /**
      * Creates a hallway between two children rooms to ensure no room is disconnected
+     *
      * @param childOneRoom Cell's child one room
      * @param childTwoRoom Cell's child two room
      */
@@ -176,7 +212,17 @@ public class Cell {
     }
 
     /**
+     * Getter for the list of cell partitions.
+     *
+     * @return
+     */
+    public List<Cell> getCells() {
+        return this.cells;
+    }
+
+    /**
      * Getter for x coord
+     *
      * @return
      */
     public int getX() {
@@ -185,6 +231,7 @@ public class Cell {
 
     /**
      * Getter for y coord
+     *
      * @return
      */
     public int getY() {
@@ -193,6 +240,7 @@ public class Cell {
 
     /**
      * Getter for height of Cell
+     *
      * @return
      */
     public int getHeight() {
@@ -201,6 +249,7 @@ public class Cell {
 
     /**
      * Getter for width of Cell
+     *
      * @return
      */
     public int getWidth() {
@@ -209,6 +258,7 @@ public class Cell {
 
     /**
      * Getter for the first child (either left or bottom child)
+     *
      * @return
      */
     public Cell getChildOne() {
@@ -217,6 +267,7 @@ public class Cell {
 
     /**
      * Getter for the second child (either right or top child)
+     *
      * @return
      */
     public Cell getChildTwo() {
