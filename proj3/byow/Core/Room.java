@@ -1,29 +1,48 @@
 package byow.Core;
 
 
-// Need more than one rectangular room, and at least one rectangular room
+import java.awt.*;
 
-// This entire project is reminiscent of connected components exercises from cis256.
-// consider reviewing them again
+public class Room extends Rectangle {
+    private Room neighbor;
+    private boolean visited;
+    public Room(int x, int y, int width, int height) {
+        super(x, y, width, height);
+        this.visited = false;
+    }
 
-// I'm absolutely convinced that this project will involve a priority queue in some way/
-// look back at the discrete event driven simulation from cis 256.
+    /**
+     * Getter for neighboring room.
+     *
+     * @return
+     */
+    public Room getNeighbor() {
+        return this.neighbor;
+    }
 
+    /**
+     * Getter
+     *
+     * @return
+     */
+    public boolean getVisited() {
+        return this.visited;
+    }
 
-// Use seeds
-//###########################################
-//The world must be pseudorandomly generated. Pseudorandomness is discussed in lab 19.
-// We strongly suggest you rely on the provided randomness utility.
+    /**
+     * Setter
+     *
+     * @param visited
+     */
+    public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
 
-
-// Battleship can lend Help to the following:
-// ############################################
-// "Rooms cannot be built on top of each other" --consider hashmap
-// "The world must contain a random number of rooms and hallways."
-// "The locations of the rooms and hallways must be random."
-
-
-//
-
-public class Room {
+    /**
+     * Setter
+     *
+     */
+    public void setNeighbor(Room neighbor) {
+        this.neighbor = neighbor;
+    }
 }

@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class HelperFunctions {
 
-	private static Random generator = new Random();
+	private static Random generator = new Random(69);
 
 	/**
 	 * Creates a pseudo-randomized number within the inclusive range

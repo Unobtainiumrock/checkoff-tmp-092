@@ -13,7 +13,13 @@ import static byow.Core.HelperFunctions.*;
 
 public class Cell {
 
-    private static final int MINSIZE = 5, MAXSIZE = 10;
+    private static final int MINSIZE = 10, MAXSIZE = 15;
+
+
+    //* * *
+    //*   *
+    //* * *
+
     private Random r;
     private int seed;
     private int x, y, height, width;
@@ -22,9 +28,9 @@ public class Cell {
 
     private Cell childOne, childTwo;
 
-    private Rectangle room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
+    private Room room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
 
-    private ArrayList<Rectangle> hallways;
+    private ArrayList<Room> hallways;
     private List<Cell> cells;
 
     public int timesRan;
@@ -150,21 +156,14 @@ public class Cell {
             }
         } else {
 //            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
-            int roomWidth = inclusiveRandom(this.MINSIZE, c.width) - 2;
+            int roomWidth = inclusiveRandom(this.MINSIZE, c.width) - 4;
 //            int roomHeight = r.nextInt(this.height - 1) + 1;
-            int roomHeight = inclusiveRandom(this.MINSIZE, c.height) - 2 ;
+            int roomHeight = inclusiveRandom(this.MINSIZE, c.height) - 4;
 //            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
             int roomXCoord = inclusiveRandom(1, c.width - roomWidth) - 1;
 //            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
             int roomYCoord = inclusiveRandom(1, c.height - roomHeight) - 1;
-            c.room = new Rectangle(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
-
-            //TODO: fill grid in each room with a certain type of tile
-            // Tile
-            // tileset
-            // render
-
-            //TODO: surround each room generated with wall tiles
+            c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
         }
     }
 
@@ -172,14 +171,14 @@ public class Cell {
     /**
      * A helper used from random crazy recursive stuff.. not a fan.
      */
-    private Rectangle getRoomHelper(Cell c) {
+    private Room getRoomHelper(Cell c) {
         boolean splitHori = this.r.nextBoolean();
 
         if (c.room != null) {
             return c.room;
         }
-        Rectangle childOneRoom = null;
-        Rectangle childTwoRoom = null;
+        Room childOneRoom = null;
+        Room childTwoRoom = null;
 
         if (c.childOne != null) {
             childOneRoom = getRoomHelper(c.getChildOne());
@@ -190,16 +189,7 @@ public class Cell {
         if (childOneRoom == null && childTwoRoom == null) {
             return null;
         }
-//        else if (childOneRoom == null) {
-//            return childTwoRoom;
-//        } else if (childTwoRoom == null) {
-//            return childOneRoom;
-//        } else if (splitHori) {
-//            return childOneRoom;
-//        } else {
-//            return childTwoRoom;
-//        }
-        return ((childOneRoom == null) ? childTwoRoom : childOneRoom);
+        return childOneRoom == null ? childTwoRoom : childOneRoom;
     }
 
 
@@ -209,11 +199,10 @@ public class Cell {
      * @param childOneRoom Cell's child one room
      * @param childTwoRoom Cell's child two room
      */
-    private void createHallways(Rectangle childOneRoom, Rectangle childTwoRoom) {
-        this.hallways = new ArrayList<>();
-
-        //TODO: find a random point in childOneRoom, a random point in childTwoRoom
-        //TODO: connect the two rooms via these two points, making either straight or bendy hallway
+    private void createHallways(Room childOneRoom, Room childTwoRoom) {
+        childOneRoom.setNeighbor(childTwoRoom);
+        childTwoRoom.setNeighbor(childOneRoom);
+        //TODO migrate over logic of hallways maybe..
     }
 
     /**
@@ -230,7 +219,7 @@ public class Cell {
      * the null returns externally useing filter.
      * @return
      */
-    public Rectangle getRoom() {
+    public Room getRoom() {
         return this.room;
     }
 
