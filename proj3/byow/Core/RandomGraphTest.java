@@ -16,57 +16,6 @@ import static org.junit.Assert.assertTrue;
 public class RandomGraphTest {
 
     public static void main(String[] args) {
-        TERenderer ter = new TERenderer();
-        ter.initialize(90, 60);
-        TETile[][] world = new TETile[90][60];
-
-//         Fill the world with empty spaces
-        for (int y = 0; y < 60; y += 1) {
-            for (int x = 0; x < 90; x += 1) {
-                world[x][y] = Tileset.NOTHING;
-            }
-        }
-
-        Cell wo = new Cell();
-
-        System.out.println(wo.getCells().size());
-
-
-//        ArrayList<Cell> cells = (ArrayList<Cell>) wo.getCells()
-//
-        wo.getCells()
-                .stream()
-                .map((cell) -> cell.getRoom())
-                .filter((room) -> room != null)
-                .forEach((room) -> {
-                    // top/bottom
-                    int x = (int) room.getX();
-                    int y = (int) room.getY();
-                    // left/right
-                    world[x][y] = Tileset.FLOOR;
-                });
-
-        ter.renderFrame(world);
-
-//        for (Rectangle r : rs) {
-//            int x = (int) r.getX(); // Top left corner
-//            int y = (int) r.getY(); // top left corner
-//            int width = (int) r.getWidth();
-//            int height = (int) r.getHeight();
-//            // x + width
-//            // y + height
-//
-//            // Top/Bottom
-//            for (int i = 0; i < width; i++) {
-//                world[x + i][y] = Tileset.FLOOR;
-//                world[x + i][y + height - 1] = Tileset.FLOOR;
-//            }
-
-
-//             Left
-
-//             Right
-
     }
 
     @Test
@@ -82,14 +31,6 @@ public class RandomGraphTest {
 
     @Test
     public void randomPlacementTests() {
-        // No collisions
-        Random r = new Random();
-        int roomSize = 10;
-
-        for (int i = 0; i < 100; i++) {
-            System.out.println(r.nextInt(roomSize - 1) + 1);
-        }
-
     }
 
     @Test
@@ -105,17 +46,54 @@ public class RandomGraphTest {
     @Test
     public void worldSandbox() {
         TERenderer ter = new TERenderer();
-        ter.initialize(15, 10);
-        TETile[][] world = new TETile[15][10];
+        ter.initialize(90, 60);
+        TETile[][] world = new TETile[90][60];
 
-        // Fill the world with empty spaces
-        for (int y = 0; y < 10; y++) {
-            for (int x = 0; y < 15; y++) {
+//         Fill the world with empty spaces
+        for (int y = 0; y < 60; y += 1) {
+            for (int x = 0; x < 90; x += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
 
+        /**
+         * Creates our default board with size x = 90, y = 60
+         */
         Cell wo = new Cell();
+
+
+        //TODO move out whatever pieces of code are being killed when the stream is closed.
+        /**
+         * Dynamically fills our board by visiting each cell, grabbing their rooms,
+         * and then filtering off null values for rooms that don't contain cells.S
+         */
+        ArrayList<Rectangle> filteredRooms = (ArrayList<Rectangle>) wo.getCells()
+                .stream()
+                .map((cell) -> cell.getRoom())
+                .filter((room) -> room != null)
+                .collect(Collectors.toList());
+
+
+        filteredRooms
+                .forEach((room) -> {
+                    System.out.println(room.getX());
+                    // top/bottom
+                    int x = (int) room.getX();
+                    int y = (int) room.getY();
+//                    world[x][y] = Tileset.FLOOR;
+
+                    //TODO top/bottom
+                    for (int i = 0; i < room.getWidth(); i++) {
+                        world[x + i][y] = Tileset.FLOOR;
+//                        world[x][y + (int) room.getHeight() - 1] = Tileset.FLOOR;
+                    }
+                });
+
+        /**
+         * Renders our world after populatinig it with the rooms.
+         */
+        ter.renderFrame(world);
+
     }
 
     @Test
