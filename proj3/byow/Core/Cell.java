@@ -146,7 +146,7 @@ public class Cell {
                 createRooms(c.getChildTwo());
             }
             if (c.getChildOne() != null && c.getChildTwo() != null) {
-                createHallways(getRoom(c.getChildOne()), getRoom(c.getChildTwo()));
+                createHallways(getRoomHelper(c.getChildOne()), getRoomHelper(c.getChildTwo()));
             }
         } else {
 //            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
@@ -170,9 +170,9 @@ public class Cell {
 
 
     /**
-     * Get each room so can later know where to generate hallways for connection
+     * A helper used from random crazy recursive stuff.. not a fan.
      */
-    public Rectangle getRoom(Cell c) {
+    private Rectangle getRoomHelper(Cell c) {
         boolean splitHori = this.r.nextBoolean();
 
         if (c.room != null) {
@@ -182,10 +182,10 @@ public class Cell {
         Rectangle childTwoRoom = null;
 
         if (c.childOne != null) {
-            childOneRoom = getRoom(c.getChildOne());
+            childOneRoom = getRoomHelper(c.getChildOne());
         }
         if (c.childTwo != null) {
-            childTwoRoom = getRoom(c.getChildTwo());
+            childTwoRoom = getRoomHelper(c.getChildTwo());
         }
         if (childOneRoom == null && childTwoRoom == null) {
             return null;
@@ -209,7 +209,7 @@ public class Cell {
      * @param childOneRoom Cell's child one room
      * @param childTwoRoom Cell's child two room
      */
-    public void createHallways(Rectangle childOneRoom, Rectangle childTwoRoom) {
+    private void createHallways(Rectangle childOneRoom, Rectangle childTwoRoom) {
         this.hallways = new ArrayList<>();
 
         //TODO: find a random point in childOneRoom, a random point in childTwoRoom
@@ -223,6 +223,15 @@ public class Cell {
      */
     public List<Cell> getCells() {
         return this.cells;
+    }
+
+    /**
+     * Room getter. Doesn't matter if some cells don't have rooms, we will handle
+     * the null returns externally useing filter.
+     * @return
+     */
+    public Rectangle getRoom() {
+        return this.room;
     }
 
     /**
