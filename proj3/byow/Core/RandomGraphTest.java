@@ -100,13 +100,14 @@ public class RandomGraphTest {
                     for (int i = 0; i < room.getWidth() - 2; i++) {
                         for (int j = 0; j < room.getHeight() - 2; j++) {
                             try {
-                                world[x + i][y + j] = Tileset.FLOOR;
+
+                                world[x + i][y + j] = Tileset.WATER;
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x + i, y + j);
                                 floorSet.add(floorCoord);
 
                             } catch (ArrayIndexOutOfBoundsException e) {
-                                world[x - i][y + j] = Tileset.FLOOR;
+                                world[x - i][y + j] = Tileset.WATER;
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x - i, y + j);
                                 floorSet.add(floorCoord);
@@ -125,58 +126,27 @@ public class RandomGraphTest {
                     /**
                      * Room
                      */
-                    Room neighbor = room.getNeighbor();
-
                     int u = (int) room.getX();
                     int v = (int) room.getY();
-                    int[] p1 = {u, v};
-
-//                    int randomRoomXCoord = inclusiveRandom(u + 1, (int) (u + room.getWidth() - 1));
-//                    int randomRoomYCoord = inclusiveRandom(v + 1, (int) (v + room.getHeight() - 2));
 
                     /**
                      * Neighbor
                      */
-                    int g = (int) neighbor.getX();
-                    int h = (int) neighbor.getY();
-                    int[] p2 = {g, h};
-
-//                    int randomNeighborXCoord = inclusiveRandom(g + 1, (int) (g + room.getWidth() - 1));
-//                    int randomNeighborYCoord = inclusiveRandom(h + 1, (int) (h + room.getHeight() - 2));
+                    int g = (int) room.getNeighbor().getX();
+                    int h = (int) room.getNeighbor().getY();
 
                     /**
                      * Corner (Potential hallway intersection)
                      */
-                    int[] p3 = {u, h};
 
-<<<<<<< HEAD
                     // Draw p1 -> p3 (up/down)
-
                     /**
                      * Used to capture the integer the loop terminates at. Too much to think through rn.
                      */
-                    int tmp = 0;
+//                    int tmp = 0;
 
-=======
-//                    for (int i = 0; i < Math.abs(randomRoomYCoord - randomNeighborYCoord); i++) {
-//                        if (randomNeighborYCoord < randomRoomYCoord) { //neighbor is above room
-//                            world[randomRoomXCoord][randomNeighborYCoord + i] = Tileset.WALL;
-//
-//                        } else {
-//                            world[randomRoomXCoord][randomNeighborYCoord - i] = Tileset.WALL;//neighbor is beneath room
-//                        }
-//                    }
-//
-//                    for (int i = 0; i < Math.abs(randomRoomXCoord - randomNeighborXCoord); i++) {
-//                        if (randomNeighborXCoord < randomRoomXCoord) { //neighbor is to the left of room
-//                            world[randomRoomXCoord - i][randomRoomYCoord] = Tileset.WALL;
-//                        } else {
-//                            world[randomRoomXCoord + i][randomRoomYCoord] = Tileset.WALL; //neighbor is to right of room
-//                        }
-//                    }
+                    int numBroken = 0;
 
-//                     Draw p1 -> p3
->>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     for (int i = 0; i < Math.abs(v - h); i++) {
                         Map<Integer, Integer> coord = new HashMap<>();
 
@@ -193,8 +163,15 @@ public class RandomGraphTest {
 
                         coord.put(x, y);
 
-                        if (!(floorSet.contains(coord) || wallSet.contains(coord))) {
-                            world[x][y] = Tileset.FLOOR;
+
+
+//                        if (numBroken < 2 && wallSet.contains(coord)) {
+//                            world[x][y] = Tileset.WATER;
+//                            numBroken++;
+//                        }
+
+                        if (!(floorSet.contains(coord))) {
+                            world[x][y] = Tileset.WATER;
                             Map<Integer, Integer> floorCoord = new HashMap<>();
                             floorCoord.put(x, y);
                             floorSet.add(floorCoord);
@@ -204,7 +181,7 @@ public class RandomGraphTest {
                             Map<Integer, Integer> checkLeft = new HashMap<>();
                             checkLeft.put(k, y);
 
-                            if (!(floorSet.contains(checkLeft) || wallSet.contains(coord))) {
+                            if (!(floorSet.contains(checkLeft) || wallSet.contains(checkLeft))) {
                                 world[k][y] = Tileset.WALL;
                                 wallSet.add(checkLeft);
                             }
@@ -220,19 +197,17 @@ public class RandomGraphTest {
                             }
 
                         }
-                        tmp = i;
+//                        tmp = i;
                     }
                     /**
                      *  Beginning point and ending point of all (top/down) hallways.
                      *  note: This will not be reflected in the floor and wall sets.
                      *  //TODO Make these reflected in the Sets later after verifying that it doesn't affect the hall generation.
                      */
-                    try {
-                        world[u + 2][v + 2] = Tileset.FLOOR;
-                    } catch (ArrayIndexOutOfBoundsException e) {
-                        world[u + 2][v - tmp + 3] = Tileset.FLOOR;
-                    }
+                    // Should break through 2 wall cells max per path
+                    //
 
+                    int numBroken2 = 0;
                     // Draw p3 -> p2 (left/right)
                     for (int i = 0; i < Math.abs(g - u); i++) {
                         Map<Integer, Integer> coord = new HashMap<>();
@@ -250,8 +225,15 @@ public class RandomGraphTest {
 
                         }
 
-                        if (!(floorSet.contains(coord) || wallSet.contains(coord))) {
-                            world[x][y] = Tileset.FLOOR;
+
+
+//                        if (numBroken2 < 2 && wallSet.contains(coord)) {
+//                            world[x][y] = Tileset.WATER;
+//                            numBroken2++;
+//                        }
+
+                        if (!(floorSet.contains(coord))) {
+                            world[x][y] = Tileset.WATER;
                             Map<Integer, Integer> floorCoord = new HashMap<>();
                             floorCoord.put(x, y);
                             floorSet.add(floorCoord);
