@@ -54,6 +54,7 @@ public class RandomGraphTest {
 
                     //TODO top/bottom
                     for (int i = 0; i < room.getWidth(); i++) {
+<<<<<<< HEAD
                         int x1 = x + i;
                         int y2 = y + (int) room.getHeight() - 1;
 
@@ -68,10 +69,19 @@ public class RandomGraphTest {
 
                         wallSet.add(w1);
                         wallSet.add(w2);
+=======
+                        world[x + i][y] = Tileset.WALL;
+                        world[x+i][y-1] = Tileset.GRASS;
+
+                        world[x + i][y + (int) room.getHeight() - 1] = Tileset.WALL;
+                        world[x+i][y + (int) room.getHeight()] = Tileset.GRASS;
+
+>>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     }
 
                     //TODO left/right
                     for (int i = 0; i < room.getHeight(); i++) {
+<<<<<<< HEAD
                         int y1 = y + i;
                         int x2 = x + (int) room.getWidth() - 1;
 
@@ -113,6 +123,13 @@ public class RandomGraphTest {
                             }
 
                         }
+=======
+                        world[x][y + i] = Tileset.WALL;
+                        world[x-1][y+i] = Tileset.GRASS;
+
+                        world[x + (int) room.getWidth() - 1][y + i] =  Tileset.WALL;
+                        world[x + (int) room.getWidth()][y + i] =  Tileset.GRASS;
+>>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     }
                 });
 
@@ -125,22 +142,31 @@ public class RandomGraphTest {
                     /**
                      * Room
                      */
+                    Room neighbor = room.getNeighbor();
+
                     int u = (int) room.getX();
                     int v = (int) room.getY();
                     int[] p1 = {u, v};
 
+//                    int randomRoomXCoord = inclusiveRandom(u + 1, (int) (u + room.getWidth() - 1));
+//                    int randomRoomYCoord = inclusiveRandom(v + 1, (int) (v + room.getHeight() - 2));
+
                     /**
                      * Neighbor
                      */
-                    int g = (int) room.getNeighbor().getX();
-                    int h = (int) room.getNeighbor().getY();
+                    int g = (int) neighbor.getX();
+                    int h = (int) neighbor.getY();
                     int[] p2 = {g, h};
+
+//                    int randomNeighborXCoord = inclusiveRandom(g + 1, (int) (g + room.getWidth() - 1));
+//                    int randomNeighborYCoord = inclusiveRandom(h + 1, (int) (h + room.getHeight() - 2));
 
                     /**
                      * Corner (Potential hallway intersection)
                      */
                     int[] p3 = {u, h};
 
+<<<<<<< HEAD
                     // Draw p1 -> p3 (up/down)
 
                     /**
@@ -148,6 +174,26 @@ public class RandomGraphTest {
                      */
                     int tmp = 0;
 
+=======
+//                    for (int i = 0; i < Math.abs(randomRoomYCoord - randomNeighborYCoord); i++) {
+//                        if (randomNeighborYCoord < randomRoomYCoord) { //neighbor is above room
+//                            world[randomRoomXCoord][randomNeighborYCoord + i] = Tileset.WALL;
+//
+//                        } else {
+//                            world[randomRoomXCoord][randomNeighborYCoord - i] = Tileset.WALL;//neighbor is beneath room
+//                        }
+//                    }
+//
+//                    for (int i = 0; i < Math.abs(randomRoomXCoord - randomNeighborXCoord); i++) {
+//                        if (randomNeighborXCoord < randomRoomXCoord) { //neighbor is to the left of room
+//                            world[randomRoomXCoord - i][randomRoomYCoord] = Tileset.WALL;
+//                        } else {
+//                            world[randomRoomXCoord + i][randomRoomYCoord] = Tileset.WALL; //neighbor is to right of room
+//                        }
+//                    }
+
+//                     Draw p1 -> p3
+>>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     for (int i = 0; i < Math.abs(v - h); i++) {
                         Map<Integer, Integer> coord = new HashMap<>();
 
@@ -155,11 +201,32 @@ public class RandomGraphTest {
                         int y;
 
                         if (v < h) {
+<<<<<<< HEAD
                             y = v + i + 2;
 
                         } else {
                             y = v - i + 2;
 
+=======
+                            if (world[u][v+i] == Tileset.WALL) {
+                                continue;
+                            } else {
+                                world[u][v + i] = Tileset.WALL;//draws vertical hallways
+                                world[u-1][v+i] = Tileset.GRASS; //to add padding around hallways
+                                world[u+1][v+i] = Tileset.GRASS; //to add padding around hallways
+
+                            }
+
+                        }
+                        else {
+                            if (world[u][v-i] == Tileset.WALL) {
+                                continue;
+                            } else {
+                                world[u][v - i] = Tileset.WALL; //draws vertical hallways
+                                world[u-1][v-i] = Tileset.GRASS; //padding around hallway
+                                world[u+1][v-i] = Tileset.GRASS; //padding around hallway
+                            }
+>>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                         }
 
                         coord.put(x, y);
@@ -211,6 +278,7 @@ public class RandomGraphTest {
                         int x;
                         int y = h + 2;
                         if (g > u) {
+<<<<<<< HEAD
                             x = u + i + 2;
 
                             coord.put(x, y);
@@ -219,6 +287,24 @@ public class RandomGraphTest {
                             x = u - i + 2;
                             coord.put(x, y);
 
+=======
+                            if (world[u+i][h] == Tileset.WALL) {
+                                continue;
+                            } else {
+                                world[u + i][h] = Tileset.WALL; //draws horizontal hallways
+                                world[u+i][h-1] = Tileset.GRASS; //padding around hallway
+                                world[u+i][h+1] = Tileset.GRASS; //padding around hallway
+                            }
+
+                        } else {
+                            if (world[u-i][h] == Tileset.WALL) {
+                                continue;
+                            } else {
+                                world[u - i][h] = Tileset.WALL; //draws horizontal hallways
+                                world[u-i][h-1] = Tileset.GRASS; //padding around hallway
+                                world[u-i][h+1] = Tileset.GRASS; //padding around hallway
+                            }
+>>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                         }
 
                         if (!(floorSet.contains(coord) || wallSet.contains(coord))) {
