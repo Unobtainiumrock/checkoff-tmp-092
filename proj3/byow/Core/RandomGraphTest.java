@@ -17,17 +17,20 @@ public class RandomGraphTest {
 
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
-        ter.initialize(15, 10);
-        TETile[][] world = new TETile[15][10];
+        ter.initialize(90, 60);
+        TETile[][] world = new TETile[90][60];
 
 //         Fill the world with empty spaces
-        for (int y = 0; y < 10; y += 1) {
-            for (int x = 0; x < 15; x += 1) {
+        for (int y = 0; y < 60; y += 1) {
+            for (int x = 0; x < 90; x += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
 
         Cell wo = new Cell();
+
+        System.out.println(wo.getCells().size());
+
 
 //        ArrayList<Cell> cells = (ArrayList<Cell>) wo.getCells()
 //
@@ -40,7 +43,7 @@ public class RandomGraphTest {
                     int x = (int) room.getX();
                     int y = (int) room.getY();
                     // left/right
-                    world[x - 2][y] = Tileset.FLOOR;
+                    world[x][y] = Tileset.FLOOR;
                 });
 
         ter.renderFrame(world);

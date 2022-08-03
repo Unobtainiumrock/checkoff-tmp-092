@@ -36,7 +36,7 @@ public class Cell {
      * Used for when the world is first generated.
      */
     public Cell() {
-        this(69, 0, 0, 20, 10);
+        this(69, 0, 0, 90, 60);
         this.cells = this.partition();
     }
 
