@@ -36,7 +36,7 @@ public class Cell {
      * Used for when the world is first generated.
      */
     public Cell() {
-        this(69, 0, 0, 90, 60);
+        this(69, 0, 0, 20, 10);
         this.cells = this.partition();
     }
 
@@ -146,7 +146,7 @@ public class Cell {
                 createRooms(c.getChildTwo());
             }
             if (c.getChildOne() != null && c.getChildTwo() != null) {
-                createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
+                createHallways(getRoom(c.getChildOne()), getRoom(c.getChildTwo()));
             }
         } else {
 //            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
@@ -157,7 +157,7 @@ public class Cell {
             int roomXCoord = inclusiveRandom(1, c.width - roomWidth) - 1;
 //            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
             int roomYCoord = inclusiveRandom(1, c.height - roomHeight) - 1;
-            c.room = new Rectangle(c.getX() + roomXCoord, c.getY() + roomYCoord, roomHeight, roomWidth);
+            c.room = new Rectangle(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
 
             //TODO: fill grid in each room with a certain type of tile
             // Tile
@@ -167,38 +167,39 @@ public class Cell {
             //TODO: surround each room generated with wall tiles
         }
     }
-//
-//    private void createRooms(Cell c) {
-//        this.timesRan++;
-//        if (c.getChildOne() != null) {
-//            createRooms(c.getChildOne());
-//        } else if (c.getChildTwo() != null) {
-//            createRooms(c.getChildTwo());
-//        } else if (c.getChildOne() != null && c.getChildTwo() != null) { //only hit here after above recursions have created rooms for all and returning back
-//            createHallways(c.getChildOne().getRoom(), c.getChildTwo().getRoom());
-//        }
-//    }
 
 
     /**
      * Get each room so can later know where to generate hallways for connection
      */
-    public Rectangle getRoom() {
+    public Rectangle getRoom(Cell c) {
+        boolean splitHori = this.r.nextBoolean();
 
-        if (this.room != null) {
-            return this.room;
+        if (c.room != null) {
+            return c.room;
         }
         Rectangle childOneRoom = null;
         Rectangle childTwoRoom = null;
 
-        if (this.childOne != null) {
-            childOneRoom = this.childOne.getRoom();
+        if (c.childOne != null) {
+            childOneRoom = getRoom(c.getChildOne());
         }
-        if (this.childTwo != null) {
-            childTwoRoom = this.childTwo.getRoom();
+        if (c.childTwo != null) {
+            childTwoRoom = getRoom(c.getChildTwo());
         }
-
-        return ((childOneRoom != null) ? childOneRoom : childTwoRoom);
+        if (childOneRoom == null && childTwoRoom == null) {
+            return null;
+        }
+//        else if (childOneRoom == null) {
+//            return childTwoRoom;
+//        } else if (childTwoRoom == null) {
+//            return childOneRoom;
+//        } else if (splitHori) {
+//            return childOneRoom;
+//        } else {
+//            return childTwoRoom;
+//        }
+        return ((childOneRoom == null) ? childTwoRoom : childOneRoom);
     }
 
 

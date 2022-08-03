@@ -74,7 +74,7 @@ public class RandomGraphTest {
 //                });
 
         ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
-                .stream().map((cell) -> cell.getRoom())
+                .stream().map((cell) -> cell.getRoom(cell))
                 .collect(Collectors.toList());
 
         for (Rectangle r : rs) {
@@ -88,23 +88,35 @@ public class RandomGraphTest {
         ter.renderFrame(world);
     }
 
+    @Test
+    public void cellRoomTest() {
+        Cell wo = new Cell();
+        wo.getCells()
+                .stream().map((cell) -> cell.getRoom(cell))
+                .forEach(System.out::println);
+    }
+
     public static void main(String[] args) {
         TERenderer ter = new TERenderer();
-        ter.initialize(90, 60);
-        TETile[][] world = new TETile[90][60];
+        ter.initialize(15, 10);
+        TETile[][] world = new TETile[15][10];
 
 //         Fill the world with empty spaces
-        for (int x = 0; x < 60; x += 1) {
-            for (int y = 0; y < 90; y += 1) {
-                world[y][x] = Tileset.NOTHING;
+        for (int y = 0; y < 10; y += 1) {
+            for (int x = 0; x < 15; x += 1) {
+                world[x][y] = Tileset.NOTHING;
             }
         }
 
         Cell wo = new Cell();
 //
-//
+//        wo.getCells()
+//                .stream().map((cell) -> cell.getRoom(cell))
+//                .forEach(System.out::println);
+
+
         ArrayList<Rectangle> rs = (ArrayList<Rectangle>) wo.getCells()
-                .stream().map((cell) -> cell.getRoom())
+                .stream().map((cell) -> cell.getRoom(cell))
                 .collect(Collectors.toList());
 
         for (Rectangle r : rs) {
@@ -118,15 +130,15 @@ public class RandomGraphTest {
             // Top/Bottom
             for (int i = 0; i < width; i++) {
                 world[x + i][y] = Tileset.FLOOR;
+                world[x + i][y + height - 1] = Tileset.FLOOR;
             }
 
 
-            // Left
+//             Left
 
-            // Right
+//             Right
 
         }
         ter.renderFrame(world);
     }
-
 }
