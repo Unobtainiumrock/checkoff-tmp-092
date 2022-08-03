@@ -120,7 +120,8 @@ public class Cell {
             splitHori = true;
         }
 
-        maxSplit = (splitHori ? this.height : this.width) - this.MINSIZE;
+//        maxSplit = (splitHori ? this.height : this.width) - this.MINSIZE;
+        maxSplit = (splitHori ? this.height - 2 : this.width - 2) - this.MINSIZE;
 
         if (maxSplit <= this.MINSIZE) {
             return false;
@@ -130,11 +131,17 @@ public class Cell {
 
 
         if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
-            childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
-            childTwo = new Cell(this.seed, this.x, this.y + splitLoc, this.width, this.height - splitLoc);
+//            childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
+            childOne = new Cell(this.seed, this.x + 1, this.y + 1, this.width - 1, splitLoc);
+
+//            childTwo = new Cell(this.seed, this.x, this.y + splitLoc, this.width, this.height - splitLoc);
+            childTwo = new Cell(this.seed, this.x + 1, this.y + splitLoc + 1, this.width - 1, this.height - splitLoc - 1);
         } else {
-            childOne = new Cell(this.seed, this.x, this.y, splitLoc, this.height);
-            childTwo = new Cell(this.seed, this.x + splitLoc, this.y, this.width - splitLoc, this.height);
+//            childOne = new Cell(this.seed, this.x, this.y, splitLoc, this.height);
+            childOne = new Cell(this.seed, this.x + 1, this.y + 1, splitLoc, this.height - 1);
+//
+//            childTwo = new Cell(this.seed, this.x + splitLoc, this.y, this.width - splitLoc, this.height);
+            childTwo = new Cell(this.seed, this.x + splitLoc + 1, this.y + 1, this.width - splitLoc - 1, this.height - 1);
         }
         return true;
     }
@@ -163,7 +170,9 @@ public class Cell {
             int roomXCoord = inclusiveRandom(1, c.width - roomWidth) - 1;
 //            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
             int roomYCoord = inclusiveRandom(1, c.height - roomHeight) - 1;
-            c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
+
+                c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
+
         }
     }
 

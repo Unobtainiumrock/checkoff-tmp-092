@@ -6,7 +6,7 @@ import java.util.Random;
 
 public class HelperFunctions {
 
-	private static Random generator = new Random(69);
+	private static Random generator = new Random(10); //109 is the only seed that works with the padding code and changing the code in Cell.java's split cry
 
 	/**
 	 * Creates a pseudo-randomized number within the inclusive range
