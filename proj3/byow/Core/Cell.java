@@ -1,10 +1,4 @@
 package byow.Core;
-
-import byow.TileEngine.TERenderer;
-import byow.TileEngine.TETile;
-import byow.TileEngine.Tileset;
-
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,12 +8,6 @@ import static byow.Core.HelperFunctions.*;
 public class Cell {
 
     private static final int MINSIZE = 10, MAXSIZE = 15;
-
-
-    //* * *
-    //*   *
-    //* * *
-
     private Random r;
     private int seed;
     private int x, y, height, width;
@@ -29,20 +17,17 @@ public class Cell {
     private Cell childOne, childTwo;
 
     private Room room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
-
-    private ArrayList<Room> hallways;
     private List<Cell> cells;
 
-    public int timesRan;
 
-//    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
+    //    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
 
 
     /**
      * Used for when the world is first generated.
      */
     public Cell() {
-        this(69, 0, 0, 90, 60);
+        this(200, 0, 0, 90, 60);
         this.cells = this.partition();
     }
 

@@ -16,7 +16,7 @@ package byow.Core;
 // to provide relational data and size characteristics of hallways and rooms.
 // Then I was going to use graph as a reference for how elements would be placed within a system
 // that imposes spacial logic. I was looking into things like planar force-directed graphs
-// altogether, this would have been a random, planar, force-directed graph.
+// altogether, this would have been a random, planar, force-directed graph with an adjacency matrix.
 // For time's sake, we'll likely transition to a system that uses BSP trees.
 // The new approach will scrap an adjacency matrix in favor of an adjacency list.
 // I'm keeping this here in case it ends up being revisited.
