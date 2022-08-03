@@ -54,7 +54,6 @@ public class RandomGraphTest {
 
                     //TODO top/bottom
                     for (int i = 0; i < room.getWidth(); i++) {
-<<<<<<< HEAD
                         int x1 = x + i;
                         int y2 = y + (int) room.getHeight() - 1;
 
@@ -69,19 +68,10 @@ public class RandomGraphTest {
 
                         wallSet.add(w1);
                         wallSet.add(w2);
-=======
-                        world[x + i][y] = Tileset.WALL;
-                        world[x+i][y-1] = Tileset.GRASS;
-
-                        world[x + i][y + (int) room.getHeight() - 1] = Tileset.WALL;
-                        world[x+i][y + (int) room.getHeight()] = Tileset.GRASS;
-
->>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     }
 
                     //TODO left/right
                     for (int i = 0; i < room.getHeight(); i++) {
-<<<<<<< HEAD
                         int y1 = y + i;
                         int x2 = x + (int) room.getWidth() - 1;
 
@@ -123,13 +113,6 @@ public class RandomGraphTest {
                             }
 
                         }
-=======
-                        world[x][y + i] = Tileset.WALL;
-                        world[x-1][y+i] = Tileset.GRASS;
-
-                        world[x + (int) room.getWidth() - 1][y + i] =  Tileset.WALL;
-                        world[x + (int) room.getWidth()][y + i] =  Tileset.GRASS;
->>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                     }
                 });
 
@@ -201,32 +184,11 @@ public class RandomGraphTest {
                         int y;
 
                         if (v < h) {
-<<<<<<< HEAD
                             y = v + i + 2;
 
                         } else {
                             y = v - i + 2;
 
-=======
-                            if (world[u][v+i] == Tileset.WALL) {
-                                continue;
-                            } else {
-                                world[u][v + i] = Tileset.WALL;//draws vertical hallways
-                                world[u-1][v+i] = Tileset.GRASS; //to add padding around hallways
-                                world[u+1][v+i] = Tileset.GRASS; //to add padding around hallways
-
-                            }
-
-                        }
-                        else {
-                            if (world[u][v-i] == Tileset.WALL) {
-                                continue;
-                            } else {
-                                world[u][v - i] = Tileset.WALL; //draws vertical hallways
-                                world[u-1][v-i] = Tileset.GRASS; //padding around hallway
-                                world[u+1][v-i] = Tileset.GRASS; //padding around hallway
-                            }
->>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                         }
 
                         coord.put(x, y);
@@ -278,7 +240,6 @@ public class RandomGraphTest {
                         int x;
                         int y = h + 2;
                         if (g > u) {
-<<<<<<< HEAD
                             x = u + i + 2;
 
                             coord.put(x, y);
@@ -287,24 +248,6 @@ public class RandomGraphTest {
                             x = u - i + 2;
                             coord.put(x, y);
 
-=======
-                            if (world[u+i][h] == Tileset.WALL) {
-                                continue;
-                            } else {
-                                world[u + i][h] = Tileset.WALL; //draws horizontal hallways
-                                world[u+i][h-1] = Tileset.GRASS; //padding around hallway
-                                world[u+i][h+1] = Tileset.GRASS; //padding around hallway
-                            }
-
-                        } else {
-                            if (world[u-i][h] == Tileset.WALL) {
-                                continue;
-                            } else {
-                                world[u - i][h] = Tileset.WALL; //draws horizontal hallways
-                                world[u-i][h-1] = Tileset.GRASS; //padding around hallway
-                                world[u-i][h+1] = Tileset.GRASS; //padding around hallway
-                            }
->>>>>>> eac61853902e1e4cf695d7050f1f3c676cb6dcf5
                         }
 
                         if (!(floorSet.contains(coord) || wallSet.contains(coord))) {
