@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Random;
 
 public class HelperFunctions {
+	private Random generator;
 
-	private static Random generator = new Random(10); //109 is the only seed that works with the padding code and changing the code in Cell.java's split cry
+	public HelperFunctions(Random r) {
+		this.generator = r;
+	}
 
 	/**
 	 * Creates a pseudo-randomized number within the inclusive range
@@ -15,8 +18,8 @@ public class HelperFunctions {
 	 * @param lower inclusive lower bound
 	 * @return pseudo-randomized number
 	 */
-	public static int inclusiveRandom(int lower, int upper) {
-		return generator.nextInt(upper - lower + 1) + lower;
+	public int inclusiveRandom(int lower, int upper) {
+		return this.generator.nextInt(upper - lower + 1) + lower;
 	}
 
 	/**
@@ -27,8 +30,8 @@ public class HelperFunctions {
 	 * @param lower exclusive lower bound
 	 * @return pseudo-randomized number
 	 */
-	public static int exclusiveRandom(int lower, int upper) {
-		return generator.nextInt(upper - lower - 1) + lower + 1;
+	public int exclusiveRandom(int lower, int upper) {
+		return this.generator.nextInt(upper - lower - 1) + lower + 1;
 	}
 
 	/**
@@ -48,12 +51,12 @@ public class HelperFunctions {
 	 * @param exclude an array of integers to exclude from the randomization
 	 * @return pseudo-randomized number
 	 */
-	public static int specialRandom(int upper, int lower, List<Integer> exclude) {
+	public int specialRandom(int upper, int lower, List<Integer> exclude) {
 		if (exclude.isEmpty()) {
 			return exclusiveRandom(upper, lower);
 		}
 
-		int random = lower + generator.nextInt(upper - lower + 1 - exclude.size());
+		int random = lower + this.generator.nextInt(upper - lower + 1 - exclude.size());
 
 		Collections.sort(exclude); // Making sure to sort it beforehand.
 

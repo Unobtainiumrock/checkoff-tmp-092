@@ -5,19 +5,19 @@ import java.util.Random;
 
 import static byow.Core.HelperFunctions.*;
 
-public class Cell {
+public class BSPartition {
 
     private static final int MINSIZE = 10, MAXSIZE = 15;
     private Random r;
-    private int seed;
+    private HelperFunctions f;
     private int x, y, height, width;
 
     private int maxSplit;
 
-    private Cell childOne, childTwo;
+    private BSPartition childOne, childTwo;
 
     private Room room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
-    private List<Cell> cells;
+    private List<BSPartition> cells;
 
 
     //    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
@@ -26,38 +26,37 @@ public class Cell {
     /**
      * Used for when the world is first generated.
      */
-    public Cell() {
-        this(200, 0, 0, 90, 60);
+    public BSPartition(Random r) {
+        this(0, 0, 90, 60, r);
         this.cells = this.partition();
     }
 
     /**
      * Constructor
      *
-     * @param seed   user's input seed
      * @param x      x coord position of Cell
      * @param y      y coord position of Cell
      * @param height height of the Cell
      * @param width  width of the Cell
      */
-    public Cell(int seed, int x, int y, int width, int height) {
-        this.seed = seed;
-        this.r = new Random(this.seed);
+    public BSPartition(int x, int y, int width, int height, Random r) {
+        this.r = r;
         this.x = x;
         this.y = y;
         this.height = height;
         this.width = width;
+        this.f = new HelperFunctions(r);
     }
 
     /**
      * Creates an ArrayList that would be filled with Cells (including their position on the board and size), which
      * are then filled with a different sized room in each Cell
      */
-    public List<Cell> partition() {
-        List<Cell> cells = new ArrayList<>();
+    public List<BSPartition> partition() {
+        List<BSPartition> cells = new ArrayList<>();
 
 //        Cell srcCell = new Cell(seed, 0, 0, width, height);
-        Cell srcCell = this;
+        BSPartition srcCell = this;
 
         cells.add(srcCell);
 
@@ -112,15 +111,15 @@ public class Cell {
             return false;
         }
 
-        int splitLoc = inclusiveRandom(this.MINSIZE, maxSplit);
+        int splitLoc = f.inclusiveRandom(this.MINSIZE, maxSplit);
 
 
         if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
-            childOne = new Cell(this.seed, this.x, this.y, this.width, splitLoc);
-            childTwo = new Cell(this.seed, this.x, this.y + splitLoc, this.width, this.height - splitLoc);
+            childOne = new BSPartition(this.x, this.y, this.width, splitLoc, this.r);
+            childTwo = new BSPartition(this.x, this.y + splitLoc, this.width, this.height - splitLoc, this.r);
         } else {
-            childOne = new Cell(this.seed, this.x, this.y, splitLoc, this.height);
-            childTwo = new Cell(this.seed, this.x + splitLoc, this.y, this.width - splitLoc, this.height);
+            childOne = new BSPartition(this.x, this.y, splitLoc, this.height, this.r);
+            childTwo = new BSPartition(this.x + splitLoc, this.y, this.width - splitLoc, this.height, this.r);
 
         }
         return true;
@@ -130,7 +129,7 @@ public class Cell {
     /**
      * create rooms within the Cell partitions by specifying the room width, room height, room x coord, room y coord in Cell
      */
-    private void createRooms(Cell c) {
+    private void createRooms(BSPartition c) {
         if (c.getChildOne() != null || c.getChildTwo() != null) {
             if (c.getChildOne() != null) {
                 createRooms(c.getChildOne());
@@ -143,13 +142,13 @@ public class Cell {
             }
         } else {
 //            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
-            int roomWidth = inclusiveRandom(this.MINSIZE, c.width) - 4;
+            int roomWidth = f.inclusiveRandom(this.MINSIZE, c.width) - 4;
 //            int roomHeight = r.nextInt(this.height - 1) + 1;
-            int roomHeight = inclusiveRandom(this.MINSIZE, c.height) - 4;
+            int roomHeight = f.inclusiveRandom(this.MINSIZE, c.height) - 4;
 //            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
-            int roomXCoord = inclusiveRandom(1, c.width - roomWidth) - 1;
+            int roomXCoord = f.inclusiveRandom(1, c.width - roomWidth) - 1;
 //            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
-            int roomYCoord = inclusiveRandom(1, c.height - roomHeight) - 1;
+            int roomYCoord = f.inclusiveRandom(1, c.height - roomHeight) - 1;
 
                 c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
 
@@ -160,7 +159,7 @@ public class Cell {
     /**
      * A helper used from random crazy recursive stuff.. not a fan.
      */
-    private Room getRoomHelper(Cell c) {
+    private Room getRoomHelper(BSPartition c) {
         boolean splitHori = this.r.nextBoolean();
 
         if (c.room != null) {
@@ -199,7 +198,7 @@ public class Cell {
      *
      * @return
      */
-    public List<Cell> getCells() {
+    public List<BSPartition> getCells() {
         return this.cells;
     }
 
@@ -253,7 +252,7 @@ public class Cell {
      *
      * @return
      */
-    public Cell getChildOne() {
+    public BSPartition getChildOne() {
         return this.childOne;
     }
 
@@ -262,7 +261,7 @@ public class Cell {
      *
      * @return
      */
-    public Cell getChildTwo() {
+    public BSPartition getChildTwo() {
         return this.childTwo;
     }
 
