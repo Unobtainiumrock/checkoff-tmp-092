@@ -46,7 +46,7 @@ public class RandomGraphTest {
 
     @Test
     public void worldSandbox() {
-
+        System.out.println(Integer.parseInt("N"));
     }
 
     @Test

@@ -57,16 +57,23 @@ public class Engine {
 //        KeyboardInputSource in = new KeyboardInputSource();
 
         String seed = "";
-        int seedInt = 0;
+        long seedL = 0;
         input = input.toUpperCase();
+        System.out.println(input);
         char firstLtr = input.charAt(0);
         char lastLtr = input.charAt(input.length() - 1);
 
-        for (int i = 1; i < input.length() -1 ; i++) {
+        for (int i = 1; i < input.length() - 1 ; i++) {
+            System.out.println(input.charAt(i));
             seed += input.charAt(i);
         }
-        seedInt = Integer.parseInt(seed);
-        Random useSeed = new Random(seedInt);
+
+
+        seedL = Long.parseLong(seed);
+
+        Random useSeed = new Random(seedL);
+
+        System.out.println(seed);
 
         World helloWorld = new World(useSeed, 90, 60);
 
