@@ -1,15 +1,9 @@
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.HashSet;
-import java.util.HashMap;
+import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
 import java.io.IOException;
-import java.util.Random;
-import java.util.Queue;
-import java.util.ArrayDeque;
 
 /* A mutable and finite Graph object. Edge labels are stored via a HashMap
    where labels are mapped to a key calculated by the following. The graph is
@@ -130,13 +124,92 @@ public class Graph {
     }
 
     public Graph prims(int start) {
-        // TODO: YOUR CODE HERE
-        return null;
+        Graph MSTResult = new Graph();
+        HashSet<Integer> visited = new HashSet<>();
+        PriorityQueue<Node> pq = new PriorityQueue<>(Comparator.comparing((node) -> node.getDistToSource()));
+
+        int vertexCount = getAllVertices().size();
+        int[] visitedTimes = new int[vertexCount];
+        int vertexAdded = 0;
+        pq.add(new Node(-1, start, 0)); //add in starting vertex
+
+
+        while (vertexAdded < vertexCount) {
+            if (pq.peek().src != -1) {
+                if (visited.contains(pq.peek().dest) || visitedTimes[pq.peek().src] >= 2) { //
+                    pq.poll();
+                }
+            }
+            Node poppedOff = pq.poll();
+            int poppedParent = poppedOff.getSrcVal();
+            if (poppedParent != -1) {
+                visitedTimes[poppedParent] += 1;
+            }
+            int poppedVertex = poppedOff.getDestVal();
+            visitedTimes[poppedVertex] += 1;
+            int poppedEdge = poppedOff.getDistToSource();
+
+            visited.add(poppedVertex);
+
+
+            if (poppedParent != -1) { //so we don't add in the start vertex
+                MSTResult.addVertex(poppedVertex);
+                MSTResult.addEdge(poppedParent, poppedVertex, poppedEdge);
+            }
+
+            vertexAdded++;
+            Iterator<Edge> neighborEdges = getEdges(poppedVertex).iterator();
+
+            while (neighborEdges.hasNext()) {
+                Edge neighbor = neighborEdges.next();
+                int dest = neighbor.getDest();
+                if (!visited.contains(dest)) {
+                    int src = neighbor.getSource();
+                    int weight = neighbor.getWeight();
+                    pq.add(new Node(src, dest, weight));
+                }
+            }
+        }
+        return MSTResult;
     }
 
     public Graph kruskals() {
         // TODO: YOUR CODE HERE
         return null;
+    }
+
+    private class Node implements Comparable<Node> {
+
+        private int src;
+        private int dest;
+        private int distToSource;
+
+        public Node() {
+        }
+
+        public Node(int src, int dest, int distToSource) {
+            this.src = src;
+            this.dest = dest;
+            this.distToSource = distToSource;
+        }
+
+        public int getSrcVal() {
+            return this.src;
+        }
+
+        public int getDestVal() {
+            return this.dest;
+        }
+
+        public int getDistToSource() {
+            return this.distToSource;
+        }
+
+        @Override
+        public int compareTo(Node node) {
+            return Integer.compare(this.distToSource, node.getDistToSource());
+        }
+
     }
 
     /* Returns a randomly generated graph with VERTICES number of vertices and
@@ -179,6 +252,14 @@ public class Graph {
             System.err.println("Caught IOException: " + e.getMessage());
             System.exit(1);
             return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        Graph test = loadFromText("inputs/graphTestNormal.in");
+        Graph res = test.prims(0);
+        for (Edge e: res.getAllEdges()) {
+            System.out.println(e);
         }
     }
 }
