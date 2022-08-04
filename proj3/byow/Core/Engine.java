@@ -33,8 +33,8 @@ public class Engine {
 
 
     /**
-     * TODO this thing first, then interactWithKeyboard. This will act
-     * TODO as simulating key entries.
+     * THIS THING FIRST DO ME DO ME DO ME thing first, then interactWithKeyboard. This will act
+     * THIS THING FIRST DO ME DO ME DO ME  as simulating key entries.
      */
 
 
@@ -43,11 +43,11 @@ public class Engine {
      * will be a series of characters (for example, "n123sswwdasdassadwas",
      * "n123sss:q", "lwww". The engine should behave exactly as if the user
      * typed these characters into the engine using interactWithKeyboard.
-     * TODO Use serialization and de-serialization for the persistence of state.
+     * THIS THING FIRST DO ME DO ME DO ME  Use serialization and de-serialization for the persistence of state.
      * Migrate over my parsing and validating user inputs over
      * from previous java projects.
-     * TODO WE should expect de-serialization to serve as an initial state to
-     * TODO which we "concatenate" the subsequent state of the program. See (*).
+     * THIS THING FIRST DO ME DO ME DO ME  WE should expect de-serialization to serve as an initial state to
+     *THIS THING FIRST DO ME DO ME DO ME  which we "concatenate" the subsequent state of the program. See (*).
 
      * Recall that strings ending in ":q" should cause the game to quite save.
      * For example, if we do interactWithInputString("n123sss:q"), we expect
