@@ -4,59 +4,98 @@ import java.util.List;
 import java.util.Random;
 
 
+/** @author Nancy Pelosi HUSKRR
+ * Main class where everything happens. Splits up board, create rooms
+ */
 public class BSPartition {
 
+    /**
+     * min and max size a partition can be.
+     */
     private static final int MINSIZE = 10, MAXSIZE = 15;
-    private Random r;
-    private HelperFunctions f;
-    private int x, y, height, width;
 
+    /**
+     * x and y coord, width and height of cell partitions and
+     * rooms for CONSTRUCTOR.
+     */
+    private static final int INITX = 0, INITY = 0,
+            INITWIDTH = 90, INITHEIGHT = 60;
+
+    /**
+     * x and y coord, width and height of cell partitions and rooms.
+     */
+    private int x, y, width, height;
+
+    /**
+     * the seed.
+     */
+    private Random r;
+
+    /**
+     * help me HELP YOUUUUUU~~~.
+     */
+    private HelperFunctions f;
+
+    /**
+     * maximum size a partition can be.
+     */
     private int maxSplit;
 
+    /**
+     * the two splits of a partition.
+     */
     private BSPartition childOne, childTwo;
 
-    private Room room; //TODO: Rectangle's (0,0) is at top left, but seems like doesn't affect our orientation
+    /**
+     * the room that goes in each partition.
+     */
+    private Room room;
+
+    /**
+     * the partitions.
+     */
     private List<BSPartition> cells;
 
 
-    //    private int adjMatrix[][]; //TODO: populate this after hallways are established as we would then know who is neighbor with who
-
-
     /**
-     * Used for when the world is first generated.
+     *
+     * @param ree the random seed
      */
-    public BSPartition(Random r) {
-        this(0, 0, 90, 60, r);
+    public BSPartition(Random ree) {
+        this(INITX, INITY, INITWIDTH, INITHEIGHT, ree);
         this.cells = this.partition();
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param x      x coord position of Cell
-     * @param y      y coord position of Cell
-     * @param height height of the Cell
-     * @param width  width of the Cell
+     * @param xx      x coord position of Cell
+     * @param yy     y coord position of Cell
+     * @param heightt height of the Cell
+     * @param widthh  width of the Cell
+     * @param ree random seed
      */
-    public BSPartition(int x, int y, int width, int height, Random r) {
-        this.r = r;
-        this.x = x;
-        this.y = y;
-        this.height = height;
-        this.width = width;
-        this.f = new HelperFunctions(r);
+    public BSPartition(int xx, int yy, int widthh, int heightt, Random ree) {
+        this.r = ree;
+        this.x = xx;
+        this.y = yy;
+        this.height = heightt;
+        this.width = widthh;
+        this.f = new HelperFunctions(ree);
     }
 
     /**
-     * Creates an ArrayList that would be filled with Cells (including their position on the board and size), which
-     * are then filled with a different sized room in each Cell
+     * Creates an ArrayList that would be filled with Cells
+     * (including their position on the board and size), which
+     * are then filled with a different sized room in each Cell.
+     * @return
      */
     public List<BSPartition> partition() {
-        List<BSPartition> cells = new ArrayList<>();
+        List<BSPartition> cellss = new ArrayList<>();
 
         BSPartition srcCell = this;
 
-        cells.add(srcCell);
+        cellss.add(srcCell);
 
         boolean splitted = true;
 
@@ -64,17 +103,20 @@ public class BSPartition {
 
             splitted = false;
 
-            for (int i = 0; i < cells.size(); i++) {
+            for (int i = 0; i < cellss.size(); i++) {
 
-                if (cells.get(i).width < this.MINSIZE || cells.get(i).height < this.MINSIZE) {
+                if (cellss.get(i).width < this.MINSIZE
+                        || cellss.get(i).height < this.MINSIZE) {
                     System.out.println("Violation occurred");
                 }
 
-                if (cells.get(i).childOne == null && cells.get(i).childTwo == null) {
-                    if (cells.get(i).width > this.MAXSIZE || cells.get(i).height > this.MAXSIZE) {
-                        if (cells.get(i).split()) {
-                            cells.add(cells.get(i).childOne);
-                            cells.add(cells.get(i).childTwo);
+                if (cellss.get(i).childOne == null
+                        && cellss.get(i).childTwo == null) {
+                    if (cellss.get(i).width > this.MAXSIZE
+                            || cellss.get(i).height > this.MAXSIZE) {
+                        if (cellss.get(i).split()) {
+                            cellss.add(cellss.get(i).childOne);
+                            cellss.add(cellss.get(i).childTwo);
                             splitted = true;
                         }
                     }
@@ -82,28 +124,32 @@ public class BSPartition {
             }
         }
         srcCell.createRooms(srcCell);
-        return cells;
+        return cellss;
     }
 
 
     /**
-     * @return true if we can split the cell more -- would then generate the position and size of the Cell
+     * true if we can split the cell more -- would then
+     * generate the position and size of the Cell.
+     * @return
      */
     private boolean split() {
         if (this.childOne != null || this.childTwo != null) {
-            return false; // already split, so don't need to split this cell anymore
+            return false;
         }
 
         boolean splitHori = this.r.nextBoolean();
 
-        if (this.width > this.height && this.width / this.height >= 1.25) {
+        final double bound25 = 1.25;
+
+        if (this.width > this.height && this.width / this.height >= bound25) {
             splitHori = false;
-        } else if (this.height > this.width && this.height / this.width >= 1.25) {
+        } else if (this.height > this.width
+                && this.height / this.width >= bound25) {
             splitHori = true;
         }
 
         maxSplit = (splitHori ? this.height : this.width) - this.MINSIZE;
-//        maxSplit = (splitHori ? this.height - 2 : this.width - 2) - this.MINSIZE;
 
         if (maxSplit <= this.MINSIZE) {
             return false;
@@ -112,12 +158,16 @@ public class BSPartition {
         int splitLoc = f.inclusiveRandom(this.MINSIZE, maxSplit);
 
 
-        if (splitHori) { //the following correctly maps to our (0,0) being at bottom left corner of board
-            childOne = new BSPartition(this.x, this.y, this.width, splitLoc, this.r);
-            childTwo = new BSPartition(this.x, this.y + splitLoc, this.width, this.height - splitLoc, this.r);
+        if (splitHori) {
+            childOne = new BSPartition(this.x, this.y,
+                    this.width, splitLoc, this.r);
+            childTwo = new BSPartition(this.x, this.y + splitLoc,
+                    this.width, this.height - splitLoc, this.r);
         } else {
-            childOne = new BSPartition(this.x, this.y, splitLoc, this.height, this.r);
-            childTwo = new BSPartition(this.x + splitLoc, this.y, this.width - splitLoc, this.height, this.r);
+            childOne = new BSPartition(this.x, this.y,
+                    splitLoc, this.height, this.r);
+            childTwo = new BSPartition(this.x + splitLoc, this.y,
+                    this.width - splitLoc, this.height, this.r);
 
         }
         return true;
@@ -125,7 +175,9 @@ public class BSPartition {
 
 
     /**
-     * create rooms within the Cell partitions by specifying the room width, room height, room x coord, room y coord in Cell
+     * create rooms within the Cell partitions by specifying the room width,
+     * room height, room x coord, room y coord in Cell.
+     * @param c each cell partition
      */
     private void createRooms(BSPartition c) {
         if (c.getChildOne() != null || c.getChildTwo() != null) {
@@ -136,19 +188,17 @@ public class BSPartition {
                 createRooms(c.getChildTwo());
             }
             if (c.getChildOne() != null && c.getChildTwo() != null) {
-                createHallways(getRoomHelper(c.getChildOne()), getRoomHelper(c.getChildTwo()));
+                createHallways(getRoomHelper(c.getChildOne()),
+                        getRoomHelper(c.getChildTwo()));
             }
         } else {
-//            int roomWidth = r.nextInt(this.width - 1) + 1; // buffer the sides YOU LOSE
             int roomWidth = f.inclusiveRandom(this.MINSIZE, c.width) - 4;
-//            int roomHeight = r.nextInt(this.height - 1) + 1;
             int roomHeight = f.inclusiveRandom(this.MINSIZE, c.height) - 4;
-//            int roomXCoord = r.nextInt(this.width - roomWidth - 1) + 1; // -1 for buffer so room doesn't stick against side of Cell
             int roomXCoord = f.inclusiveRandom(1, c.width - roomWidth) - 1;
-//            int roomYCoord = r.nextInt(this.height - roomHeight - 1) + 1;
             int roomYCoord = f.inclusiveRandom(1, c.height - roomHeight) - 1;
 
-                c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord, roomWidth, roomHeight);
+            c.room = new Room(c.getX() + roomXCoord, c.getY() + roomYCoord,
+                    roomWidth, roomHeight);
 
         }
     }
@@ -156,9 +206,10 @@ public class BSPartition {
 
     /**
      * A helper used from random crazy recursive stuff.. not a fan.
+     * @param c a cell
+     * @return
      */
     private Room getRoomHelper(BSPartition c) {
-        boolean splitHori = this.r.nextBoolean();
 
         if (c.room != null) {
             return c.room;
@@ -180,7 +231,8 @@ public class BSPartition {
 
 
     /**
-     * Creates a hallway between two children rooms to ensure no room is disconnected
+     * Creates a hallway between two children rooms
+     * to ensure no room is disconnected.
      *
      * @param childOneRoom Cell's child one room
      * @param childTwoRoom Cell's child two room
@@ -188,7 +240,6 @@ public class BSPartition {
     private void createHallways(Room childOneRoom, Room childTwoRoom) {
         childOneRoom.setNeighbor(childTwoRoom);
         childTwoRoom.setNeighbor(childOneRoom);
-        //TODO migrate over logic of hallways maybe..
     }
 
     /**
@@ -201,8 +252,8 @@ public class BSPartition {
     }
 
     /**
-     * Room getter. Doesn't matter if some cells don't have rooms, we will handle
-     * the null returns externally useing filter.
+     * Room getter. Doesn't matter if some cells don't have rooms,
+     * we will handle the null returns externally using filter.
      * @return
      */
     public Room getRoom() {
@@ -210,7 +261,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for x coord
+     * Getter for x coord.
      *
      * @return
      */
@@ -219,7 +270,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for y coord
+     * Getter for y coord.
      *
      * @return
      */
@@ -228,7 +279,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for height of Cell
+     * Getter for height of Cell.
      *
      * @return
      */
@@ -237,7 +288,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for width of Cell
+     * Getter for width of Cell.
      *
      * @return
      */
@@ -246,7 +297,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for the first child (either left or bottom child)
+     * Getter for the first child (either left or bottom child).
      *
      * @return
      */
@@ -255,7 +306,7 @@ public class BSPartition {
     }
 
     /**
-     * Getter for the second child (either right or top child)
+     * Getter for the second child (either right or top child).
      *
      * @return
      */
