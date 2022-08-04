@@ -11,19 +11,32 @@ import java.io.IOException;
    are numbered starting from 0. */
 public class Graph {
 
-    /* Maps vertices to a list of its neighboring vertices. */
+    /* Maps vertices to a Set of its neighboring vertices.
+    * V to {V, ...}
+    * */
     private HashMap<Integer, Set<Integer>> neighbors = new HashMap<>();
-    /* Maps vertices to a list of its connected edges. */
+    /* Maps vertices to a Set of its connected edges.
+    * V to {E, ...}
+    *
+    *  */
     private HashMap<Integer, Set<Edge>> edges = new HashMap<>();
     /* A sorted set of all edges. */
     private TreeSet<Edge> allEdges = new TreeSet<>();
 
-    /* Returns the vertices that neighbor V. */
+    /* Returns the vertices that neighbor V.
+    *
+    * f(V) -> {V, ...}
+    *
+    * */
     public TreeSet<Integer> getNeighbors(int v) {
         return new TreeSet<Integer>(neighbors.get(v));
     }
 
-    /* Returns all edges adjacent to V. */
+    /* Returns all edges adjacent to V.
+    *
+    * f(V) -> {E, ....}
+    *
+    *  */
     public TreeSet<Edge> getEdges(int v) {
         return new TreeSet<Edge>(edges.get(v));
     }
