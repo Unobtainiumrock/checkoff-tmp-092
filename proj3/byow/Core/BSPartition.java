@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static byow.Core.HelperFunctions.*;
 
 public class BSPartition {
 
@@ -55,7 +54,6 @@ public class BSPartition {
     public List<BSPartition> partition() {
         List<BSPartition> cells = new ArrayList<>();
 
-//        Cell srcCell = new Cell(seed, 0, 0, width, height);
         BSPartition srcCell = this;
 
         cells.add(srcCell);
