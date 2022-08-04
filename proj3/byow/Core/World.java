@@ -86,6 +86,7 @@ public class World {
                 .collect(Collectors.toList());
     }
 
+
     /**
      * Draws the walls for each room
      */
@@ -299,5 +300,9 @@ public class World {
 
                     }
                 });
+    }
+
+    public TETile[][] getWorld() {
+        return this.world;
     }
 }
