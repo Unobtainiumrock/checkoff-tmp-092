@@ -55,6 +55,7 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         //        "N10340938080S"
         KeyboardInputSource in = new KeyboardInputSource();
+
         String seed = "";
         int seedInt = 0;
         input = input.toUpperCase();
@@ -66,6 +67,10 @@ public class Engine {
         }
         seedInt = Integer.parseInt(seed);
         Random useSeed = new Random(seedInt);
+
+        World helloWorld = new World(useSeed, 90, 60);
+
+        helloWorld.render();
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
@@ -73,7 +78,6 @@ public class Engine {
         //
         // TODO See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;
     }
