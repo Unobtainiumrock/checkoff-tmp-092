@@ -1,7 +1,10 @@
 package byow.Core;
 
+import byow.InputDemo.KeyboardInputSource;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+
+import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -50,6 +53,19 @@ public class Engine {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] interactWithInputString(String input) {
+        //        "N10340938080S"
+        KeyboardInputSource in = new KeyboardInputSource();
+        String seed = "";
+        int seedInt = 0;
+        input = input.toUpperCase();
+        char firstLtr = input.charAt(0);
+        char lastLtr = input.charAt(input.length() - 1);
+
+        for (int i = 1; i < input.length() -1 ; i++) {
+            seed += input.charAt(i);
+        }
+        seedInt = Integer.parseInt(seed);
+        Random useSeed = new Random(seedInt);
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
