@@ -3,6 +3,10 @@ package byow.Core;
 import java.util.Random;
 
 /**
+ * OMG I HAD NO IDEA THIS WAS HERE..
+ */
+
+/**
  * A library of static methods to generate pseudo-random numbers from
  * different distributions (bernoulli, uniform, gaussian, discrete,
  * and exponential). Also includes methods for shuffling an array and
