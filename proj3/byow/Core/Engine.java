@@ -59,12 +59,10 @@ public class Engine {
         String seed = "";
         long seedL = 0;
         input = input.toUpperCase();
-        System.out.println(input);
         char firstLtr = input.charAt(0);
         char lastLtr = input.charAt(input.length() - 1);
 
         for (int i = 1; i < input.length() - 1 ; i++) {
-            System.out.println(input.charAt(i));
             seed += input.charAt(i);
         }
 
@@ -72,8 +70,6 @@ public class Engine {
         seedL = Long.parseLong(seed);
 
         Random useSeed = new Random(seedL);
-
-        System.out.println(seed);
 
         World helloWorld = new World(useSeed, 90, 60);
 

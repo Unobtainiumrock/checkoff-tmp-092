@@ -1,15 +1,15 @@
 package byow.Core;
 
-import byow.TileEngine.TERenderer;
+//import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-import byow.TileEngine.Tileset;
+//import byow.TileEngine.Tileset;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class World {
     private Random r;
-    private TERenderer ter;
+//    private TERenderer ter;
     private TETile[][] world;
     private Set<Map<Integer, Integer>> wallSet;
     private Set<Map<Integer, Integer>> floorSet;
@@ -22,8 +22,8 @@ public class World {
 
     public World(Random r, int width, int height) {
         this.r = r;
-        this.ter = new TERenderer();
-        this.ter.initialize(width, height);
+//        this.ter = new TERenderer();
+//        this.ter.initialize(width, height);
         this.world = new TETile[width][height];
 
         this.wallSet = new HashSet<>();
@@ -39,7 +39,7 @@ public class World {
      * Used externally to render the map.
      */
     public void render() {
-        this.ter.renderFrame(this.world);
+//        this.ter.renderFrame(this.world);
     }
 
     /**
