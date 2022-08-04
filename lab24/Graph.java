@@ -136,7 +136,7 @@ public class Graph {
 
         while (vertexAdded < vertexCount) {
             if (pq.peek().src != -1) {
-                if (visited.contains(pq.peek().dest) || visitedTimes[pq.peek().src] >= 2) { //
+                while (visited.contains(pq.peek().dest) || visitedTimes[pq.peek().src] >= 2) { //
                     pq.poll();
                 }
             }
@@ -256,7 +256,7 @@ public class Graph {
     }
 
     public static void main(String[] args) {
-        Graph test = loadFromText("inputs/graphTestNormal.in");
+        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
         Graph res = test.prims(0);
         for (Edge e: res.getAllEdges()) {
             System.out.println(e);
