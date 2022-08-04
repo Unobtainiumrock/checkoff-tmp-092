@@ -1,3 +1,6 @@
+import com.sun.source.tree.Tree;
+import com.sun.source.util.Trees;
+
 import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -128,8 +131,30 @@ public class Graph {
     }
 
     public Graph kruskals() {
-        // TODO: YOUR CODE HERE
-        return null;
+        UnionFind stuff = new UnionFind();
+        Graph MSTResult = new Graph();
+        int vertexCount = getAllVertices().size();
+        int edgesAdded = 0;
+
+        Iterator allVertices = getAllVertices().iterator();
+
+        while (allVertices.hasNext()) { //fill up MST with vertices
+            MSTResult.addVertex((Integer) allVertices.next());
+        }
+
+        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
+        while (allEdges.hasNext() && edgesAdded < vertexCount) {
+            Edge nextEdge = (Edge) allEdges.next();
+            int u = nextEdge.getSource();
+            int w = nextEdge.getDest();
+            int weight = nextEdge.getWeight();
+            if (stuff.find(u) != stuff.find(w)) {
+                MSTResult.addEdge(new Edge(u, w, weight));
+                stuff.union(u, w);
+                edgesAdded++;
+            }
+        }
+        return MSTResult;
     }
 
 
@@ -178,7 +203,7 @@ public class Graph {
 
     public static void main(String[] args) {
         Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-        Graph res = test.prims(0);
+        Graph res = test.kruskals();
         for (Edge e: res.getAllEdges()) {
             System.out.println(e);
         }
