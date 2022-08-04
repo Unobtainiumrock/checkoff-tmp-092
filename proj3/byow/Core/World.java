@@ -2,7 +2,7 @@ package byow.Core;
 
 //import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
-//import byow.TileEngine.Tileset;
+import byow.TileEngine.Tileset;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,7 +48,7 @@ public class World {
     private void populateWorld() {
         for (int y = 0; y < 60; y += 1) {
             for (int x = 0; x < 90; x += 1) {
-//                world[x][y] = Tileset.NOTHING;
+                world[x][y] = Tileset.NOTHING;
             }
         }
     }
@@ -149,13 +149,13 @@ public class World {
                     for (int i = 0; i < room.getWidth() - 2; i++) {
                         for (int j = 0; j < room.getHeight() - 2; j++) {
                             try {
-//                                world[x + i][y + j] = Tileset.WATER;
+                                world[x + i][y + j] = Tileset.WATER;
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x + i, y + j);
                                 floorSet.add(floorCoord);
 
                             } catch (ArrayIndexOutOfBoundsException e) {
-//                                world[x - i][y + j] = Tileset.WATER;
+                                world[x - i][y + j] = Tileset.WATER;
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x - i, y + j);
                                 floorSet.add(floorCoord);
@@ -226,7 +226,7 @@ public class World {
                              * Adds a border to the hallway's left side.
                              */
                             if (!(floorSet.contains(checkLeft) || wallSet.contains(checkLeft))) {
-//                                world[k][y] = Tileset.WALL;
+                                world[k][y] = Tileset.WALL;
                                 wallSet.add(checkLeft);
                             }
 
@@ -239,7 +239,7 @@ public class World {
                              * Adds a border to the hallway's right side.
                              */
                             if (!(floorSet.contains(checkRight) || wallSet.contains(checkRight))) {
-//                                world[o][y] = Tileset.WALL;
+                                world[o][y] = Tileset.WALL;
                                 wallSet.add(checkRight);
                             }
 
@@ -281,7 +281,7 @@ public class World {
                             checkTop.put(x, k);
 
                             if (!(floorSet.contains(checkTop) || wallSet.contains(checkTop))) {
-//                                world[x][k] = Tileset.WALL;
+                                world[x][k] = Tileset.WALL;
                                 wallSet.add(checkTop);
                             }
 
@@ -291,7 +291,7 @@ public class World {
                             checkBottom.put(x, o);
 
                             if (!(floorSet.contains(checkBottom) || wallSet.contains(checkBottom))) {
-//                                world[x][o] = Tileset.WALL;
+                                world[x][o] = Tileset.WALL;
                                 wallSet.add(checkBottom);
                             }
 
