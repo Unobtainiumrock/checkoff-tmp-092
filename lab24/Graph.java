@@ -71,12 +71,8 @@ public class Graph {
 
     public static void main(String[] args) {
 //        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-        Graph test2 = loadFromText("inputs/tmp.in");
-        test2.prims(0);
-//        Graph res = test.kruskals();
-//        for (Edge e: res.getAllEdges()) {
-//            System.out.println(e);
-//        }
+//        Graph test2 = loadFromText("inputs/tmp.in");
+//        test2.prims(0);
     }
 
     public static void testArea() {
@@ -151,32 +147,32 @@ public class Graph {
         return allEdges.contains(e);
     }
 
-//    public Graph kruskals() {
-//        UnionFind stuff = new UnionFind();
-//        Graph MSTResult = new Graph();
-//        int vertexCount = getAllVertices().size();
-//        int edgesAdded = 0;
-//
-//        Iterator allVertices = getAllVertices().iterator();
-//
-//        while (allVertices.hasNext()) { //fill up MST with vertices
-//            MSTResult.addVertex((Integer) allVertices.next());
-//        }
-//
-//        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
-//        while (allEdges.hasNext() && edgesAdded < vertexCount) {
-//            Edge nextEdge = (Edge) allEdges.next();
-//            int u = nextEdge.getSource();
-//            int w = nextEdge.getDest();
-//            int weight = nextEdge.getWeight();
-//            if (stuff.find(u) != stuff.find(w)) {
-//                MSTResult.addEdge(new Edge(u, w, weight));
-//                stuff.union(u, w);
-//                edgesAdded++;
-//            }
-//        }
-//        return MSTResult;
-//    }
+    public Graph kruskals() {
+        UnionFind stuff = new UnionFind();
+        Graph MSTResult = new Graph();
+        int vertexCount = getAllVertices().size();
+        int edgesAdded = 0;
+
+        Iterator allVertices = getAllVertices().iterator();
+
+        while (allVertices.hasNext()) { //fill up MST with vertices
+            MSTResult.addVertex((Integer) allVertices.next());
+        }
+
+        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
+        while (allEdges.hasNext() && edgesAdded < vertexCount) {
+            Edge nextEdge = (Edge) allEdges.next();
+            int u = nextEdge.getSource();
+            int w = nextEdge.getDest();
+            int weight = nextEdge.getWeight();
+            if (stuff.find(u) != stuff.find(w)) {
+                MSTResult.addEdge(new Edge(u, w, weight));
+                stuff.union(u, w);
+                edgesAdded++;
+            }
+        }
+        return MSTResult;
+    }
 
     /* Returns if this graph spans G. */
     public boolean spans(Graph g) {
@@ -239,7 +235,7 @@ public class Graph {
         Graph mst = new Graph();
         Set<Integer> visited = new HashSet<>();
         recursiveHelper(start, mst, visited);
-        System.out.println(mst.spans(this));
+//        System.out.println(mst.spans(this));
         return mst;
     }
 
