@@ -148,29 +148,29 @@ public class Graph {
     }
 
     public Graph kruskals() {
-        UnionFind stuff = new UnionFind();
+//        UnionFind stuff = new UnionFind();
         Graph MSTResult = new Graph();
-        int vertexCount = getAllVertices().size();
-        int edgesAdded = 0;
-
-        Iterator allVertices = getAllVertices().iterator();
-
-        while (allVertices.hasNext()) { //fill up MST with vertices
-            MSTResult.addVertex((Integer) allVertices.next());
-        }
-
-        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
-        while (allEdges.hasNext() && edgesAdded < vertexCount) {
-            Edge nextEdge = (Edge) allEdges.next();
-            int u = nextEdge.getSource();
-            int w = nextEdge.getDest();
-            int weight = nextEdge.getWeight();
-            if (stuff.find(u) != stuff.find(w)) {
-                MSTResult.addEdge(new Edge(u, w, weight));
-                stuff.union(u, w);
-                edgesAdded++;
-            }
-        }
+//        int vertexCount = getAllVertices().size();
+//        int edgesAdded = 0;
+//
+//        Iterator allVertices = getAllVertices().iterator();
+//
+//        while (allVertices.hasNext()) { //fill up MST with vertices
+//            MSTResult.addVertex((Integer) allVertices.next());
+//        }
+//
+//        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
+//        while (allEdges.hasNext() && edgesAdded < vertexCount) {
+//            Edge nextEdge = (Edge) allEdges.next();
+//            int u = nextEdge.getSource();
+//            int w = nextEdge.getDest();
+//            int weight = nextEdge.getWeight();
+//            if (stuff.find(u) != stuff.find(w)) {
+//                MSTResult.addEdge(new Edge(u, w, weight));
+//                stuff.union(u, w);
+//                edgesAdded++;
+//            }
+//        }
         return MSTResult;
     }
 
