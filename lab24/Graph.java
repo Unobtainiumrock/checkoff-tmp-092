@@ -7,39 +7,98 @@ import java.nio.file.Paths;
 import java.io.BufferedReader;
 import java.nio.charset.Charset;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 /* A mutable and finite Graph object. Edge labels are stored via a HashMap
    where labels are mapped to a key calculated by the following. The graph is
    undirected (whenever an Edge is added, the dual Edge is also added). Vertices
    are numbered starting from 0. */
 public class Graph {
-
     /* Maps vertices to a Set of its neighboring vertices.
-    * V to {V, ...}
-    * */
+     * V to {V, ...}
+     * */
     private HashMap<Integer, Set<Integer>> neighbors = new HashMap<>();
     /* Maps vertices to a Set of its connected edges.
-    * V to {E, ...}
-    *
-    *  */
+     * V to {E, ...}
+     *
+     *  */
     private HashMap<Integer, Set<Edge>> edges = new HashMap<>();
     /* A sorted set of all edges. */
     private TreeSet<Edge> allEdges = new TreeSet<>();
 
+    /* Returns a randomly generated graph with VERTICES number of vertices and
+       EDGES number of edges with max weight WEIGHT. */
+    public static Graph randomGraph(int vertices, int edges, int weight) {
+        Graph g = new Graph();
+        Random rng = new Random();
+        for (int i = 0; i < vertices; i += 1) {
+            g.addVertex(i);
+        }
+        for (int i = 0; i < edges; i += 1) {
+            Edge e = new Edge(rng.nextInt(vertices), rng.nextInt(vertices), rng.nextInt(weight));
+            g.addEdge(e);
+        }
+        return g;
+    }
+
+    /* Returns a Graph object with integer edge weights as parsed from
+       FILENAME. Talk about the setup of this file. */
+    public static Graph loadFromText(String filename) {
+        Charset cs = Charset.forName("US-ASCII");
+        try (BufferedReader r = Files.newBufferedReader(Paths.get(filename), cs)) {
+            Graph g = new Graph();
+            String line;
+            while ((line = r.readLine()) != null) {
+                String[] fields = line.split(", ");
+                if (fields.length == 3) {
+                    int from = Integer.parseInt(fields[0]);
+                    int to = Integer.parseInt(fields[1]);
+                    int weight = Integer.parseInt(fields[2]);
+                    g.addEdge(from, to, weight);
+                } else if (fields.length == 1) {
+                    g.addVertex(Integer.parseInt(fields[0]));
+                } else {
+                    throw new IllegalArgumentException("Bad input file!");
+                }
+            }
+            return g;
+        } catch (IOException e) {
+            System.err.println("Caught IOException: " + e.getMessage());
+            System.exit(1);
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+//        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
+        Graph test2 = loadFromText("inputs/tmp.in");
+        test2.prims(0);
+//        Graph res = test.kruskals();
+//        for (Edge e: res.getAllEdges()) {
+//            System.out.println(e);
+//        }
+    }
+
+    public static void testArea() {
+        Set<Integer> visited = new HashSet<>();
+
+
+    }
+
     /* Returns the vertices that neighbor V.
-    *
-    * f(V) -> {V, ...}
-    *
-    * */
+     *
+     * f(V) -> {V, ...}
+     *
+     * */
     public TreeSet<Integer> getNeighbors(int v) {
         return new TreeSet<Integer>(neighbors.get(v));
     }
 
     /* Returns all edges adjacent to V.
-    *
-    * f(V) -> {E, ....}
-    *
-    *  */
+     *
+     * f(V) -> {E, ....}
+     *
+     *  */
     public TreeSet<Edge> getEdges(int v) {
         return new TreeSet<Edge>(edges.get(v));
     }
@@ -92,6 +151,33 @@ public class Graph {
         return allEdges.contains(e);
     }
 
+//    public Graph kruskals() {
+//        UnionFind stuff = new UnionFind();
+//        Graph MSTResult = new Graph();
+//        int vertexCount = getAllVertices().size();
+//        int edgesAdded = 0;
+//
+//        Iterator allVertices = getAllVertices().iterator();
+//
+//        while (allVertices.hasNext()) { //fill up MST with vertices
+//            MSTResult.addVertex((Integer) allVertices.next());
+//        }
+//
+//        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
+//        while (allEdges.hasNext() && edgesAdded < vertexCount) {
+//            Edge nextEdge = (Edge) allEdges.next();
+//            int u = nextEdge.getSource();
+//            int w = nextEdge.getDest();
+//            int weight = nextEdge.getWeight();
+//            if (stuff.find(u) != stuff.find(w)) {
+//                MSTResult.addEdge(new Edge(u, w, weight));
+//                stuff.union(u, w);
+//                edgesAdded++;
+//            }
+//        }
+//        return MSTResult;
+//    }
+
     /* Returns if this graph spans G. */
     public boolean spans(Graph g) {
         TreeSet<Integer> all = getAllVertices();
@@ -139,86 +225,43 @@ public class Graph {
         allEdges.add(e1);
     }
 
+    /*
+     * DFS
+     * for each vertex, quick sort its neighbors
+     * iterate the sorted neighbors
+     * for each neighbor, recurse
+     *
+     * all while building the needed
+     *  path.*
+     *
+     * */
     public Graph prims(int start) {
-        return null;
+        Graph mst = new Graph();
+        Set<Integer> visited = new HashSet<>();
+        recursiveHelper(start, mst, visited);
+        System.out.println(mst.spans(this));
+        return mst;
     }
 
-    public Graph kruskals() {
-        UnionFind stuff = new UnionFind();
-        Graph MSTResult = new Graph();
-        int vertexCount = getAllVertices().size();
-        int edgesAdded = 0;
+    private void recursiveHelper(int v, Graph mst, Set<Integer> visited) {
+        visited.add(v);
+        List<Edge> treeSetToSortedList = this.getEdges(v)
+                .stream()
+                .sorted()
+                .filter((edge) -> !visited.contains(edge.getDest()))
+                .collect(Collectors.toList());
 
-        Iterator allVertices = getAllVertices().iterator();
-
-        while (allVertices.hasNext()) { //fill up MST with vertices
-            MSTResult.addVertex((Integer) allVertices.next());
-        }
-
-        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
-        while (allEdges.hasNext() && edgesAdded < vertexCount) {
-            Edge nextEdge = (Edge) allEdges.next();
-            int u = nextEdge.getSource();
-            int w = nextEdge.getDest();
-            int weight = nextEdge.getWeight();
-            if (stuff.find(u) != stuff.find(w)) {
-                MSTResult.addEdge(new Edge(u, w, weight));
-                stuff.union(u, w);
-                edgesAdded++;
+        while (mst.getAllVertices().size() != this.getAllVertices().size()) {
+            if (!treeSetToSortedList.isEmpty()) {
+                Edge e = treeSetToSortedList.remove(0);
+                mst.addEdge(e.getSource(), e.getDest(), e.getWeight());
+                v = e.getDest();
+                recursiveHelper(v, mst, visited);
+            } else {
+                break;
             }
-        }
-        return MSTResult;
-    }
-
-
-    /* Returns a randomly generated graph with VERTICES number of vertices and
-       EDGES number of edges with max weight WEIGHT. */
-    public static Graph randomGraph(int vertices, int edges, int weight) {
-        Graph g = new Graph();
-        Random rng = new Random();
-        for (int i = 0; i < vertices; i += 1) {
-            g.addVertex(i);
-        }
-        for (int i = 0; i < edges; i += 1) {
-            Edge e = new Edge(rng.nextInt(vertices), rng.nextInt(vertices), rng.nextInt(weight));
-            g.addEdge(e);
-        }
-        return g;
-    }
-
-    /* Returns a Graph object with integer edge weights as parsed from
-       FILENAME. Talk about the setup of this file. */
-    public static Graph loadFromText(String filename) {
-        Charset cs = Charset.forName("US-ASCII");
-        try (BufferedReader r = Files.newBufferedReader(Paths.get(filename), cs)) {
-            Graph g = new Graph();
-            String line;
-            while ((line = r.readLine()) != null) {
-                String[] fields = line.split(", ");
-                if (fields.length == 3) {
-                    int from = Integer.parseInt(fields[0]);
-                    int to = Integer.parseInt(fields[1]);
-                    int weight = Integer.parseInt(fields[2]);
-                    g.addEdge(from, to, weight);
-                } else if (fields.length == 1) {
-                    g.addVertex(Integer.parseInt(fields[0]));
-                } else {
-                    throw new IllegalArgumentException("Bad input file!");
-                }
-            }
-            return g;
-        } catch (IOException e) {
-            System.err.println("Caught IOException: " + e.getMessage());
-            System.exit(1);
-            return null;
-        }
-    }
-
-    public static void main(String[] args) {
-        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-        Graph res = test.kruskals();
-        for (Edge e: res.getAllEdges()) {
-            System.out.println(e);
         }
     }
 }
+
+
