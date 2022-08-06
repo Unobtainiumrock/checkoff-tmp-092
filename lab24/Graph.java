@@ -72,8 +72,8 @@ public class Graph {
 
     public static void main(String[] args) {
 //        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-        Graph test2 = loadFromText("inputs/tmp.in");
-        test2.prims(0);
+//        Graph test2 = loadFromText("inputs/tmp.in");
+//        test2.prims(0);
     }
 
     public static void testArea() {
@@ -247,7 +247,7 @@ public class Graph {
         }
 
         recursiveHelper(start, start, mst, visited, remainingVertices, remainingEdges);
-        System.out.println(mst.spans(this));
+//        System.out.println(mst.spans(this));
         return mst;
     }
 
