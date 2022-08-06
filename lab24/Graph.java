@@ -235,21 +235,31 @@ public class Graph {
         Graph mst = new Graph();
         Set<Integer> visited = new HashSet<>();
         Set<Edge> remainingEdges = new HashSet<>(this.getAllEdges());
-        Set<Integer> remainingVertices = new HashSet<>(this.getAllVertices());
-        Set<Integer> remainingVerticesRead = new HashSet<>(this.getAllVertices());
-//        Stack<Integer> s = new Stack<>();
+//        Set<Integer> remainingVertices = new HashSet<>(this.getAllVertices());
+        List<Integer> tmp = this.getAllVertices().stream().collect(Collectors.toList());
+        int[] remainingVertices = new int[tmp.size()];
 
-        recursiveHelper(start, start, mst, visited, remainingVertices, remainingEdges, remainingVerticesRead);
-//        System.out.println(mst.spans(this));
+        // Working around concurrency modification bugs.
+        for (int i = 0; i < tmp.size(); i++) {
+            remainingVertices[i] = tmp.get(i);
+        }
+
+        recursiveHelper(start, start, mst, visited, remainingVertices, remainingEdges);
+        System.out.println(mst.spans(this));
         return mst;
     }
 
     private void recursiveHelper(int start, int v, Graph mst, Set<Integer> visited,
-                                  Set<Integer> remainingVertices, Set<Edge> remainingEdges,
-                                 Set<Integer> remainingVerticesRead) {
-        remainingVerticesRead = remainingVertices;
+                                 int[] remainingVertices, Set<Edge> remainingEdges) {
         visited.add(v);
-        remainingVertices.remove(v);
+//        remainingVertices.remove(v);
+
+        for (int i = 0; i < remainingVertices.length; i++) {
+            if (remainingVertices[i] == v) {
+                remainingVertices[i] = -1;
+            }
+        }
+
         List<Edge> treeSetToSortedList = this.getEdges(v)
                 .stream()
                 .sorted()
@@ -262,26 +272,35 @@ public class Graph {
                 mst.addEdge(e.getSource(), e.getDest(), e.getWeight());
                 remainingEdges.remove(e.hashCode());
                 v = e.getDest();
-                remainingVertices.remove(v);
-                recursiveHelper(start, v, mst, visited, remainingVertices, remainingEdges, remainingVerticesRead);
+//                remainingVertices.remove(v);
+
+                for (int i = 0; i < remainingVertices.length; i++) {
+                    if (remainingVertices[i] == v) {
+                        remainingVertices[i] = -1;
+                    }
+                }
+
+                recursiveHelper(start, v, mst, visited, remainingVertices, remainingEdges);
             } else {
                 // For the remaining vertices, find the minimum of the available edges.
                 // to be "available" means that each edge has an unvisited destination
-                if (remainingVerticesRead.size() != 0) {
-                    for (Integer vert : remainingVerticesRead) {
-                        remainingVertices.remove(vert);
-//                        s.push(vert);
-                        List<Edge> ed = this.getEdges(vert)
+//                if (remainingVertices.size() != 0) {
+                for (int i = 0; i < remainingVertices.length; i++) {
+//                    remainingVertices.remove(vert);
+                    if (remainingVertices[i] != -1) {
+                        List<Edge> ed = this.getEdges(remainingVertices[i])
                                 .stream()
-//                                .filter((edge) -> !remainingEdges.contains(edge))
                                 .sorted()
                                 .collect(Collectors.toList());
 
-                        recursiveHelper(start, vert, mst, visited, remainingVertices, remainingEdges, remainingVerticesRead);
+                        recursiveHelper(start, remainingVertices[i], mst, visited, remainingVertices, remainingEdges);
 
                         mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest(), ed.get(0).getWeight());
+                    } else {
+                        continue;
                     }
                 }
+//                }
                 break;
             }
         }
