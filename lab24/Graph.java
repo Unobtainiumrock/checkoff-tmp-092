@@ -263,18 +263,20 @@ public class Graph {
             } else {
                 // For the remaining vertices, find the minimum of the available edges.
                 // to be "available" means that each edge has an unvisited destination
-                for (Integer vert : remainingVertices) {
-                    remainingVertices.remove(vert);
+                if (remainingVertices.size() != 0) {
+                    for (Integer vert : remainingVertices) {
+                        remainingVertices.remove(vert);
 
-                    List<Edge> ed = this.getEdges(vert)
-                            .stream()
-                            .filter((edge) -> !remainingEdges.contains(edge))
-                            .sorted()
-                            .collect(Collectors.toList());
+                        List<Edge> ed = this.getEdges(vert)
+                                .stream()
+                                .filter((edge) -> !remainingEdges.contains(edge))
+                                .sorted()
+                                .collect(Collectors.toList());
 
-                    recursiveHelper(start, vert, mst, visited, remainingVertices, remainingEdges);
+                        recursiveHelper(start, vert, mst, visited, remainingVertices, remainingEdges);
 
-                    mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest());
+                        mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest());
+                    }
                 }
                 break;
             }
