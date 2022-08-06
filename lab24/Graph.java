@@ -149,17 +149,19 @@ public class Graph {
     }
 
     public Graph kruskals() {
-        UnionFind stuff = new UnionFind();
         Graph MSTResult = new Graph();
         int vertexCount = getAllVertices().size();
+        HashSet<Integer> visited = new HashSet<>();
+    
+        UnionFind stuff = new UnionFind(vertexCount);
         int edgesAdded = 0;
-
+    
         Iterator allVertices = getAllVertices().iterator();
-
+    
         while (allVertices.hasNext()) { //fill up MST with vertices
             MSTResult.addVertex((Integer) allVertices.next());
         }
-
+    
         Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
         while (allEdges.hasNext() && edgesAdded < vertexCount) {
             Edge nextEdge = (Edge) allEdges.next();
