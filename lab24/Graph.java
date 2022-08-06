@@ -72,8 +72,8 @@ public class Graph {
 
     public static void main(String[] args) {
 //        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-//        Graph test2 = loadFromText("inputs/tmp.in");
-//        test2.prims(0);
+        Graph test2 = loadFromText("inputs/graphTestNormal.in");
+        test2.prims(0);
     }
 
     public static void testArea() {
@@ -223,7 +223,6 @@ public class Graph {
         edges.get(v2).add(e2);
         allEdges.add(e1);
     }
-
     /*
      * DFS
      * for each vertex, quick sort its neighbors
@@ -271,7 +270,8 @@ public class Graph {
         while (mst.getAllVertices().size() != this.getAllVertices().size()) {
             if (!treeSetToSortedList.isEmpty()) {
                 Edge e = treeSetToSortedList.remove(0);
-                mst.addEdge(e.getSource(), e.getDest(), e.getWeight());
+//                mst.addEdge(e.getSource(), e.getDest(), e.getWeight());
+                mst.addEdge(new Edge(e.getSource(), e.getDest(), e.getWeight()));
                 remainingEdges.remove(e.hashCode());
                 v = e.getDest();
 //                remainingVertices.remove(v);
@@ -297,7 +297,8 @@ public class Graph {
 
                         recursiveHelper(start, remainingVertices[i], mst, visited, remainingVertices, remainingEdges);
 
-                        mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest(), ed.get(0).getWeight());
+//                        mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest(), ed.get(0).getWeight());
+                        mst.addEdge(new Edge(ed.get(0).getSource(), ed.get(0).getDest(), ed.get(0).getWeight()));
                     } else {
                         continue;
                     }
