@@ -235,10 +235,11 @@ public class Graph {
         Graph mst = new Graph();
         Set<Integer> visited = new HashSet<>();
         Set<Edge> remainingEdges = new HashSet<>(this.getAllEdges());
-        Set<Integer> remainingVertices = new HashSet<>(this.getAllVertices());
+        Set<Integer> remainingVertices = Collections.synchronizedSet(new HashSet<>(this.getAllVertices()));
+//        Stack<Integer> s = new Stack<>();
 
         recursiveHelper(start, start, mst, visited, remainingVertices, remainingEdges);
-//        System.out.println(mst.spans(this));
+        System.out.println(mst.spans(this));
         return mst;
     }
 
@@ -266,7 +267,7 @@ public class Graph {
                 if (remainingVertices.size() != 0) {
                     for (Integer vert : remainingVertices) {
                         remainingVertices.remove(vert);
-
+//                        s.push(vert);
                         List<Edge> ed = this.getEdges(vert)
                                 .stream()
 //                                .filter((edge) -> !remainingEdges.contains(edge))
