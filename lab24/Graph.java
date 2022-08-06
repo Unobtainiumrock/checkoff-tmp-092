@@ -1,6 +1,7 @@
 import com.sun.source.tree.Tree;
 import com.sun.source.util.Trees;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -17,14 +18,14 @@ public class Graph {
     /* Maps vertices to a Set of its neighboring vertices.
      * V to {V, ...}
      * */
-    private HashMap<Integer, Set<Integer>> neighbors = new HashMap<>();
+    private final HashMap<Integer, Set<Integer>> neighbors = new HashMap<>();
     /* Maps vertices to a Set of its connected edges.
      * V to {E, ...}
      *
      *  */
-    private HashMap<Integer, Set<Edge>> edges = new HashMap<>();
+    private final HashMap<Integer, Set<Edge>> edges = new HashMap<>();
     /* A sorted set of all edges. */
-    private TreeSet<Edge> allEdges = new TreeSet<>();
+    private final TreeSet<Edge> allEdges = new TreeSet<>();
 
     /* Returns a randomly generated graph with VERTICES number of vertices and
        EDGES number of edges with max weight WEIGHT. */
@@ -44,7 +45,7 @@ public class Graph {
     /* Returns a Graph object with integer edge weights as parsed from
        FILENAME. Talk about the setup of this file. */
     public static Graph loadFromText(String filename) {
-        Charset cs = Charset.forName("US-ASCII");
+        Charset cs = StandardCharsets.US_ASCII;
         try (BufferedReader r = Files.newBufferedReader(Paths.get(filename), cs)) {
             Graph g = new Graph();
             String line;
@@ -71,8 +72,8 @@ public class Graph {
 
     public static void main(String[] args) {
 //        Graph test = loadFromText("inputs/graphTestSomeDisjoint.in");
-//        Graph test2 = loadFromText("inputs/tmp.in");
-//        test2.prims(0);
+        Graph test2 = loadFromText("inputs/tmp.in");
+        test2.prims(0);
     }
 
     public static void testArea() {
@@ -148,29 +149,29 @@ public class Graph {
     }
 
     public Graph kruskals() {
-//        UnionFind stuff = new UnionFind();
+        UnionFind stuff = new UnionFind();
         Graph MSTResult = new Graph();
-//        int vertexCount = getAllVertices().size();
-//        int edgesAdded = 0;
-//
-//        Iterator allVertices = getAllVertices().iterator();
-//
-//        while (allVertices.hasNext()) { //fill up MST with vertices
-//            MSTResult.addVertex((Integer) allVertices.next());
-//        }
-//
-//        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
-//        while (allEdges.hasNext() && edgesAdded < vertexCount) {
-//            Edge nextEdge = (Edge) allEdges.next();
-//            int u = nextEdge.getSource();
-//            int w = nextEdge.getDest();
-//            int weight = nextEdge.getWeight();
-//            if (stuff.find(u) != stuff.find(w)) {
-//                MSTResult.addEdge(new Edge(u, w, weight));
-//                stuff.union(u, w);
-//                edgesAdded++;
-//            }
-//        }
+        int vertexCount = getAllVertices().size();
+        int edgesAdded = 0;
+
+        Iterator allVertices = getAllVertices().iterator();
+
+        while (allVertices.hasNext()) { //fill up MST with vertices
+            MSTResult.addVertex((Integer) allVertices.next());
+        }
+
+        Iterator allEdges = getAllEdges().iterator(); //to go through all the edges
+        while (allEdges.hasNext() && edgesAdded < vertexCount) {
+            Edge nextEdge = (Edge) allEdges.next();
+            int u = nextEdge.getSource();
+            int w = nextEdge.getDest();
+            int weight = nextEdge.getWeight();
+            if (stuff.find(u) != stuff.find(w)) {
+                MSTResult.addEdge(new Edge(u, w, weight));
+                stuff.union(u, w);
+                edgesAdded++;
+            }
+        }
         return MSTResult;
     }
 
@@ -227,20 +228,24 @@ public class Graph {
      * iterate the sorted neighbors
      * for each neighbor, recurse
      *
-     * all while building the needed
-     *  path.*
+     * all while building the MST. MST negates, I swear!
      *
      * */
     public Graph prims(int start) {
         Graph mst = new Graph();
         Set<Integer> visited = new HashSet<>();
-        recursiveHelper(start, mst, visited);
+        Set<Edge> remainingEdges = new HashSet<>(this.getAllEdges());
+        Set<Integer> remainingVertices = new HashSet<>(this.getAllVertices());
+
+        recursiveHelper(start, start, mst, visited, remainingVertices, remainingEdges);
 //        System.out.println(mst.spans(this));
         return mst;
     }
 
-    private void recursiveHelper(int v, Graph mst, Set<Integer> visited) {
+    private void recursiveHelper(int start, int v, Graph mst, Set<Integer> visited,
+                                  Set<Integer> remainingVertices, Set<Edge> remainingEdges) {
         visited.add(v);
+        remainingVertices.remove(v);
         List<Edge> treeSetToSortedList = this.getEdges(v)
                 .stream()
                 .sorted()
@@ -251,9 +256,26 @@ public class Graph {
             if (!treeSetToSortedList.isEmpty()) {
                 Edge e = treeSetToSortedList.remove(0);
                 mst.addEdge(e.getSource(), e.getDest(), e.getWeight());
+                remainingEdges.remove(e.hashCode());
                 v = e.getDest();
-                recursiveHelper(v, mst, visited);
+                remainingVertices.remove(v);
+                recursiveHelper(start, v, mst, visited, remainingVertices, remainingEdges);
             } else {
+                // For the remaining vertices, find the minimum of the available edges.
+                // to be "available" means that each edge has an unvisited destination
+                for (Integer vert : remainingVertices) {
+                    remainingVertices.remove(vert);
+
+                    List<Edge> ed = this.getEdges(vert)
+                            .stream()
+                            .filter((edge) -> !remainingEdges.contains(edge))
+                            .sorted()
+                            .collect(Collectors.toList());
+
+                    recursiveHelper(start, vert, mst, visited, remainingVertices, remainingEdges);
+
+                    mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest());
+                }
                 break;
             }
         }
