@@ -269,13 +269,13 @@ public class Graph {
 
                         List<Edge> ed = this.getEdges(vert)
                                 .stream()
-                                .filter((edge) -> !remainingEdges.contains(edge))
+//                                .filter((edge) -> !remainingEdges.contains(edge))
                                 .sorted()
                                 .collect(Collectors.toList());
 
                         recursiveHelper(start, vert, mst, visited, remainingVertices, remainingEdges);
 
-                        mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest());
+                        mst.addEdge(ed.get(0).getSource(), ed.get(0).getDest(), ed.get(0).getWeight());
                     }
                 }
                 break;
