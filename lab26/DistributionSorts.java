@@ -8,6 +8,7 @@ public class DistributionSorts {
         int[] res = new int[arr.length];
         int[] count = new int[10];
         int[] startingPoint = new int[10];
+
         for (int i = 0; i < arr.length; i++) {
             count[arr[i]]++;
         }
@@ -31,21 +32,22 @@ public class DistributionSorts {
 
     }
 
-    public static int[] countingSortTwo(int[] p) {
+    public static int[] countingSortTwo(int[] arr, int[] p) {
         int[] count = new int[10];
         int[] startingPoint = new int[10];
 
         for (int i = 0; i < p.length; i++) {
             count[p[i]]++;
         }
-// [1   ... 1, .... , last], length of 10.
+
         int sum = 0;
+
         for (int i = 0; i < count.length; i++) {
-            startingPoint[i] = sum + startingPoint[i];
+            startingPoint[i] = sum + count[i];
             sum += count[i];
         }
 
-        return count;
+        return startingPoint;
     }
 
     /* Destructively sorts ARR using LSD radix sort. */
@@ -84,11 +86,12 @@ public class DistributionSorts {
             }
 
             // Sort based on the current digit-lopping.
-            T = countingSortTwo(p);
+            T = countingSortTwo(arr, p);
 
             // Mutate the thing.
             for (int i = 0; i < arr.length; i++) {
-                res[T[p[i]] - 1] = arr[i];
+                res[T[p[i]]] = arr[i];
+                T[p[i]]++;
             }
         }
 
@@ -145,7 +148,7 @@ public class DistributionSorts {
 
     public static void main(String[] args) {
 //        runCountingSort(20);
-//        runLSDRadixSort(3);
-        runLSDRadixSort(30);
+        runLSDRadixSort(3);
+//        runLSDRadixSort(30);
     }
 }
