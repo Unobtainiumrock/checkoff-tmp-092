@@ -32,22 +32,30 @@ public class DistributionSorts {
 
     }
 
-    public static int[] countingSortTwo(int[] arr, int[] p) {
-        int[] count = new int[10];
-        int[] startingPoint = new int[10];
+    // Used by cunting sort.
+    public static int[] countingSortTwo(int[] arr, int exponent) {
+        int[] out = new int[arr.length];
+        int[] cunt = new int[10];
 
-        for (int i = 0; i < p.length; i++) {
-            count[p[i]]++;
+
+        for (int i = 0; i < arr.length; i++) {
+            // divide using base 10 representations.
+            cunt[(arr[i] / exponent) % 10]++;
         }
 
-        int sum = 0;
-
-        for (int i = 0; i < count.length; i++) {
-            startingPoint[i] = sum + count[i];
-            sum += count[i];
+        for (int i = 1; i < 10; i++) {
+            cunt[i] += cunt[i  - 1];
         }
 
-        return startingPoint;
+        // Build
+        for (int i = arr.length - 1; i >= 0; i--) {
+            out[cunt[(arr[i] / exponent) % 10] - 1] = arr[i];
+            cunt[(arr[i] / exponent) % 10]--;
+        }
+
+        System.arraycopy(out, 0, arr, 0, arr.length);
+
+        return out;
     }
 
     /* Destructively sorts ARR using LSD radix sort. */
@@ -67,37 +75,10 @@ public class DistributionSorts {
        DIGIT-th digit. When DIGIT is equal to 0, sort the numbers by the
        rightmost digit of each number. */
     private static void countingSortOnDigit(int[] arr, int digit) {
-        int[] digitLopper = new int[arr.length];
-        int[] res = new int[arr.length];
-        int[] T;
-
-        // Make a copy
-        for (int i = 0; i < arr.length; i++) {
-            digitLopper[i] = arr[i];
-        }
-
-        // Grab current last digits and update for next digit beheading.
-        for (; digit > 0; digit--)  {
-            int[] p = new int[digitLopper.length];
-
-            for (int i = 0; i < digitLopper.length; i++) {
-                p[i] = digitLopper[i] % 10;
-                digitLopper[i] = digitLopper[i] / 10;
-            }
-
-            // Sort based on the current digit-lopping.
-            T = countingSortTwo(arr, p);
-
-            // Mutate the thing.
-            for (int i = 0; i < arr.length; i++) {
-                res[T[p[i]]] = arr[i];
-                T[p[i]]++;
-            }
-        }
-
-        // Overwrite
-        for (int i = 0; i < res.length; i++) {
-            arr[i] = res[i];
+        int exp = 1;
+        for (; digit > 0; digit--) {
+            countingSortTwo(arr, exp);
+            exp *= 10;
         }
     }
 
@@ -147,8 +128,12 @@ public class DistributionSorts {
     }
 
     public static void main(String[] args) {
-//        runCountingSort(20);
+        runCountingSort(20);
         runLSDRadixSort(3);
-//        runLSDRadixSort(30);
+        runLSDRadixSort(30);
+//        for (int i = 0; i < 10; i++) {
+//            runLSDRadixSort(15);
+//            System.out.println("=============");
+//        }
     }
 }
