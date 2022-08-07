@@ -5,22 +5,97 @@ public class DistributionSorts {
     /* Destructively sorts ARR using counting sort. Assumes that ARR contains
        only 0, 1, ..., 9. */
     public static void countingSort(int[] arr) {
-        // TODO: YOUR CODE HERE
+        int[] res = new int[arr.length];
+        int[] count = new int[10];
+        int[] startingPoint = new int[10];
+        for (int i = 0; i < arr.length; i++) {
+            count[arr[i]]++;
+        }
+
+        int sum = 0;
+
+        for (int i = 0; i < count.length; i++) {
+            startingPoint[i] = sum;
+            sum += count[i];
+        }
+
+
+        for (int i = 0; i < arr.length; i++) {
+            res[startingPoint[arr[i]]] = arr[i];
+            startingPoint[arr[i]]++;
+        }
+
+        for (int i =0; i < res.length; i++) {
+            arr[i] = res[i];
+        }
+
+    }
+
+    public static int[] countingSortTwo(int[] p) {
+        int[] count = new int[10];
+        int[] startingPoint = new int[10];
+
+        for (int i = 0; i < p.length; i++) {
+            count[p[i]]++;
+        }
+// [1   ... 1, .... , last], length of 10.
+        int sum = 0;
+        for (int i = 0; i < count.length; i++) {
+            startingPoint[i] = sum + startingPoint[i];
+            sum += count[i];
+        }
+
+        return count;
     }
 
     /* Destructively sorts ARR using LSD radix sort. */
     public static void lsdRadixSort(int[] arr) {
+        // if given, [66, 12, 13, 14, 15, 21], then 2
         int maxDigit = mostDigitsIn(arr);
-        for (int d = 0; d < maxDigit; d++) {
-            countingSortOnDigit(arr, d);
-        }
+        // iterate twice, performing countingSortOnDigit twice, therefore we need to
+        // make sure that within countingSortOnDigit that we are iterating the entirety of arr
+        //
+//        for (int d = 0; d < maxDigit; d++) {
+//            countingSortOnDigit(arr, d);
+//        }
+        countingSortOnDigit(arr, maxDigit);
     }
 
     /* A helper method for radix sort. Modifies ARR to be sorted according to
        DIGIT-th digit. When DIGIT is equal to 0, sort the numbers by the
        rightmost digit of each number. */
     private static void countingSortOnDigit(int[] arr, int digit) {
-        // TODO: YOUR CODE HERE
+        int[] digitLopper = new int[arr.length];
+        int[] res = new int[arr.length];
+        int[] T;
+
+        // Make a copy
+        for (int i = 0; i < arr.length; i++) {
+            digitLopper[i] = arr[i];
+        }
+
+        // Grab current last digits and update for next digit beheading.
+        for (; digit > 0; digit--)  {
+            int[] p = new int[digitLopper.length];
+
+            for (int i = 0; i < digitLopper.length; i++) {
+                p[i] = digitLopper[i] % 10;
+                digitLopper[i] = digitLopper[i] / 10;
+            }
+
+            // Sort based on the current digit-lopping.
+            T = countingSortTwo(p);
+
+            // Mutate the thing.
+            for (int i = 0; i < arr.length; i++) {
+                res[T[p[i]] - 1] = arr[i];
+            }
+        }
+
+        // Overwrite
+        for (int i = 0; i < res.length; i++) {
+            arr[i] = res[i];
+        }
     }
 
     /* Returns the largest number of digits that any integer in ARR has. */
@@ -69,8 +144,8 @@ public class DistributionSorts {
     }
 
     public static void main(String[] args) {
-        runCountingSort(20);
-        runLSDRadixSort(3);
+//        runCountingSort(20);
+//        runLSDRadixSort(3);
         runLSDRadixSort(30);
     }
 }
