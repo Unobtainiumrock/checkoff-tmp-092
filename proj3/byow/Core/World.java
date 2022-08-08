@@ -190,15 +190,13 @@ public class World {
                         for (int j = 0; j < room.getHeight() - 2; j++) {
                             try {
                                 world[x + i][y + j] = Tileset.WATER;
-                                Map<Integer, Integer> floorCoord =
-                                        new HashMap<>();
+                                Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x + i, y + j);
                                 floorSet.add(floorCoord);
 
                             } catch (ArrayIndexOutOfBoundsException e) {
                                 world[x - i][y + j] = Tileset.WATER;
-                                Map<Integer, Integer> floorCoord =
-                                        new HashMap<>();
+                                Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x - i, y + j);
                                 floorSet.add(floorCoord);
                             }
@@ -209,7 +207,136 @@ public class World {
     }
 
     /**
-     * Places the hallway tiles on the map.
+     * Places the hallway tiles on the map
+     *
+     * @param rooms A list of all the rooms that cells contain, where cells are created during the partitioning process.
+     */
+    private void drawHalls(List<Room> rooms) {
+        /**
+         * Connects each room with hallways
+         */
+        rooms
+                .forEach((room) -> {
+                    /**
+                     * Room A
+                     */
+                    int u = (int) room.getX();
+                    int v = (int) room.getY();
+
+                    /**
+                     * Room B
+                     */
+                    int g = (int) room.getNeighbor().getX();
+                    int h = (int) room.getNeighbor().getY();
+
+
+                    /**
+                     * Up/down.
+                     */
+                    for (int i = 0; i < Math.abs(v - h); i++) {
+                        Map<Integer, Integer> coord = new HashMap<>();
+
+                        int x = u + 2;
+                        int y;
+
+                        if (v < h) {
+                            y = v + i + 2;
+
+                        } else {
+                            y = v - i + 2;
+
+                        }
+
+                        coord.put(x, y);
+
+                        /**
+                         * Fill the hall with water.
+                         */
+                        if (!(floorSet.contains(coord))) {
+                            world[x][y] = Tileset.WATER;
+                            Map<Integer, Integer> floorCoord = new HashMap<>();
+                            floorCoord.put(x, y);
+                            floorSet.add(floorCoord);
+
+                            int k = x - 1;
+
+                            Map<Integer, Integer> checkLeft = new HashMap<>();
+                            checkLeft.put(k, y);
+
+                            /**
+                             * Adds a border to the hallway's left side.
+                             */
+                            if (!(floorSet.contains(checkLeft) || wallSet.contains(checkLeft))) {
+                                world[k][y] = Tileset.WALL;
+                                wallSet.add(checkLeft);
+                            }
+
+                            int o = x + 1;
+
+                            Map<Integer, Integer> checkRight = new HashMap<>();
+                            checkRight.put(o, y);
+
+                            /**
+                             * Adds a border to the hallway's right side.
+                             */
+                            if (!(floorSet.contains(checkRight) || wallSet.contains(checkRight))) {
+                                world[o][y] = Tileset.WALL;
+                                wallSet.add(checkRight);
+                            }
+
+                        }
+                    }
+
+                    /**
+                     * Left/right
+                     */
+                    for (int i = 0; i < Math.abs(g - u); i++) {
+                        Map<Integer, Integer> coord = new HashMap<>();
+
+                        int x;
+                        int y = h + 2;
+                        if (g > u) {
+                            x = u + i + 2;
+
+                            coord.put(x, y);
+
+                        } else {
+                            x = u - i + 2;
+                            coord.put(x, y);
+
+                        }
+
+                        /**
+                         * FIl
+                         */
+                        if (!(floorSet.contains(coord))) {
+                            world[x][y] = Tileset.WATER;
+                            Map<Integer, Integer> floorCoord = new HashMap<>();
+                            floorCoord.put(x, y);
+                            floorSet.add(floorCoord);
+
+
+                            int k = y - 1;
+
+                            Map<Integer, Integer> checkTop = new HashMap<>();
+                            checkTop.put(x, k);
+
+                            if (!(floorSet.contains(checkTop) || wallSet.contains(checkTop))) {
+                                world[x][k] = Tileset.WALL;
+                                wallSet.add(checkTop);
+                            }
+
+                            int o = y + 1;
+
+                            Map<Integer, Integer> checkBottom = new HashMap<>();
+                            checkBottom.put(x, o);
+
+                            if (!(floorSet.contains(checkBottom) || wallSet.contains(checkBottom))) {
+                                world[x][o] = Tileset.WALL;
+                                wallSet.add(checkBottom);
+                            }
+                            
+     /* Places the hallway tiles on the map.
      * @param rooms A list of all the rooms that cells contain, where
      * cells are created during the partitioning process.
      */
