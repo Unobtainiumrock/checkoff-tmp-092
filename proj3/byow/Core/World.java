@@ -1,29 +1,69 @@
 package byow.Core;
 
-import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import java.util.*;
+import java.util.Random;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import java.util.stream.Collectors;
 
+/**
+ * @author Nancy Pelosi
+ * World.
+ */
 public class World {
+
+    /**
+     * ugh.
+     */
+    private static final int INITSEED = 69, INITWIDTH = 90, INITHEIGHT = 60;
+    /**
+     * r.
+     */
     private Random r;
-    private TERenderer ter;
+    /**
+     * world.
+     */
     private TETile[][] world;
+    /**
+     * w.
+     */
     private Set<Map<Integer, Integer>> wallSet;
+    /**
+     * fs.
+     */
     private Set<Map<Integer, Integer>> floorSet;
+    /**
+     * screw you.
+     */
     private Set<Map<Integer, Integer>> hallSet;
+    /**
+     * ugh.
+     */
     private BSPartition wo;
 
+    /**
+     * world UGH.
+     */
     public World() {
-        this(new Random(69), 90, 60);
+        this(new Random(INITSEED), INITWIDTH, INITHEIGHT);
     }
 
-    public World(Random r, int width, int height) {
-        this.r = r;
-        this.ter = new TERenderer();
-        this.ter.initialize(width, height);
+    /**
+     * ugh2.
+     *
+     * @param ree    r
+     * @param width  w
+     * @param height h
+     */
+    public World(Random ree, int width, int height) {
+        this.r = ree;
         this.world = new TETile[width][height];
 
         this.wallSet = new HashSet<>();
@@ -31,7 +71,7 @@ public class World {
         this.hallSet = new HashSet<>();
 
         this.populateWorld();
-        this.partitionWorld(this.r, width, height);
+        this.partitionWorld(this.r);
         this.initRooms();
     }
 
@@ -39,15 +79,16 @@ public class World {
      * Used externally to render the map.
      */
     public void render() {
-        this.ter.renderFrame(this.world);
     }
 
     /**
      * Fills the world with blank tiles.
      */
     private void populateWorld() {
-        for (int y = 0; y < 60; y += 1) {
-            for (int x = 0; x < 90; x += 1) {
+        final int height = 60;
+        final int width = 90;
+        for (int y = 0; y < height; y += 1) {
+            for (int x = 0; x < width; x += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
@@ -55,12 +96,11 @@ public class World {
 
     /**
      * Uses a BSP Tree to partition the world into cells for rooms to be placed.
-     * @param r nice.
-     * @param width self explanatory..
-     * @param height self explanatory..
+     *
+     * @param ree nice.
      */
-    private void partitionWorld(Random r, int width, int height) {
-        this.wo = new BSPartition(r);
+    private void partitionWorld(Random ree) {
+        this.wo = new BSPartition(ree);
     }
 
     /**
@@ -75,6 +115,8 @@ public class World {
 
     /**
      * Grabs rooms from all cells containing rooms, filtering off the null ones.
+     *
+     * @return
      */
     private ArrayList<Room> getRooms() {
         return (ArrayList<Room>) wo.getCells()
@@ -86,7 +128,9 @@ public class World {
 
 
     /**
-     * Draws the walls for each room
+     * Draws the walls for each room.
+     *
+     * @param rooms rooms
      */
     private void draWalls(ArrayList<Room> rooms) {
         rooms
@@ -94,9 +138,6 @@ public class World {
                     int x = (int) room.getX();
                     int y = (int) room.getY();
 
-                    /**
-                     * Draws the top and bottom borders on a particular room.
-                     */
                     for (int i = 0; i < room.getWidth(); i++) {
                         int x1 = x + i;
                         int y2 = y + (int) room.getHeight() - 1;
@@ -114,9 +155,6 @@ public class World {
                         this.wallSet.add(w2);
                     }
 
-                    /**
-                     * Draws the left and right borders on a particular room
-                     */
                     for (int i = 0; i < room.getHeight(); i++) {
                         int y1 = y + i;
                         int x2 = x + (int) room.getWidth() - 1;
@@ -138,8 +176,11 @@ public class World {
 
     /**
      * Fills in each room with water.
+     *
+     * @param rooms rooms
      */
-    private void fillRooms(ArrayList<Room> rooms) {
+    private void fillRooms(
+            ArrayList<Room> rooms) {
         rooms
                 .forEach((room) -> {
                     int x = (int) room.getX() + 1;
@@ -167,6 +208,7 @@ public class World {
 
     /**
      * Places the hallway tiles on the map
+     *
      * @param rooms A list of all the rooms that cells contain, where cells are created during the partitioning process.
      */
     private void drawHalls(List<Room> rooms) {
@@ -295,12 +337,15 @@ public class World {
                             }
 
                         }
-
                     }
                 });
     }
 
-    public TETile[][] getWorld() {
+    /**
+     * getter.
+     * @return
+     */
+    public TETile[][] getWorld () {
         return this.world;
     }
 }

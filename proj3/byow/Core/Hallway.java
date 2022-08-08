@@ -2,22 +2,27 @@ package byow.Core;
 import java.util.Random;
 
 
-// Two possible orientations
-// thickness of 1 - 2 and a buffer for walls on either side -- (3-4 total thickness occupied)
-// length random
+/** @author Nancy Pelosi
+ * Hallway generation, does vertical and horizontal
+ */
 public class Hallway {
     /**
-     * Responsible for determining whether to draw horizontally or vertical.
+     * Responsible for determining whether to draw
+     * horizontally or vertical.
      */
     private Random r = new Random();
-    private int length;
+
+    /**
+     * length of the hallway.
+     */
+    private int lengthh;
 
     /**
      *
      * @param length A random integer passed from some parent randomizer
      */
     public Hallway(int length) {
-        this.length = length;
+        this.lengthh = length;
     }
 
     /**
@@ -29,24 +34,36 @@ public class Hallway {
 
     }
 
+    /**
+     * generate horizontal hallways.
+     * @param length length
+     */
     public void horizontal(int length) {
         System.out.println("Making horizontal hallway: " + length);
     }
 
+    /**
+     * alternating.
+     * @return
+     */
     private int alternate() {
         return this.r.nextInt(2);
     }
 
+    /**
+     * the main method.
+     * @param args argssss
+     */
     public static void main(String[] args) {
         Hallway test = new Hallway(5);
 
-        for (int i = 0; i < 10; i ++) {
+        for (int i = 0; i < 10; i++) {
             int flip = test.alternate();
-           if (flip == 1) {
-               test.vertical(1);
-           } else {
-               test.horizontal(1);
-           }
+            if (flip == 1) {
+                test.vertical(1);
+            } else {
+                test.horizontal(1);
+            }
         }
     }
 }

@@ -1,0 +1,4 @@
+1) I recently moved and had a housing scare.
+2) My partner's family caught covid, and it disrupted our workflow.
+3) We produced valid code for valid prims algorithms in the previous lab, but there was error messages without explanations
+as to why they were wrong. (Will prove via example outputs for given inputs of valid MST's in a future email w/ screenshots)
