@@ -13,45 +13,40 @@ import java.util.List;
 
 import java.util.stream.Collectors;
 
-/** @author Nancy Pelosi
+/**
+ * @author Nancy Pelosi
  * World.
  */
 public class World {
 
     /**
+     * ugh.
+     */
+    private static final int INITSEED = 69, INITWIDTH = 90, INITHEIGHT = 60;
+    /**
      * r.
      */
     private Random r;
-
     /**
      * world.
      */
     private TETile[][] world;
-
     /**
      * w.
      */
     private Set<Map<Integer, Integer>> wallSet;
-
     /**
      * fs.
      */
     private Set<Map<Integer, Integer>> floorSet;
-
     /**
      * screw you.
      */
     private Set<Map<Integer, Integer>> hallSet;
-
     /**
      * ugh.
      */
     private BSPartition wo;
-
-    /**
-     * ugh.
-     */
-    private static final int INITSEED = 69, INITWIDTH = 90, INITHEIGHT = 60;
 
     /**
      * world UGH.
@@ -62,8 +57,9 @@ public class World {
 
     /**
      * ugh2.
-     * @param ree r
-     * @param width w
+     *
+     * @param ree    r
+     * @param width  w
      * @param height h
      */
     public World(Random ree, int width, int height) {
@@ -100,6 +96,7 @@ public class World {
 
     /**
      * Uses a BSP Tree to partition the world into cells for rooms to be placed.
+     *
      * @param ree nice.
      */
     private void partitionWorld(Random ree) {
@@ -118,6 +115,7 @@ public class World {
 
     /**
      * Grabs rooms from all cells containing rooms, filtering off the null ones.
+     *
      * @return
      */
     private ArrayList<Room> getRooms() {
@@ -131,6 +129,7 @@ public class World {
 
     /**
      * Draws the walls for each room.
+     *
      * @param rooms rooms
      */
     private void draWalls(ArrayList<Room> rooms) {
@@ -177,6 +176,7 @@ public class World {
 
     /**
      * Fills in each room with water.
+     *
      * @param rooms rooms
      */
     private void fillRooms(
@@ -335,112 +335,17 @@ public class World {
                                 world[x][o] = Tileset.WALL;
                                 wallSet.add(checkBottom);
                             }
-                            
-     /* Places the hallway tiles on the map.
-     * @param rooms A list of all the rooms that cells contain, where
-     * cells are created during the partitioning process.
-     */
-    private void drawHalls(List<Room> rooms) {
-        rooms.forEach((room) -> {
-            int u = (int) room.getX();
-            int v = (int) room.getY();
-            int g = (int) room.getNeighbor().getX();
-            int h = (int) room.getNeighbor().getY();
-            this.stupidAG1(u, v, g, h);
-            this.stupidAG2(u, v, g, h);
-        });
-    }
 
-    /**
-     * stupid ag.
-     * @param u u
-     * @param v v
-     * @param g g
-     * @param h h
-     */
-    private void stupidAG1(int u, int v, int g, int h) {
-        for (int i = 0; i < Math.abs(v - h); i++) {
-            Map<Integer, Integer> coord = new HashMap<>();
-            int x = u + 2;
-            int y;
-            if (v < h) {
-                y = v + i + 2;
-            } else {
-                y = v - i + 2;
-            }
-            coord.put(x, y);
-            if (!(floorSet.contains(coord))) {
-                Map<Integer, Integer> floorCoord = new HashMap<>();
-                floorCoord.put(x, y);
-                floorSet.add(floorCoord);
-                int k = x - 1;
-                Map<Integer, Integer> checkLeft = new HashMap<>();
-                checkLeft.put(k, y);
-                if (!(floorSet.contains(checkLeft)
-                        || wallSet.contains(checkLeft))) {
-                    world[k][y] = Tileset.WALL;
-                    wallSet.add(checkLeft);
-                }
-                int o = x + 1;
-                Map<Integer, Integer> checkRight = new HashMap<>();
-                checkRight.put(o, y);
-                if (!(floorSet.contains(checkRight)
-                        || wallSet.contains(checkRight))) {
-                    world[o][y] = Tileset.WALL;
-                    wallSet.add(checkRight);
-                }
-            }
-        }
-    }
-
-    /**
-     * for stupid ag.
-     * @param u u
-     * @param v v
-     * @param g g
-     * @param h h
-     */
-    private void stupidAG2(int u, int v, int g, int h) {
-        for (int i = 0; i < Math.abs(g - u); i++) {
-            Map<Integer, Integer> coord = new HashMap<>();
-            int x;
-            int y = h + 2;
-            if (g > u) {
-                x = u + i + 2;
-                coord.put(x, y);
-            } else {
-                x = u - i + 2;
-                coord.put(x, y);
-            }
-            if (!(floorSet.contains(coord))) {
-                Map<Integer, Integer> floorCoord = new HashMap<>();
-                floorCoord.put(x, y);
-                floorSet.add(floorCoord);
-                int k = y - 1;
-                Map<Integer, Integer> checkTop = new HashMap<>();
-                checkTop.put(x, k);
-                if (!(floorSet.contains(checkTop)
-                        || wallSet.contains(checkTop))) {
-                    world[x][k] = Tileset.WALL;
-                    wallSet.add(checkTop);
-                }
-                int o = y + 1;
-                Map<Integer, Integer> checkBottom = new HashMap<>();
-                checkBottom.put(x, o);
-                if (!(floorSet.contains(checkBottom)
-                        || wallSet.contains(checkBottom))) {
-                    world[x][o] = Tileset.WALL;
-                    wallSet.add(checkBottom);
-                }
-            }
-        }
+                        }
+                    }
+                });
     }
 
     /**
      * getter.
      * @return
      */
-    public TETile[][] getWorld() {
+    public TETile[][] getWorld () {
         return this.world;
     }
 }
