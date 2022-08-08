@@ -1,6 +1,6 @@
 package byow.Core;
 
-//import byow.InputDemo.KeyboardInputSource;
+import byow.InputDemo.KeyboardInputSource;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
