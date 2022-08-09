@@ -2,12 +2,11 @@ package byow.Core;
 
 import org.junit.Test;
 
-import java.util.*;
-
 public class MovementSystemTest {
 
     @Test
     public void upTest() {
+        System.out.println("Pressing up many times should push to the stack");
 
     }
 

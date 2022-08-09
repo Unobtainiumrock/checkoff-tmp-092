@@ -9,11 +9,13 @@ import java.util.stream.Collectors;
 
 public class World {
     private Random r;
-    private TERenderer ter;
-    private TETile[][] world;
+    private State state;
+    private Board board;
     private Set<Map<Integer, Integer>> wallSet;
     private Set<Map<Integer, Integer>> floorSet;
-    private Set<Map<Integer, Integer>> hallSet;
+//    private Set<Map<Integer, Integer>> hallSet;
+
+    private int[] avatarPosition;
     private BSPartition wo;
 
     public World() {
@@ -22,24 +24,24 @@ public class World {
 
     public World(Random r, int width, int height) {
         this.r = r;
-        this.ter = new TERenderer();
-        this.ter.initialize(width, height);
-        this.world = new TETile[width][height];
+        this.board = new Board(width, height);
 
         this.wallSet = new HashSet<>();
         this.floorSet = new HashSet<>();
-        this.hallSet = new HashSet<>();
 
         this.populateWorld();
-        this.partitionWorld(this.r, width, height);
+        this.partitionWorld(this.r);
         this.initRooms();
+        this.placeAvatar(width, height);
     }
 
     /**
      * Used externally to render the map.
      */
-    public void render() {
-        this.ter.renderFrame(this.world);
+    public static void render(Board b) {
+        TERenderer ter = new TERenderer();
+        ter.initialize(b.getWidth(), b.getHeight());
+        ter.renderFrame(b.getBoardTiles());
     }
 
     /**
@@ -48,7 +50,8 @@ public class World {
     private void populateWorld() {
         for (int y = 0; y < 60; y += 1) {
             for (int x = 0; x < 90; x += 1) {
-                world[x][y] = Tileset.NOTHING;
+//                wo rld[x][y] = Tileset.NOTHING;
+                this.board.setTile(x, y, Tileset.NOTHING);
             }
         }
     }
@@ -56,11 +59,8 @@ public class World {
     /**
      * Uses a BSP Tree to partition the world into cells for rooms to be placed.
      * @param r nice.
-     * @param width self explanatory..
-     * @param height self explanatory..
      */
-    private void partitionWorld(Random r, int width, int height) {
-//        this.wo = new BSPartition(seed, 0, 0, width, height);
+        private void partitionWorld(Random r) {
         this.wo = new BSPartition(r);
     }
 
@@ -105,8 +105,10 @@ public class World {
                         Map<Integer, Integer> w1 = new HashMap<>();
                         Map<Integer, Integer> w2 = new HashMap<>();
 
-                        world[x1][y] = Tileset.WALL;
-                        world[x1][y2] = Tileset.WALL;
+//                        world[x1][y] = Tileset.WALL;
+                        this.board.setTile(x1, y, Tileset.WALL);
+//                        world[x1][y2] = Tileset.WALL;
+                        this.board.setTile(x1, y2, Tileset.WALL);
 
                         w1.put(x1, y);
                         w2.put(x1, y2);
@@ -125,8 +127,10 @@ public class World {
                         Map<Integer, Integer> w1 = new HashMap<>();
                         Map<Integer, Integer> w2 = new HashMap<>();
 
-                        world[x][y1] = Tileset.WALL;
-                        world[x2][y1] = Tileset.WALL;
+//                        world[x][y1] = Tileset.WALL;
+                        this.board.setTile(x, y1, Tileset.WALL);
+//                        world[x2][y1] = Tileset.WALL;
+                        this.board.setTile(x2, y1, Tileset.WALL);
 
                         w1.put(x, y1);
                         w2.put(x2, y1);
@@ -149,13 +153,15 @@ public class World {
                     for (int i = 0; i < room.getWidth() - 2; i++) {
                         for (int j = 0; j < room.getHeight() - 2; j++) {
                             try {
-                                world[x + i][y + j] = Tileset.WATER;
+//                                world[x + i][y + j] = Tileset.WATER;
+                                this.board.setTile(x + i, y + j, Tileset.WATER);
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x + i, y + j);
                                 floorSet.add(floorCoord);
 
                             } catch (ArrayIndexOutOfBoundsException e) {
-                                world[x - i][y + j] = Tileset.WATER;
+//                                world[x - i][y + j] = Tileset.WATER;
+                                this.board.setTile(x - i, y + j, Tileset.WATER);
                                 Map<Integer, Integer> floorCoord = new HashMap<>();
                                 floorCoord.put(x - i, y + j);
                                 floorSet.add(floorCoord);
@@ -212,7 +218,8 @@ public class World {
                          * Fill the hall with water.
                          */
                         if (!(floorSet.contains(coord))) {
-                            world[x][y] = Tileset.WATER;
+//                            world[x][y] = Tileset.WATER;
+                            this.board.setTile(x, y, Tileset.WATER);
                             Map<Integer, Integer> floorCoord = new HashMap<>();
                             floorCoord.put(x, y);
                             floorSet.add(floorCoord);
@@ -226,7 +233,8 @@ public class World {
                              * Adds a border to the hallway's left side.
                              */
                             if (!(floorSet.contains(checkLeft) || wallSet.contains(checkLeft))) {
-                                world[k][y] = Tileset.WALL;
+//                                world[k][y] = Tileset.WALL;
+                                this.board.setTile(k, y, Tileset.WALL);
                                 wallSet.add(checkLeft);
                             }
 
@@ -239,7 +247,8 @@ public class World {
                              * Adds a border to the hallway's right side.
                              */
                             if (!(floorSet.contains(checkRight) || wallSet.contains(checkRight))) {
-                                world[o][y] = Tileset.WALL;
+//                                world[o][y] = Tileset.WALL;
+                                this.board.setTile(o, y, Tileset.WALL);
                                 wallSet.add(checkRight);
                             }
 
@@ -269,7 +278,8 @@ public class World {
                          * FIl
                          */
                         if (!(floorSet.contains(coord))) {
-                            world[x][y] = Tileset.WATER;
+//                            world[x][y] = Tileset.WATER;
+                            this.board.setTile(x, y, Tileset.WATER);
                             Map<Integer, Integer> floorCoord = new HashMap<>();
                             floorCoord.put(x, y);
                             floorSet.add(floorCoord);
@@ -281,7 +291,8 @@ public class World {
                             checkTop.put(x, k);
 
                             if (!(floorSet.contains(checkTop) || wallSet.contains(checkTop))) {
-                                world[x][k] = Tileset.WALL;
+//                                world[x][k] = Tileset.WALL;
+                                this.board.setTile(x, k, Tileset.WALL);
                                 wallSet.add(checkTop);
                             }
 
@@ -291,7 +302,8 @@ public class World {
                             checkBottom.put(x, o);
 
                             if (!(floorSet.contains(checkBottom) || wallSet.contains(checkBottom))) {
-                                world[x][o] = Tileset.WALL;
+//                                world[x][o] = Tileset.WALL;
+                                this.board.setTile(x, o, Tileset.WALL);
                                 wallSet.add(checkBottom);
                             }
 
@@ -301,7 +313,29 @@ public class World {
                 });
     }
 
-    public TETile[][] getWorld() {
-        return this.world;
+    private void placeAvatar(int widthBounds, int heightBounds) {
+        int randX = this.r.nextInt(widthBounds);
+        int randY = this.r.nextInt(heightBounds);
+
+        TETile loc = this.board.getTile(randX, randY);
+
+        while (!(loc.description() == "water")) {
+            randX = this.r.nextInt(widthBounds);
+            randY = this.r.nextInt(heightBounds);
+            loc = this.getBoard().getTile(randX, randY);
+        }
+
+        this.board.setTile(randX, randY, Tileset.AVATAR);
+        this.board.setAvatarPosition(randX, randY);
+    }
+
+    public int[] getAvatarPosition() {
+        return this.board.getAvatarPosition();
+    }
+
+
+    //TODO clean this up later.
+    public Board getBoard() {
+        return this.board;
     }
 }

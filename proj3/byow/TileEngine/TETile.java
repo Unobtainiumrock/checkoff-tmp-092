@@ -6,6 +6,7 @@ import java.util.Random;
 
 import edu.princeton.cs.algs4.StdDraw;
 import byow.Core.RandomUtils;
+import byow.Core.Save;
 
 /**
  * The TETile object is used to represent a single tile in your world. A 2D array of tiles make up a
@@ -21,7 +22,7 @@ import byow.Core.RandomUtils;
  * to make your TETile class mutable, if you prefer.
  */
 
-public class TETile {
+public class TETile implements Save {
     private final char character; // Do not rename character or the autograder will break.
     private final Color textColor;
     private final Color backgroundColor;
