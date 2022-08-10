@@ -8,7 +8,7 @@ import java.util.function.BiConsumer;
  *  in either keyboard or input string mode.
  */
 public class Main {
-//-s n5197880843569031643s:Q
+//-s n5197880843569031643sAWWAWWWWWWWWWWWWWWDDDD:Q
     /**
      * the main method.
      * @param args args

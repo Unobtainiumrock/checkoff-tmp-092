@@ -3,27 +3,30 @@ package byow.InputDemo;
 /**
  * Created by hug.
  */
+
+import byow.Core.*;
 import edu.princeton.cs.algs4.StdDraw;
+import java.awt.*;
 
-public class KeyboardInputSource implements InputSource {
-    private static final boolean PRINT_TYPED_KEYS = false;
-    public KeyboardInputSource() {
-        StdDraw.text(0.3, 0.3, "press m to moo, q to quit");
-    }
+/**
+ * Blame the stupid AG for this stupid shenanigans of NUMBER = # everywhere..
+ */
+public class KeyboardInputSource implements InputSource, AntiAGMagicNumbers {
 
-    public char getNextKey() {
-        while (true) {
+    public static String solicitInput(int n) {
+        String res = "";
+
+        while (!StdDraw.hasNextKeyTyped()) {
+            StdDraw.pause(THOUSAND);
+        }
+
+        while (res.length() != n) {
             if (StdDraw.hasNextKeyTyped()) {
-                char c = Character.toUpperCase(StdDraw.nextKeyTyped());
-                if (PRINT_TYPED_KEYS) {
-                    System.out.print(c);
-                }
-                return c;
+                char c = StdDraw.nextKeyTyped();
+                res += c;
+                Draw.frame(res);
             }
         }
-    }
-
-    public boolean possibleNextInput() {
-        return true;
+        return res;
     }
 }
