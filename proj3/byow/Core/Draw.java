@@ -19,7 +19,7 @@ public class Draw implements AntiAGMagicNumbers {
         StdDraw.setPenColor(Color.WHITE);
 
         /* Draw the title of the menu. */
-        Font fontBig = new Font("Monaco", Font.BOLD, FORTY);
+        Font fontBig = new Font("Monaco", Font.BOLD, THIRSTY);
         StdDraw.setFont(fontBig);
         StdDraw.text(MENU_WIDTH * HALF, MENU_HEIGHT * POINT_SEVEN_FIVE, s);
     }

@@ -116,6 +116,8 @@ public class MovementHandler {
             oldY = previousBoard.getAvatarPosition()[1];
             oldX = previousBoard.getAvatarPosition()[0];
         }
+        //TODO conditional logic for shadow board.
+        Render.render(cp);
     }
 
     private static boolean collision(State previousState, int x, int y) {

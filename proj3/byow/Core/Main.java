@@ -1,5 +1,7 @@
 package byow.Core;
 
+import edu.princeton.cs.algs4.StdDraw;
+
 import java.util.function.BiConsumer;
 
 /** @author Nancy Pelosi
@@ -14,6 +16,7 @@ public class Main {
      * @param args args
      */
     public static void main(String[] args) throws CloneNotSupportedException {
+        StdDraw.show();
         if (args.length > 2) {
             System.out.println("Can only have two arguments - the "
                     + "flag and input string");

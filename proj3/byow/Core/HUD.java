@@ -10,7 +10,7 @@ import java.awt.*;
  * Only displayed after menu screen(s) have been shown.
  */
 public class HUD implements AntiAGMagicNumbers {
-    private static String avatarName = "";
+    public static String avatarName = "";
     private World world;
 
     public HUD(World w) {
@@ -47,5 +47,9 @@ public class HUD implements AntiAGMagicNumbers {
 
     public static void setAvatarName() {
         avatarName = KeyboardInputSource.solicitInput(FIVE);
+    }
+
+    public static boolean hasAvatarName() {
+        return avatarName.length() >= 1;
     }
 }

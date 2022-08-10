@@ -16,7 +16,7 @@ public class World {
     private BSPartition wo;
 
     /**
-     * Used for when we are interracting with the game via the keyboard.
+     * Used for when we are interacting with the game via the keyboard.
      * KeyboardInputSource class expects to have
      */
     public World() {
@@ -40,7 +40,6 @@ public class World {
         this.partitionWorld(this.r);
         this.initRooms();
         this.placeAvatar(width, height);
-        /* Has to happen last because state depends on a board being fully built, specifically the avatar placement*/
         this.state = new State(b, wallSet, floorSet, movements);
     }
 
