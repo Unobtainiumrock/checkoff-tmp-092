@@ -27,6 +27,7 @@ public class KeyboardInputSource implements InputSource, AntiAGMagicNumbers {
                 Draw.frame(res);
             }
         }
+
         return res.toLowerCase();
     }
 }

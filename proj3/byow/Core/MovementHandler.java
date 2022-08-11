@@ -76,16 +76,18 @@ public class MovementHandler {
                         doStuff(previousBoard, newX1, newY1);
                         previousBoard.setAvatarPosition(newX1, newY1);
                     }
-
                     break;
                 case 'g':
-                   if (previousBoard.isShadowing()) {
-                       shadowizeBoard(previousBoard, oldX1, oldY1, false);
-                   } else {
-                       shadowizeBoard(previousBoard, oldX1, oldY1, true);
-                   }
+                    if (previousBoard.isShadowing()) {
+                        shadowizeBoard(previousBoard, oldX1, oldY1, false);
+                    } else {
+                        shadowizeBoard(previousBoard, oldX1, oldY1, true);
+                    }
                     break;
+
+
             }
+
 
             Map<String, Board> shot = new HashMap<>();
             shot.put(s, previousBoard);
@@ -121,18 +123,17 @@ public class MovementHandler {
 
     /**
      * Used to "flip-on" tiles to be lit within a 1-radius around the avatar's new position
+     *
      * @param b previous board state
      * @param x new x position
      * @param y new y postition
      */
     private static void flipper(Board b, int x, int y) {
-        int[][] borders = {
-                {0, 1}, {0, -1},/* up, down */
+        int[][] borders = {{0, 1}, {0, -1},/* up, down */
                 {1, 0}, {-1, 0}, /* left, right*/
                 {-1, 1}, {1, 1}, /* Top left, top right */
                 {-1, -1}, {-1, 1}, /* Bottom left, bottom right */
-                {0, 0}
-        };
+                {0, 0}};
 
         /* flip on everything in a 1-radius around (x, y) */
         for (int i = 0; i < borders.length; i++) {
@@ -144,6 +145,7 @@ public class MovementHandler {
 
     /**
      * We stan Shadow the hedgehog.
+     *
      * @param b previousState
      * @param x curent avatar position.
      * @param y ditto.

@@ -2,7 +2,11 @@ package byow.Core;
 
 import byow.TileEngine.*;
 
-public class TileWrapper implements Save {
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+
+public class TileWrapper implements Save, MouseListener {
     private TETile current;
     private TETile tile;
     private boolean lit = true;
@@ -37,5 +41,30 @@ public class TileWrapper implements Save {
 
     public TETile getCurrent() {
         return this.current;
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent mouseEvent) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent mouseEvent) {
+
     }
 }

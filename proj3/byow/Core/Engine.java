@@ -4,11 +4,12 @@ import byow.InputDemo.KeyboardInputSource;
 import byow.TileEngine.TETile;
 import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.InputMismatchException;
 import java.util.Random;
 
 import static byow.Core.Utils.*;
 
-/**
+ /**
  * @author Nancy Pelosi HUSKRR
  * Engine class
  */
@@ -115,14 +116,31 @@ public class Engine implements Save, AntiAGMagicNumbers {
     }
 
     private Board loadWorld() {
-        World loaded = new World(readObject(STATE_DIR, State.class));
-        this.world = loaded;
+        return loadWorld(0);
+    }
 
-        Board bs = this.world.getState().getLastShot();
-//        this.r = new Render(bs);
-        Render.render(bs);
+    private Board loadWorld(int k) {
+        Board bs;
+
+        if (k == 0) {
+            World loaded = new World(readObject(STATE_DIR, State.class));
+            this.world = loaded;
+
+            bs = this.world.getState().getLastShot();
+            Render.render(bs);
+        } else {
+            World loaded = new World(readObject(STATE_DIR, State.class));
+            this.world = loaded;
+
+            bs = this.world.getState().getSnapshots().get(Integer.toString(k));
+            Render.render(bs);
+        }
 
         return bs;
+    }
+
+    private void saveWorld(State s) {
+        writeObject(STATE_DIR, s);
     }
 
     private void saveWorld() {
@@ -146,15 +164,27 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 this.world = new World(new Random(this.seed), MENU_WIDTH, MENU_HEIGHT, "");
                 this.movementHandler = new MovementHandler(this.world);
                 Render.render(this.world.getBoard());
-
                 this.playMe();
                 break;
             case "q":
                 System.exit(0);
                 break;
             case "l":
+                /*Last minute hack crap*/
+                Draw.frame("Select a game to load: [1], [2], [3]");
+                int choice = 1;
+
+                while (true) {
+                    try {
+                        choice = Integer.parseInt(KeyboardInputSource.solicitInput(1));
+                        break;
+                    } catch (InputMismatchException e) {
+                        continue;
+                    }
+                }
+
                 Draw.frame("Loading...");
-                this.loadWorld();
+                this.loadWorld(choice);
                 this.playMe();
                 break;
             case "m":
@@ -173,16 +203,36 @@ public class Engine implements Save, AntiAGMagicNumbers {
                     Draw.frame("Already named your avatar!");
                     break;
                 }
+            case 'v':
+//                this.changeOutfit();
             default:
                 this.playMe();
         }
     }
 
+//    private void changeOutFit() {
+//        while (true) {
+//            try {
+//                choice = Integer.parseInt(KeyboardInputSource.solicitInput(1));
+//                break;
+//            } catch (InputMismatchException e) {
+//                continue;
+//            }
+//        }
+//    }
+
     private void playMe() throws CloneNotSupportedException {
         while (!otherKeyHandler().equals(":")) {
+            this.mouseHandler();
         }
         this.saveWorld();
         System.exit(0);
+    }
+
+    private void mouseHandler() {
+        StdDraw.pause(1000);
+        System.out.print("X: " + StdDraw.mouseX());
+        System.out.println("Y: " + StdDraw.mouseY());
     }
 
     // clear, show, pause
@@ -202,6 +252,20 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 }
 
                 res += c;
+
+                /* Last minute hacky code*/
+                if (c == '1' || c == '2' || c == '3') {
+                    State s = this.world.getState();
+                    this.world.getState().getSnapshots().put(Character.toString(c), s.getLastShot());
+                    this.saveWorld(s);
+                    System.exit(0);
+                }
+
+                /* Last minute hacky code */
+                if (c == 'v') {
+
+                }
+
                 Dispatcher.dispatch(this.world.getState(), res);
             }
         }
