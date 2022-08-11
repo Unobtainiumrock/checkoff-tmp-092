@@ -14,6 +14,7 @@ public class World {
     private Set<Map<Integer, Integer>> wallSet = new HashSet<>();
     private Set<Map<Integer, Integer>> floorSet = new HashSet<>();
     private BSPartition wo;
+    private TETile avatar;
 
     /**
      * Used for when we are interacting with the game via the keyboard.
@@ -31,16 +32,17 @@ public class World {
         this.setState(s);
     }
 
-    public World(Random r, int width, int height, String movements) throws CloneNotSupportedException {
+    public World(Random r, int width, int height, String movements, TETile avatar) throws CloneNotSupportedException {
         Board b = new Board(width, height);
 
+        this.avatar = avatar;
         this.r = r;
         this.initBoard(b);
         this.populateWorld();
         this.partitionWorld(this.r);
         this.initRooms();
-        this.placeAvatar(width, height);
-        this.state = new State(b, wallSet, floorSet, movements);
+        this.placeAvatar(avatar, width, height);
+        this.state = new State(b, wallSet, floorSet, movements, this.avatar);
     }
 
     private void initBoard(Board b) {
@@ -326,7 +328,7 @@ public class World {
                 });
     }
 
-    private void placeAvatar(int widthBounds, int heightBounds) {
+    private void placeAvatar(TETile avatar, int widthBounds, int heightBounds) {
         int randX = this.r.nextInt(widthBounds);
         int randY = this.r.nextInt(heightBounds);
 
@@ -338,7 +340,7 @@ public class World {
             loc = this.getBoard().getTile(randX, randY).getCurrent();
         }
 
-        this.board.setTile(randX, randY, Tileset.AVATAR);
+        this.board.setTile(randX, randY, avatar);
         this.board.setAvatarPosition(randX, randY);
 
     }

@@ -40,7 +40,7 @@ public class MovementHandler {
                         newY1 = oldY1 + 1;
                         newX1 = oldX1;
                         previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
-                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        previousBoard.setTile(newX1, newY1, previousState.getAvatar());
                         doStuff(previousBoard, newX1, newY1);
                         previousBoard.setAvatarPosition(newX1, newY1);
                     }
@@ -51,7 +51,7 @@ public class MovementHandler {
                         newY1 = oldY1 - 1;
                         newX1 = oldX1;
                         previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
-                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        previousBoard.setTile(newX1, newY1, previousState.getAvatar());
                         doStuff(previousBoard, newX1, newY1);
                         previousBoard.setAvatarPosition(newX1, newY1);
                     }
@@ -62,7 +62,7 @@ public class MovementHandler {
                         newX1 = oldX1 - 1;
                         newY1 = oldY1;
                         previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
-                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        previousBoard.setTile(newX1, newY1, previousState.getAvatar());
                         doStuff(previousBoard, newX1, newY1);
                         previousBoard.setAvatarPosition(newX1, newY1);
                     }
@@ -72,7 +72,7 @@ public class MovementHandler {
                         newX1 = oldX1 + 1;
                         newY1 = oldY1;
                         previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
-                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        previousBoard.setTile(newX1, newY1, previousState.getAvatar());
                         doStuff(previousBoard, newX1, newY1);
                         previousBoard.setAvatarPosition(newX1, newY1);
                     }

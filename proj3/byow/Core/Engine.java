@@ -2,6 +2,7 @@ package byow.Core;
 
 import byow.InputDemo.KeyboardInputSource;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
 import edu.princeton.cs.algs4.StdDraw;
 
 import java.util.InputMismatchException;
@@ -18,13 +19,14 @@ public class Engine implements Save, AntiAGMagicNumbers {
     private Render r;
     private MovementHandler movementHandler;
     private long seed = 69L;
+    private TETile avatar = Tileset.AVATAR;
 
     /**
      * Method used for exploring a fresh world. This method should handle
      * all inputs, including inputs from the main menu.
      */
     public void interactWithKeyboard() throws CloneNotSupportedException {
-        this.menuNav(false);
+        this.menuNav(0);
     }
 
     /**
@@ -63,11 +65,10 @@ public class Engine implements Save, AntiAGMagicNumbers {
             Board bs = this.loadWorld();
             boardTiles = bs.getBoardTiles();
         } else {
-
             seedL = Long.parseLong(seed);
             Random useSeed = new Random(seedL);
 
-            this.world = new World(useSeed, MENU_WIDTH, MENU_HEIGHT, movements);
+            this.world = new World(useSeed, MENU_WIDTH, MENU_HEIGHT, movements, this.avatar);
             this.movementHandler = new MovementHandler(this.world);
 
             boardTiles = this.world.getBoard().getBoardTiles();
@@ -147,11 +148,13 @@ public class Engine implements Save, AntiAGMagicNumbers {
         writeObject(STATE_DIR, this.world.getState());
     }
 
-    private void menuNav(boolean second) throws CloneNotSupportedException {
-        if (!second) {
+    private void menuNav(int menuStep) throws CloneNotSupportedException {
+        if (menuStep == 0) {
             Menu.displayLandingMenu();
+        } else if (menuStep == 1) {
+            Menu.displayB();
         } else {
-            Menu.displaySecondMenu();
+            Menu.displayC();
         }
 
         String menuChoice = KeyboardInputSource.solicitInput(1);
@@ -161,7 +164,7 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 Draw.frame("Please enter a numerical seed, then 's'");
                 StdDraw.pause(3000);
                 this.seed = this.buildSeed();
-                this.world = new World(new Random(this.seed), MENU_WIDTH, MENU_HEIGHT, "");
+                this.world = new World(new Random(this.seed), MENU_WIDTH, MENU_HEIGHT, "", this.avatar);
                 this.movementHandler = new MovementHandler(this.world);
                 Render.render(this.world.getBoard());
                 this.playMe();
@@ -188,7 +191,7 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 this.playMe();
                 break;
             case "m":
-                if (!second) {
+                if (menuStep == 0) {
                     Draw.frame("Give your avatar a 5-letter name!");
                     if (!HUD.hasAvatarName()) {
                         HUD.setAvatarName();
@@ -197,29 +200,34 @@ public class Engine implements Save, AntiAGMagicNumbers {
                         StdDraw.pause(3000);
                         Draw.frame("Navigating to main menu... " + HUD.avatarName);
                         StdDraw.pause(3000);
-                        menuNav(true);
+                        menuNav(1);
                     }
                 } else {
                     Draw.frame("Already named your avatar!");
                     break;
                 }
-            case 'v':
-//                this.changeOutfit();
+            case "v":
+                if (menuStep != 2) {
+                    this.changeOutfit();
+                    menuNav(2);
+                } else {
+                    Draw.frame("Too bad, you're a flower forever!");
+                    break;
+                }
+                break;
             default:
                 this.playMe();
         }
     }
 
-//    private void changeOutFit() {
-//        while (true) {
-//            try {
-//                choice = Integer.parseInt(KeyboardInputSource.solicitInput(1));
-//                break;
-//            } catch (InputMismatchException e) {
-//                continue;
-//            }
-//        }
-//    }
+    private void changeOutfit() {
+        Draw.frame("Would you like to change you appearance? [Y/N]");
+        String s = KeyboardInputSource.solicitInput(1);
+        if (s.toLowerCase().equals(("y"))) {
+            TETile avatarAppearance = Tileset.FLOWER;
+            this.avatar = avatarAppearance;
+        }
+    }
 
     private void playMe() throws CloneNotSupportedException {
         while (!otherKeyHandler().equals(":")) {
@@ -259,11 +267,6 @@ public class Engine implements Save, AntiAGMagicNumbers {
                     this.world.getState().getSnapshots().put(Character.toString(c), s.getLastShot());
                     this.saveWorld(s);
                     System.exit(0);
-                }
-
-                /* Last minute hacky code */
-                if (c == 'v') {
-
                 }
 
                 Dispatcher.dispatch(this.world.getState(), res);

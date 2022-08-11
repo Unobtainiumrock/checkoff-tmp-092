@@ -1,5 +1,7 @@
 package byow.Core;
 
+import byow.TileEngine.TETile;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,6 +14,7 @@ public class State implements Save {
     private Set<Map<Integer, Integer>> floorSet;
     private Board lastShot;
     private boolean shadowMode = false;
+    private TETile avatar;
 
     /**
      * Used when creating a new state from interractWithInputString.
@@ -21,8 +24,9 @@ public class State implements Save {
      */
     public State(Board b, Set<Map<Integer, Integer>> w,
                  Set<Map<Integer, Integer>> f,
-                 String movements) throws CloneNotSupportedException {
+                 String movements, TETile avatar) throws CloneNotSupportedException {
 
+        this.avatar = avatar;
         this.wallSet = w;
         this.floorSet = f;
         this.keyPresses = movements;
@@ -71,5 +75,9 @@ public class State implements Save {
 
     public void setLastShot(Board b) {
         this.lastShot = b;
+    }
+
+    public TETile getAvatar() {
+        return this.avatar;
     }
 }
