@@ -2,7 +2,7 @@ package byow.Core;
 
 import byow.TileEngine.*;
 
-public class TileWrapper {
+public class TileWrapper implements Save {
     private TETile current;
     private TETile tile;
     private boolean lit = true;
@@ -19,7 +19,7 @@ public class TileWrapper {
 
     public void turnOn() {
         this.flip();
-        this.current = tile;s
+        this.current = tile;
     }
 
     public void turnOff() {

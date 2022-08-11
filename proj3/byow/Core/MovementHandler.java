@@ -84,9 +84,6 @@ public class MovementHandler {
                    } else {
                        shadowizeBoard(previousBoard, oldX1, oldY1, true);
                    }
-//                   if (!previousBoard.isShadowing()) {
-//                       shadowizeBoard(previousBoard, oldX1, oldY1, true);
-//                   }
                     break;
             }
 
@@ -104,7 +101,6 @@ public class MovementHandler {
         }
 
         Render.render(previousBoard);
-
     }
 
     private static boolean collision(State previousState, int x, int y) {

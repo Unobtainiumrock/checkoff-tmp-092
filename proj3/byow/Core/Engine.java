@@ -14,6 +14,7 @@ import static byow.Core.Utils.*;
  */
 public class Engine implements Save, AntiAGMagicNumbers {
     private World world;
+    private Render r;
     private MovementHandler movementHandler;
     private long seed = 69L;
 
@@ -69,7 +70,7 @@ public class Engine implements Save, AntiAGMagicNumbers {
             this.movementHandler = new MovementHandler(this.world);
 
             boardTiles = this.world.getBoard().getBoardTiles();
-
+//            this.r = new Render(this.world.getBoard());
             Render.render(this.world.getState().getLastShot());
         }
 
@@ -116,9 +117,9 @@ public class Engine implements Save, AntiAGMagicNumbers {
     private Board loadWorld() {
         World loaded = new World(readObject(STATE_DIR, State.class));
         this.world = loaded;
+
         Board bs = this.world.getState().getLastShot();
-        //TODO Add in logic for whether or not the shadow board is loaded.
-//        World.render(bs[0]);
+//        this.r = new Render(bs);
         Render.render(bs);
 
         return bs;
@@ -144,17 +145,17 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 this.seed = this.buildSeed();
                 this.world = new World(new Random(this.seed), MENU_WIDTH, MENU_HEIGHT, "");
                 this.movementHandler = new MovementHandler(this.world);
-//                this.world.render(this.world.getBoard());
                 Render.render(this.world.getBoard());
-                while (otherKeyHandler() != ":") {
-                }
+
+                this.playMe();
                 break;
             case "q":
-                this.saveWorld();
                 System.exit(0);
                 break;
             case "l":
+                Draw.frame("Loading...");
                 this.loadWorld();
+                this.playMe();
                 break;
             case "m":
                 if (!second) {
@@ -172,7 +173,16 @@ public class Engine implements Save, AntiAGMagicNumbers {
                     Draw.frame("Already named your avatar!");
                     break;
                 }
+            default:
+                this.playMe();
         }
+    }
+
+    private void playMe() throws CloneNotSupportedException {
+        while (!otherKeyHandler().equals(":")) {
+        }
+        this.saveWorld();
+        System.exit(0);
     }
 
     // clear, show, pause
