@@ -47,7 +47,7 @@ public class World {
         if (this.board == null) {
             this.board = b;
         } else {
-            this.board = this.state.getLastShot()[0];
+            this.board = this.state.getLastShot();
         }
     }
 
@@ -330,12 +330,12 @@ public class World {
         int randX = this.r.nextInt(widthBounds);
         int randY = this.r.nextInt(heightBounds);
 
-        TETile loc = this.board.getTile(randX, randY);
+        TETile loc = this.board.getTile(randX, randY).getCurrent();
 
         while (!(loc.description() == "water")) {
             randX = this.r.nextInt(widthBounds);
             randY = this.r.nextInt(heightBounds);
-            loc = this.getBoard().getTile(randX, randY);
+            loc = this.getBoard().getTile(randX, randY).getCurrent();
         }
 
         this.board.setTile(randX, randY, Tileset.AVATAR);

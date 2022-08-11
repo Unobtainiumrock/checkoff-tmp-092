@@ -22,102 +22,89 @@ public class MovementHandler {
         createSnapshots(previousState, s);
     }
 
-    //TODO break apart the logic for makig snap shots into a separate method, otherwise the AG will hella complain
+    //TODO break apart the logic for making snap shots into a separate method, otherwise the AG will hella complain
     // also, this is something I'd do later anyways.
     private static void createSnapshots(State previousState, String s) throws CloneNotSupportedException {
-        Board previousBoard = previousState.getLastShot()[0];
-        Board cp = (Board) previousBoard.clone();
+        Board previousBoard = previousState.getLastShot();
 
-        int oldX = previousBoard.getAvatarPosition()[0];
-        int oldY = previousBoard.getAvatarPosition()[1];
-        int newX = 0, newY = 0;
+        int oldX1 = previousBoard.getAvatarPosition()[0];
+        int oldY1 = previousBoard.getAvatarPosition()[1];
+        int newX1 = 0, newY1 = 0;
 
-        /*
-        * Mapper will look like this, given the following example String:
-        * "WWASD"
-        *
-        * {{"W", "W"}, {"W", "WW"}, {"A", "WWA"}, {"S", "WWAS"}, {"D", "WWASD"} }
-        * The mapper is then iterated and the single-element(first item in the 'tuple') strings will be read and used for updating the
-        * avatar position. The second element in the 'tuple' will be used to create a key for our snapshot hashmap,
-        * where the value for each key is the current state of the board.
-        *
-        * */
-        String[][] mapper = new String[s.length()][2];
-        String thing = "";
 
         for (int i = 0; i < s.length(); i++) {
-            thing += s.charAt(i);
-            mapper[i][0] = Character.toString(s.charAt(i)).toLowerCase();
-            mapper[i][1] = thing;
-        }
 
-        for (int i = 0; i < thing.length(); i ++) {
+            switch (s.charAt(i)) {
+                case 'w':
+                    if (!collision(previousState, oldX1, oldY1 + 1)) {
+                        newY1 = oldY1 + 1;
+                        newX1 = oldX1;
+                        previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
+                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        doStuff(previousBoard, newX1, newY1);
+                        previousBoard.setAvatarPosition(newX1, newY1);
+                    }
 
-            switch(mapper[i][0]) {
-                case "w":
-                    if (!collision(previousState, oldX, oldY + 1)) {
-                        newY = oldY + 1;
-                        newX = oldX;
-                        cp.setTile(oldX, oldY, Tileset.WATER);
-                        cp.setTile(newX, newY, Tileset.AVATAR);
-                        cp.setAvatarPosition(newX, newY);
+                    break;
+                case 's':
+                    if (!collision(previousState, oldX1, oldY1 - 1)) {
+                        newY1 = oldY1 - 1;
+                        newX1 = oldX1;
+                        previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
+                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        doStuff(previousBoard, newX1, newY1);
+                        previousBoard.setAvatarPosition(newX1, newY1);
+                    }
+
+                    break;
+                case 'a':
+                    if (!collision(previousState, oldX1 - 1, oldY1)) {
+                        newX1 = oldX1 - 1;
+                        newY1 = oldY1;
+                        previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
+                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        doStuff(previousBoard, newX1, newY1);
+                        previousBoard.setAvatarPosition(newX1, newY1);
                     }
                     break;
-                case "s":
-                    if (!collision(previousState, oldX, oldY -  1)) {
-                        newY = oldY - 1;
-                        newX = oldX;
-                        cp.setTile(oldX, oldY, Tileset.WATER);
-                        cp.setTile(newX, newY, Tileset.AVATAR);
-                        cp.setAvatarPosition(newX, newY);
+                case 'd':
+                    if (!collision(previousState, oldX1 + 1, oldY1)) {
+                        newX1 = oldX1 + 1;
+                        newY1 = oldY1;
+                        previousBoard.setTile(oldX1, oldY1, Tileset.WATER);
+                        previousBoard.setTile(newX1, newY1, Tileset.AVATAR);
+                        doStuff(previousBoard, newX1, newY1);
+                        previousBoard.setAvatarPosition(newX1, newY1);
                     }
+
                     break;
-                case "a":
-                    if (!collision(previousState, oldX - 1, oldY)) {
-                        newX = oldX - 1;
-                        newY = oldY;
-                        cp.setTile(oldX, oldY, Tileset.WATER);
-                        cp.setTile(newX, newY, Tileset.AVATAR);
-                        cp.setAvatarPosition(newX, newY);
-                    }
-                    break;
-                case "d":
-                    if (!collision(previousState, oldX + 1, oldY)) {
-                        newX = oldX + 1;
-                        newY = oldY;
-                        cp.setTile(oldX, oldY, Tileset.WATER);
-                        cp.setTile(newX, newY, Tileset.AVATAR);
-                        cp.setAvatarPosition(newX, newY);
-                    }
+                case 'g':
+                   if (previousBoard.isShadowing()) {
+                       shadowizeBoard(previousBoard, oldX1, oldY1, false);
+                   } else {
+                       shadowizeBoard(previousBoard, oldX1, oldY1, true);
+                   }
+//                   if (!previousBoard.isShadowing()) {
+//                       shadowizeBoard(previousBoard, oldX1, oldY1, true);
+//                   }
                     break;
             }
 
-            Map<Integer, Integer> coord = new HashMap<>();
-            coord.put(newX, newY);
-
-            Board shadowBoard = ((Board) cp.clone()).shadow();
-
             Map<String, Board> shot = new HashMap<>();
-            shot.put(thing, cp);
-
-            Map<String, Board> shadowShot = new HashMap<>();
-            shadowShot.put("*" + thing, shadowBoard);
+            shot.put(s, previousBoard);
 
             previousState.snap(shot);
-            previousState.snap(shadowShot);
 
-            Board[] shots = new Board[2];
-            shots[0] = cp;
-            shots[1] = shadowBoard;
+            previousState.setLastShot(previousBoard);
 
-            previousState.setLastShot(shots);
+            /* Non-shadow */
+            oldY1 = previousState.getLastShot().getAvatarPosition()[1];
+            oldX1 = previousState.getLastShot().getAvatarPosition()[0];
 
-            previousBoard = previousState.getLastShot()[0];
-            oldY = previousBoard.getAvatarPosition()[1];
-            oldX = previousBoard.getAvatarPosition()[0];
         }
-        //TODO conditional logic for shadow board.
-        Render.render(cp);
+
+        Render.render(previousBoard);
+
     }
 
     private static boolean collision(State previousState, int x, int y) {
@@ -125,6 +112,49 @@ public class MovementHandler {
         coord.put(x, y);
 
         return previousState.getWallSet().contains(coord);
+    }
+
+    private static void doStuff(Board b, int x, int y) {
+        if (b.isShadowing()) {
+            flipper(b, x, y);
+            shadowizeBoard(b, x, y, true);
+        } else {
+            shadowizeBoard(b, x, y, false);
+        }
+    }
+
+    /**
+     * Used to "flip-on" tiles to be lit within a 1-radius around the avatar's new position
+     * @param b previous board state
+     * @param x new x position
+     * @param y new y postition
+     */
+    private static void flipper(Board b, int x, int y) {
+        int[][] borders = {
+                {0, 1}, {0, -1},/* up, down */
+                {1, 0}, {-1, 0}, /* left, right*/
+                {-1, 1}, {1, 1}, /* Top left, top right */
+                {-1, -1}, {-1, 1}, /* Bottom left, bottom right */
+                {0, 0}
+        };
+
+        /* flip on everything in a 1-radius around (x, y) */
+        for (int i = 0; i < borders.length; i++) {
+            TileWrapper t = b.getTile(x + borders[i][0], y + borders[i][1]);
+            t.turnOn();
+        }
+    }
+
+
+    /**
+     * We stan Shadow the hedgehog.
+     * @param b previousState
+     * @param x curent avatar position.
+     * @param y ditto.
+     */
+    private static void shadowizeBoard(Board b, int x, int y, boolean shadow) {
+        b.shadow(shadow);
+        flipper(b, x, y);
     }
 
 }

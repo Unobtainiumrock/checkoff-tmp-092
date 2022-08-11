@@ -16,7 +16,6 @@ public class Main {
      * @param args args
      */
     public static void main(String[] args) throws CloneNotSupportedException {
-        StdDraw.show();
         if (args.length > 2) {
             System.out.println("Can only have two arguments - the "
                     + "flag and input string");

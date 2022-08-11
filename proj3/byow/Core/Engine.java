@@ -1,6 +1,5 @@
 package byow.Core;
 
-import byow.InputDemo.InputSource;
 import byow.InputDemo.KeyboardInputSource;
 import byow.TileEngine.TETile;
 import edu.princeton.cs.algs4.StdDraw;
@@ -23,9 +22,6 @@ public class Engine implements Save, AntiAGMagicNumbers {
      * all inputs, including inputs from the main menu.
      */
     public void interactWithKeyboard() throws CloneNotSupportedException {
-//        Menu.displayLandingMenu();
-//        String menuChoice = KeyboardInputSource.solicitInput(1);
-
         this.menuNav(false);
     }
 
@@ -62,8 +58,8 @@ public class Engine implements Save, AntiAGMagicNumbers {
         if (input.charAt(0) == 'l') {
             this.loadWorld();
 
-            Board[] bs = this.loadWorld();
-            boardTiles = bs[0].getBoardTiles();
+            Board bs = this.loadWorld();
+            boardTiles = bs.getBoardTiles();
         } else {
 
             seedL = Long.parseLong(seed);
@@ -72,10 +68,9 @@ public class Engine implements Save, AntiAGMagicNumbers {
             this.world = new World(useSeed, MENU_WIDTH, MENU_HEIGHT, movements);
             this.movementHandler = new MovementHandler(this.world);
 
-            //TODO Add in logic for whether or not the shadow board is loaded.
             boardTiles = this.world.getBoard().getBoardTiles();
-//            World.render(this.world.getState().getLastShot()[0]);
-            Render.render(this.world.getState().getLastShot()[0]);
+
+            Render.render(this.world.getState().getLastShot());
         }
 
         /*
@@ -84,6 +79,7 @@ public class Engine implements Save, AntiAGMagicNumbers {
         if (input.charAt(input.length() - 1) == 'q') {
             this.saveWorld();
         }
+
 
         return boardTiles;
     }
@@ -117,13 +113,13 @@ public class Engine implements Save, AntiAGMagicNumbers {
         return Long.parseLong(res);
     }
 
-    private Board[] loadWorld() {
+    private Board loadWorld() {
         World loaded = new World(readObject(STATE_DIR, State.class));
         this.world = loaded;
-        Board[] bs = this.world.getState().getLastShot();
+        Board bs = this.world.getState().getLastShot();
         //TODO Add in logic for whether or not the shadow board is loaded.
 //        World.render(bs[0]);
-        Render.render(bs[0]);
+        Render.render(bs);
 
         return bs;
     }
@@ -196,7 +192,7 @@ public class Engine implements Save, AntiAGMagicNumbers {
                 }
 
                 res += c;
-                Dispatcher.dispatch(this.world.getState(), res);s
+                Dispatcher.dispatch(this.world.getState(), res);
             }
         }
         return res;

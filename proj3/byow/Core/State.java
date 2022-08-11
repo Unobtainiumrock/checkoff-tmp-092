@@ -10,7 +10,8 @@ public class State implements Save {
     private String keyPresses = "";
     private Set<Map<Integer, Integer>> wallSet;
     private Set<Map<Integer, Integer>> floorSet;
-    private Board[] lastShot = new Board[2];
+    private Board lastShot;
+    private boolean shadowMode = false;
 
     /**
      * Used when creating a new state from interractWithInputString.
@@ -22,16 +23,12 @@ public class State implements Save {
                  Set<Map<Integer, Integer>> f,
                  String movements) throws CloneNotSupportedException {
 
-        Board shadow = ((Board) b.clone()).shadow();
         this.wallSet = w;
         this.floorSet = f;
         this.keyPresses = movements;
+        this.lastShot = b;
 
-        this.lastShot[0] = b;
-        this.lastShot[1] = shadow;
-
-        Dispatcher.dispatch(this, movements
-        );
+        Dispatcher.dispatch(this, movements);
     }
 
     public String getKeyPresses() {
@@ -60,11 +57,19 @@ public class State implements Save {
         this.snapshots.put(k, v);
     }
 
-    public Board[] getLastShot() {
+    public boolean getShadowMode() {
+        return this.shadowMode;
+    }
+
+    public void setShadowMode(boolean flip) {
+        this.shadowMode = flip;
+    }
+
+    public Board getLastShot() {
         return this.lastShot;
     }
 
-    public void setLastShot(Board[] l) {
-        this.lastShot = l;
+    public void setLastShot(Board b) {
+        this.lastShot = b;
     }
 }

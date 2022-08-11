@@ -33,7 +33,7 @@ public class HUD implements AntiAGMagicNumbers {
         int mouseX = (int) StdDraw.mouseX();
         int mouseY = (int) StdDraw.mouseY();
 
-        TETile tileType = this.world.getBoard().getTile(mouseX, mouseY);
+        TETile tileType = this.world.getBoard().getTile(mouseX, mouseY).getCurrent();
 
         StdDraw.textLeft(ZERO, MENU_HEIGHT - ONE, tileType.description());
 
